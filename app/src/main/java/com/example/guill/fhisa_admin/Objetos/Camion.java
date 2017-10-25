@@ -11,6 +11,7 @@ public class Camion {
     String id;
     Posicion posicion;
     ArrayList<Posicion> posiciones;
+    ArrayList<Long> horas;
 
     public Camion() {
     }
@@ -34,6 +35,7 @@ public class Camion {
     public Camion(String id){
         this.id = id;
         posiciones = new ArrayList();
+        horas = new ArrayList<>();
         }
 
 
@@ -69,6 +71,22 @@ public class Camion {
 
     public void setPosicionesList(ArrayList<Posicion> posicionesList) {
         this.posiciones = posicionesList;
+    }
+
+    //Lo usaremos más que nada en DetalleCamion para ver las horas de cada posicion
+
+    public void setHoras(Long hora) {
+        horas.add(hora);
+    }
+
+    public void clearHoras() { horas.clear(); }
+
+    public ArrayList<Long> getHorasList() {
+        return horas;
+    }
+
+    public void setHorasList (ArrayList<Long> horasList) {
+        this.horas = horasList;
     }
 }
 

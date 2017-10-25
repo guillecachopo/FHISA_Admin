@@ -4,17 +4,18 @@ import android.app.Activity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.Objetos.Camion;
-import com.example.guill.fhisa_admin.Objetos.Posicion;
 import com.example.guill.fhisa_admin.R;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,15 +27,16 @@ public class AdapterPosiciones extends RecyclerView.Adapter<AdapterPosiciones.Ca
 
     List<Camion> camiones;
     Activity activity;
-    List<Posicion> posiciones;
+    List<String> posicionesString;
+    List<String> horasString;
     String id;
 
-    public AdapterPosiciones(List<Posicion> posiciones, String id, Activity activity) {
-
+    public AdapterPosiciones(List<String> posicionesString, List<String> horasString, String id, Activity activity) {
 
         this.activity = activity;
-        this.posiciones = posiciones;
+        this.posicionesString = posicionesString;
         this.id = id;
+        this.horasString = horasString;
     }
 
     //Va a inflar el layout y lo pasara al viewholder para que el obtenga los views
@@ -49,46 +51,46 @@ public class AdapterPosiciones extends RecyclerView.Adapter<AdapterPosiciones.Ca
     //Asciar cada elemento de la lista con cada view
     @Override
     public void onBindViewHolder(CamionesViewHolder holder, int position) {
-        final Camion camion = camiones.get(position);
-        final Posicion posicion = posiciones.get(position);
+        final String posicionString = posicionesString.get(position);
+        String[] splitter = posicionString.split(",");
+        double latitud = Double.parseDouble(splitter[0]);
+        double longitud = Double.parseDouble(splitter[1]);
 
-        Log.i("POSICIONESCAMION", String.valueOf(camion.getPosicionesList().size()));
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        final long horalong = Long.parseLong(horasString.get(position));
+        Date date = new Date(horalong);
+        String hora = format.format(date);
 
-
-        holder.tvId.setText("ID: " + id);
+        holder.tvPosiciones.setText("Pos: " + latitud + ", " + longitud);
 
         //Geocoder para hacer geolocalización inversa
-        for (int i=0; i<posiciones.size(); i++) {
-
-            Geocoder geocoder = new Geocoder(holder.tvId.getContext(), Locale.getDefault());
-            try {
-                List<Address> list = geocoder.getFromLocation(posiciones.get(i).getLatitude(), posiciones.get(i).getLongitude(), 1);
-                if (!list.isEmpty()) {
-                    Address direccion = list.get(0);
-                    holder.tvPosiciones.setText("Pos.: " + direccion.getAddressLine(0));
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
+        Geocoder geocoder = new Geocoder(holder.tvPosiciones.getContext(), Locale.getDefault());
+        try {
+            List<Address> list = geocoder.getFromLocation(latitud, longitud, 1);
+            if (!list.isEmpty()) {
+                Address direccion = list.get(0);
+                holder.tvPosiciones.setText("Posicion: " + direccion.getAddressLine(0));
+                holder.tvHoras.setText("Hora: " + hora);
             }
+         } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
 
     @Override
     public int getItemCount() {
-        Log.i("Posiciones", String.valueOf(posiciones.size()));
-        return posiciones.size();
+        return posicionesString.size();
     }
 
     public static class CamionesViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvPosiciones, tvId;
+        TextView tvPosiciones, tvHoras;
 
         public CamionesViewHolder(View itemView) {
             super(itemView);
-            tvId = itemView.findViewById(R.id.tvIDIndividual);
             tvPosiciones = itemView.findViewById(R.id.tvPosicionesIndividual);
+            tvHoras = itemView.findViewById(R.id.tvHorasIndividual);
         }
     }
 

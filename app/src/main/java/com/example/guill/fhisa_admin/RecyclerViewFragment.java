@@ -88,6 +88,8 @@ public class RecyclerViewFragment extends Fragment {
                             if (camiones.get(i).getId().compareTo(id)==0) {
                                 camion = camiones.get(i);
                                 camion.clearPosiciones();
+
+                                camion.clearHoras();
                             }
                     }
 
@@ -104,6 +106,8 @@ public class RecyclerViewFragment extends Fragment {
                             speed = camion.getUltimaPosicion().getSpeed();
                             time = camion.getUltimaPosicion().getTime();
                             LatLng latlng = new LatLng(latitude, longitude);
+
+                            camion.setHoras(time);
 
                         } //for snapshot2 (Iterador donde estan las posiciones)
                     } //for snapshot1 (Iterador donde esta la cadena "posiciones")

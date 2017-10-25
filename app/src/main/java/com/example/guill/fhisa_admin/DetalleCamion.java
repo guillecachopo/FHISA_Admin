@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.Adapter.AdapterPosiciones;
@@ -22,9 +23,13 @@ import java.util.List;
 
 public class DetalleCamion extends AppCompatActivity {
 
-    ArrayList<Posicion> posiciones;
     ArrayList<Camion> camiones;
     private RecyclerView listaPosiciones;
+    ArrayList<String> posicionesString;
+    ArrayList<String> posicionesAux;
+
+    ArrayList<String> horasString;
+    ArrayList<String> horasAux;
 
     String id;
     double altitude;
@@ -39,6 +44,8 @@ public class DetalleCamion extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycler);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         listaPosiciones = (RecyclerView) findViewById(R.id.rvCamionIndividual);
 
@@ -52,11 +59,16 @@ public class DetalleCamion extends AppCompatActivity {
 
     public void inicializarListaPosiciones(){
 
-        posiciones = new ArrayList<Posicion>();
+        posicionesString = new ArrayList<>();
+        posicionesAux = new ArrayList<>();
         camiones = new ArrayList<>();
         IDs = new ArrayList<>();
         Bundle extras = getIntent().getExtras();
         id = extras.getString("id");
+        posicionesAux = (ArrayList<String>) getIntent().getSerializableExtra("posiciones");
+
+        horasAux = (ArrayList<String>) getIntent().getSerializableExtra("horas");
+        horasString = new ArrayList<>();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance(); //Cualquier referencia tiene que ser igual al mismo tipo pero cogiendo la instancia
         final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
@@ -79,6 +91,8 @@ public class DetalleCamion extends AppCompatActivity {
                             if (camiones.get(i).getId().compareTo(id)==0) {
                                 camion = camiones.get(i);
                                 camion.clearPosiciones();
+                                posicionesAux.clear();
+                                horasAux.clear();
                             }
                     }
 
@@ -98,7 +112,23 @@ public class DetalleCamion extends AppCompatActivity {
 
                         } //for snapshot2 (Iterador donde estan las posiciones)
                     } //for snapshot1 (Iterador donde esta la cadena "posiciones")
-                    posiciones = camion.getPosicionesList();
+                    for (int i = 0; i< camion.getPosicionesList().size(); i++) {
+                        posicionesAux.add(camion.getPosicionesList().get(i).toString());
+                    }
+
+                    for (int i = 0; i < camion.getHorasList().size(); i++) {
+                        horasAux.add(camion.getHorasList().get(i).toString());
+                    }
+
+                    Log.i("HORAS", " " + camion.getHorasList().size());
+
+                    for (int i = 0; i < posicionesAux.size(); i++) {
+                        if (!posicionesAux.get(i).startsWith("com")) {
+                            posicionesString.add(posicionesAux.get(i));
+                            horasString.add(horasAux.get(i));
+                        }
+                    }
+
                 } //for snapshot (Iterador donde estan las IDs)
                 adaptador.notifyDataSetChanged();
             } //onDataChange
@@ -113,8 +143,10 @@ public class DetalleCamion extends AppCompatActivity {
     public AdapterPosiciones adaptador;
     public void inicializarAdaptador(){
         //Crea un objeto de contacto adaptador y le pasa la lista que tenemos para hacer internamente lo configurado en esa activity
-        adaptador = new AdapterPosiciones(posiciones, id, this);
+        adaptador = new AdapterPosiciones(posicionesString, horasString, id, this);
         listaPosiciones.setAdapter(adaptador);
     }
+
+
 
 }
