@@ -127,7 +127,7 @@ public class NotificationJobScheduler extends JobService {
                     if(diferencia >= 1000) enviarNotificacion(); //Setear en milisegundos cuánto tiempo queremos que puede estar sin recibir una posición antes de que salte
                     Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (bucle camiones)");
                 }
-                Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (fuera bucle)");
+                Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (fuera de bucle)");
             }
 
             @Override
