@@ -4,7 +4,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.Adapter.AdapterPosiciones;
@@ -21,7 +24,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetalleCamion extends AppCompatActivity {
+public class DetallePosicionesCamion extends AppCompatActivity {
+
+    private Toolbar toolbar;
+    private ImageView btnBack;
 
     ArrayList<Camion> camiones;
     private RecyclerView listaPosiciones;
@@ -40,12 +46,17 @@ public class DetalleCamion extends AppCompatActivity {
     List<String> IDs;
     private TextView tvPosiciones;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler);
+        setContentView(R.layout.activity_posiciones_camiones_recycler);
+        toolbar = (Toolbar) findViewById(R.id.actionBar);
+        if (toolbar!=null) {
+            setSupportActionBar(toolbar);
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         listaPosiciones = (RecyclerView) findViewById(R.id.rvCamionIndividual);
 
@@ -54,6 +65,22 @@ public class DetalleCamion extends AppCompatActivity {
         listaPosiciones.setLayoutManager(llm); //Para q el recycleview se comporte como un LinearLayout
         inicializarListaPosiciones();
         inicializarAdaptador();
+
+
+        /*
+        btnBack = (ImageView) findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                //startActivity(intent);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                RecyclerViewFragment myFragment = new RecyclerViewFragment();
+                transaction.replace(R.id.mainLayout, myFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        }); */
 
     }
 
@@ -147,6 +174,33 @@ public class DetalleCamion extends AppCompatActivity {
         listaPosiciones.setAdapter(adaptador);
     }
 
+    //Para volver al fragment anterior cuando hacemos click y no al activity
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+
+        return true;
+    }
+
+
+    /*
+    @Override
+    public void onBackPressed(){
+        FragmentManager fm = getFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            Log.i("MainActivity", "popping backstack");
+            fm.popBackStack();
+        } else {
+            Log.i("MainActivity", "nothing on backstack, calling super");
+            super.onBackPressed();
+        }
+    } */
 
 
 }

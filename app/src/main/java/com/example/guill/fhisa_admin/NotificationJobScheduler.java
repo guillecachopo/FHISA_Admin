@@ -124,7 +124,7 @@ public class NotificationJobScheduler extends JobService {
                     long horaActual = horaActualDate.getTime();
                     long diferencia = horaActual - ultimaHora;
                     Log.i("JobScheduler", "Diferencia: " + diferencia);
-                    if(diferencia >= 1000) enviarNotificacion(); //Setear en milisegundos cuánto tiempo queremos que puede estar sin recibir una posición antes de que salte
+                    if(diferencia >= 1000 * 60) enviarNotificacion(camionNotif); //Setear en milisegundos cuánto tiempo queremos que puede estar sin recibir una posición antes de que salte
                     Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (bucle camiones)");
                 }
                 Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (fuera de bucle)");
@@ -138,7 +138,7 @@ public class NotificationJobScheduler extends JobService {
 
     }
 
-    public void enviarNotificacion() {
+    public void enviarNotificacion(Camion camionError) {
         Log.i("JobScheduler", "Dentro de enviarNotificacion" );
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -147,7 +147,7 @@ public class NotificationJobScheduler extends JobService {
                 (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle("Advertencia")
-                        .setContentText("No se reciben posiciones de algún camión")
+                        .setContentText("No se reciben posiciones de " + camionError.getId())
                         .setSound(alarmSound)
                         .setVibrate(new long[] { 500, 500 })
                         .setLights(Color.RED, 1000, 1000);

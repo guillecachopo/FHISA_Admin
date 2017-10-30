@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.guill.fhisa_admin.DetalleCamion;
 import com.example.guill.fhisa_admin.Objetos.Camion;
+import com.example.guill.fhisa_admin.OpcionesCamionActivity;
 import com.example.guill.fhisa_admin.R;
 
 import java.io.IOException;
@@ -93,11 +93,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
         holder.cvCamion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, DetalleCamion.class);
+                //Intent intent = new Intent(activity, DetallePosicionesCamion.class);
+                Intent intent = new Intent(activity, OpcionesCamionActivity.class);
                 intent.putExtra("id", id);
                 intent.putStringArrayListExtra("posiciones", posicionesString);
                 intent.putStringArrayListExtra("horas", horasString);
                 activity.startActivity(intent);
+
+
             }
         });
 
@@ -118,7 +121,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
             tvId = itemView.findViewById(R.id.tvNombreCV);
             tvUltimaPosicion = itemView.findViewById(R.id.tvPosicionCV);
             tvHora = itemView.findViewById(R.id.tvHoraCV);
-            cvCamion = itemView.findViewById(R.id.cvContacto);
+            cvCamion = itemView.findViewById(R.id.cvCamion);
         }
     }
 

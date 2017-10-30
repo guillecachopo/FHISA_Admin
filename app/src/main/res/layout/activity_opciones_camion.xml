@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--    android:background="?attr/selectableItemBackground" -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/opciones_camion"
+    android:weightSum="1">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/actionbar"></include>
+
+    <RelativeLayout
+        android:id="@+id/rlCamionOpcionesId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <TextView
+            android:id="@+id/tvCamionOpcionesId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Camion"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="15dp"
+            android:textAlignment="center"
+            android:textColor="@color/colorFhisa"
+            android:textStyle="bold"
+
+            />
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/rlCamionOpcionesId"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/rlLlamar"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <TextView
+            android:id="@+id/tvLlamar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="29dp"
+            android:text="Llamar al conductor"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/rlLlamar"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/rlVerPosiciones"
+        android:onClick="irPosiciones"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <TextView
+            android:id="@+id/tvVerPosiciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="29dp"
+            android:text="Posiciones"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/rlVerPosiciones"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/rlVerAlbaranes"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+
+        >
+
+        <TextView
+            android:id="@+id/tvVerAlbaranes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="29dp"
+            android:text="Albaranes"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/rlVerAlbaranes"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/rlGraficaVelocidades"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+
+        >
+
+        <TextView
+            android:id="@+id/tvGraficaVelocidades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="29dp"
+            android:text="Gráfica de velocidades"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/rlGraficaVelocidades"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/rlVelocidad"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <TextView
+            android:id="@+id/tvVelocidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="29dp"
+            android:text="Velocidad actual"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/rlVelocidad"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/rlConsumo"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <TextView
+            android:id="@+id/tvConsumo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="29dp"
+            android:text="Consumo de combustible"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/rlConsumo"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/rlConfiguracion"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:clickable="true"
+        android:onClick="irConfiguracion"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <TextView
+            android:id="@+id/tvConfiguracion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="29dp"
+            android:text="Configuración"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/rlConfiguracion"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+</LinearLayout>

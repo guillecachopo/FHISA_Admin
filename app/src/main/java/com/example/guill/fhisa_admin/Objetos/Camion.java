@@ -73,7 +73,7 @@ public class Camion {
         this.posiciones = posicionesList;
     }
 
-    //Lo usaremos más que nada en DetalleCamion para ver las horas de cada posicion
+    //Lo usaremos más que nada en DetallePosicionesCamion para ver las horas de cada posicion
 
     public void setHoras(Long hora) {
         horas.add(hora);

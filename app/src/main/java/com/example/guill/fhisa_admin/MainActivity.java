@@ -42,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        toolbar = (Toolbar) findViewById(R.id.actionBar);
+        if (toolbar!=null) {
+            setSupportActionBar(toolbar);
+        }
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         setUpViewPager();
@@ -82,11 +86,12 @@ public class MainActivity extends AppCompatActivity {
         //Con la linea anterior pasamos soporte fragment manager y la lista de fragments q queremos agregar al page adapter (viewpager)
         tabLayout.setupWithViewPager(viewPager); //Lo agregamos al tabLayout
 
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_mapa);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_truck);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_map_white);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_truck_white);
     }
 
     //-----MENU OPTIONS---------
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -94,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    //Controlar opciones menu:
+    private boolean isStarted = false;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) { //El item del menu seleccionado
@@ -128,16 +133,30 @@ public class MainActivity extends AppCompatActivity {
 
                 JobScheduler js = JobScheduler.getInstance(this);
                 js.schedule(jb);
-                Toast.makeText(this, "Lanzando Servicio de tipo JobSchedule", Toast.LENGTH_LONG).show();
-
-                break;
+                Toast.makeText(this, "Servicio de notificaciones activo", Toast.LENGTH_LONG).show();
+                isStarted = true;
+                return true;
 
             case R.id.menuStopNotificaciones:
                 JobScheduler js2 = JobScheduler.getInstance(this);
                 js2.cancelAll();
+                Toast.makeText(this, "Servicio de notificaciones inactivo", Toast.LENGTH_LONG).show();
+                isStarted = false;
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menuNotificaciones).setVisible(!isStarted);
+        menu.findItem(R.id.menuStopNotificaciones).setVisible(isStarted);
+        return true;
+    }
+
+    //-------------
 
 
 }

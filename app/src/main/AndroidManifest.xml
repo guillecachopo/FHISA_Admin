@@ -11,11 +11,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
 
     <application
         android:allowBackup="true"
@@ -46,17 +44,22 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-
         <activity
-            android:name=".DetalleCamion"
-            android:parentActivityName=".MainActivity">
-
-        </activity>
+            android:name=".DetallePosicionesCamion"
+            android:parentActivityName=".MainActivity" />
 
         <service
             android:name=".NotificationJobScheduler"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <activity android:name=".CamionPreferences"
+            android:parentActivityName=".MainActivity"
+            />
+
+        <activity android:name=".OpcionesCamionActivity"
+            android:parentActivityName=".MainActivity"
+            ></activity>
 
     </application>
 

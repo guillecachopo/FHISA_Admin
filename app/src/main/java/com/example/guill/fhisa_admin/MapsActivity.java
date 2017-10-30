@@ -1,13 +1,18 @@
 package com.example.guill.fhisa_admin;
 
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
@@ -70,6 +75,18 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                                     Bundle savedInstanceState) {
         //Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.activity_maps, container, false);
+
+        ImageView button = (ImageView) mView.findViewById(R.id.btnTipoMapa);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                showMapTypeSelectorDialog();
+            }
+        });
+
+
         return mView;
     }
 
@@ -99,12 +116,17 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
         final LatLng oviedo = new LatLng(43.3579649511212,-5.8733862770);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(oviedo)); //Ponemos el mapa inicialmente centrado en el centro de asturias
-        CameraUpdate cuOviedo = CameraUpdateFactory.newLatLngZoom(oviedo, 8); //Que el mapa no empiece con asturias muy lejos
+        CameraUpdate cuOviedo = CameraUpdateFactory.newLatLngZoom(oviedo, 9); //Que el mapa no empiece con asturias muy lejos
         mMap.animateCamera(cuOviedo);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance(); //Cualquier referencia tiene que ser igual al mismo tipo pero cogiendo la instancia
 
         final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
+
+        final SharedPreferences pref = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+
+        final SharedPreferences settings = getContext().getSharedPreferences(id, 0);
 
         camionesRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -157,10 +179,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 } //for snapshot (Iterador donde estan las IDs)
 
 
+
+
                 mMap.clear(); //Limpiamos el mapa cada vez que llega una posicion para que se actualice el marcador
                 for (int i=0; i<camionesList.size(); i++){
                     Camion pintado = camionesList.get(i);
-                    Integer color = coloresLista.get(i); //Cojo un color de la lista de colores random
+                   // Integer color = coloresLista.get(i); //Cojo un color de la lista de colores random
 
                     markerOptions = new MarkerOptions()
                             .position(new LatLng(pintado.getUltimaPosicion().getLatitude(), pintado.getUltimaPosicion().getLongitude()))
@@ -168,7 +192,45 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
                     marcador = mMap.addMarker(markerOptions);
 
-                    dibujaRuta(pintado, color); //Dibujo la ruta del camión con un color
+                  //  dibujaRuta(pintado, color); //Dibujo la ruta del camión con un color
+
+                    String prefColor = pref.getString("lpColorTrazo", "random");
+                    // Comprobamos si se desea dibujar la ruta, en caso de no
+                    // estar definida la propiedad por defecto indicamos true.
+                    boolean prefTrazoRuta = pref.getBoolean("cbxDibujarRuta", true);
+
+                    if (prefTrazoRuta) {
+                        Integer color;
+                        if (prefColor.equals("white"))
+                            color = Color.WHITE;
+                        else if (prefColor.equals("green"))
+                            color = Color.GREEN;
+                        else if (prefColor.equals("blue"))
+                            color = Color.BLUE;
+                        else if (prefColor.equals("yellow"))
+                            color = Color.YELLOW;
+                        else if (prefColor.equals("black"))
+                            color = Color.BLACK;
+                        else if (prefColor.equals("grey"))
+                            color = Color.GRAY;
+                        else if (prefColor.equals("cyan"))
+                            color = Color.CYAN;
+                        else if (prefColor.equals("red"))
+                            color = Color.RED;
+                        else if (prefColor.equals("dkgray"))
+                            color = Color.DKGRAY;
+                        else if (prefColor.equals("ltgray"))
+                            color = Color.LTGRAY;
+                        else if (prefColor.equals("magenta"))
+                            color = Color.MAGENTA;
+                        else if (prefColor.equals("aleatorio"))
+                            color = coloresLista.get(i);
+                        else
+                            color = coloresLista.get(i);
+
+                        dibujaRuta(pintado, color);
+
+                    }
 
                 }
 
@@ -207,6 +269,55 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         int b = rand.nextInt(255);
         int randomColor = Color.rgb(r,g,b);
         return randomColor;
+    }
+
+
+    private static final CharSequence[] MAP_TYPE_ITEMS =
+            {"Road Map", "Hybrid", "Satellite", "Terrain"};
+
+    private void showMapTypeSelectorDialog() {
+
+        Log.i("Click", "Dentro de showMapTypeSelectorDialog");
+        // Prepare the dialog by setting up a Builder.
+        final String fDialogTitle = "Select Map Type";
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(fDialogTitle);
+        builder.create();
+        Log.i("Click", "Despues de crear builder");
+
+        // Find the current map type to pre-check the item representing the current state.
+        int checkItem = mMap.getMapType() - 1;
+
+        // Add an OnClickListener to the dialog, so that the selection will be handled.
+        builder.setSingleChoiceItems(
+                MAP_TYPE_ITEMS,
+                checkItem,
+                new DialogInterface.OnClickListener() {
+
+
+                    public void onClick(DialogInterface dialog, int item) {
+                        // Locally create a finalised object.
+
+                        // Perform an action depending on which item was selected.
+                        switch (item) {
+
+                            case 1:
+                                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                                break;
+                            case 2:
+                                mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                                break;
+                            case 3:
+                                mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                                break;
+                            default:
+                                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        }
+                        dialog.dismiss();
+                    }
+                }
+        );
+        builder.show();
     }
 
 

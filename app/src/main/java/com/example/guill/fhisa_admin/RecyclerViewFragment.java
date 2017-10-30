@@ -129,4 +129,18 @@ public class RecyclerViewFragment extends Fragment {
         adaptador = new Adapter(camiones, getActivity());
         listaCamiones.setAdapter(adaptador);
     }
+
+
+/*
+
+    @Override
+    public void onResume() {
+        // Recogemos las preferencias del sistema.
+        SharedPreferences pref = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+
+    }
+
+    */
+
 }
