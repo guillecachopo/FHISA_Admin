@@ -1,8 +1,10 @@
-package com.example.guill.fhisa_admin;
+package com.example.guill.fhisa_admin.Preferences;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import com.example.guill.fhisa_admin.R;
 
 public class CamionPreferences extends AppCompatActivity {
 

@@ -44,4 +44,13 @@
         <item>terrain</item>
         <item>hybrid</item>
     </string-array>
+    
+    
+    <string-array name="listFechas">
+        <item>Hoy</item>
+        <item>Última semana</item>
+        <item>Todas las posiciones</item>
+    </string-array>
+    
+    
 </resources>

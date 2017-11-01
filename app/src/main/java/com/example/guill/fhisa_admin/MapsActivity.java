@@ -3,6 +3,7 @@ package com.example.guill.fhisa_admin;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.guill.fhisa_admin.Objetos.Camion;
@@ -23,6 +26,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -34,6 +39,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -60,6 +66,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     long numCamiones;
     MarkerOptions markerOptions;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +83,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         //Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.activity_maps, container, false);
 
+
         ImageView button = (ImageView) mView.findViewById(R.id.btnTipoMapa);
         button.setOnClickListener(new View.OnClickListener()
         {
@@ -83,6 +91,40 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             public void onClick(View v)
             {
                 showMapTypeSelectorDialog();
+            }
+        });
+
+        circleList = new ArrayList<>();
+        Button btnArea = (Button) mView.findViewById(R.id.btnMarcarArea);
+        btnArea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSetAreaInfoDialog();
+                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latlng) {
+                        Log.d("arg0", latlng.latitude + "," + latlng.longitude);
+                        AreaSegura(latlng);
+                        mMap.setOnMapClickListener(null); //Para que no salga continuamente el dialogo para definir una zona
+                    }
+                });
+            }
+        });
+
+        Button btnBorrarArea = (Button) mView.findViewById(R.id.btnBorrarArea);
+        btnBorrarArea.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                showDeleteAreaInfoDialog();
+                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+                        Log.i("PRUEBA", "Click borra: " + latLng.latitude);
+                        BorrarAreaSegura(latLng);
+                        mMap.setOnMapClickListener(null);
+                    }
+                });
             }
         });
 
@@ -118,6 +160,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLng(oviedo)); //Ponemos el mapa inicialmente centrado en el centro de asturias
         CameraUpdate cuOviedo = CameraUpdateFactory.newLatLngZoom(oviedo, 9); //Que el mapa no empiece con asturias muy lejos
         mMap.animateCamera(cuOviedo);
+
+
+
+
 
         FirebaseDatabase database = FirebaseDatabase.getInstance(); //Cualquier referencia tiene que ser igual al mismo tipo pero cogiendo la instancia
 
@@ -231,11 +277,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         dibujaRuta(pintado, color);
 
                     }
-
                 }
-
-
-
 
             } //onDataChange
 
@@ -273,13 +315,13 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
 
     private static final CharSequence[] MAP_TYPE_ITEMS =
-            {"Road Map", "Hybrid", "Satellite", "Terrain"};
+            {"Carretera", "Hibrido", "Satélite", "Terreno"};
 
     private void showMapTypeSelectorDialog() {
 
         Log.i("Click", "Dentro de showMapTypeSelectorDialog");
         // Prepare the dialog by setting up a Builder.
-        final String fDialogTitle = "Select Map Type";
+        final String fDialogTitle = "Selecciona el tipo de mapa";
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(fDialogTitle);
         builder.create();
@@ -320,5 +362,150 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         builder.show();
     }
 
+
+
+
+    public void showSetAreaInfoDialog() {
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Creación de zona libre de notificaciones (CANTERA)")
+                .setMessage("Está a punto de configurar un area segura libre de notificaciones. Cuando un camión se encuentre dentro del area, no se recibirán alertas. Marque el punto central del area.")
+                .setPositiveButton("ENTENDIDO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+                    }
+                }).show();
+    }
+
+    public void showDeleteAreaInfoDialog() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Borrado de zona libre de notificaciones (CANTERA)")
+                .setMessage("Parar borrar una zona, haga click en ella.")
+                .setPositiveButton("ENTENDIDO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+                    }
+                }).show();
+    }
+
+    long metrosArea;
+    Circle circle;
+    ArrayList<Circle> circleList;
+    public void AreaSegura(final LatLng latlng) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = this.getLayoutInflater(getArguments());
+        final View dialogView = inflater.inflate(R.layout.dialog_area, null);
+        dialogBuilder.setView(dialogView);
+
+        final EditText edt = (EditText) dialogView.findViewById(R.id.etArea);
+
+        dialogBuilder.setTitle("Selección de area");
+        dialogBuilder.setMessage("Elija en metros el radio del area.");
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //do something with edt.getText().toString();
+                long distancia = Long.parseLong(edt.getText().toString());
+                metrosArea = distancia;
+                Log.i("distancia", String.valueOf(metrosArea));
+                LatLng randomLatLng = getRandomLocation(latlng, (int) distancia);
+                Log.i("PRUEBA", "Click en: " + latlng.latitude + ", " + latlng.longitude + ", Radio: " + distancia + ", Random: " + randomLatLng.latitude + ", " + randomLatLng.longitude);
+
+                circle = mMap.addCircle(new CircleOptions()
+                        .center(new LatLng(latlng.latitude, latlng.longitude))
+                        .radius(distancia)
+                        .strokeColor(Color.RED)
+                        .fillColor(Color.BLUE));
+                circleList.add(circle);
+                Log.i("CircleList", String.valueOf(circleList.size()));
+                float[] distance = new float[2];
+
+                //Comprobamos si los camiones están dentro del circulo
+                for (int i = 0; i < camionesList.size(); i++) {
+                    //Con esta linea guardamos en distance el valor de la distancia entre la ultima posicion de cada camion y el circulo
+                    Location.distanceBetween(camionesList.get(i).getUltimaPosicion().getLatitude(), camionesList.get(i).getUltimaPosicion().getLongitude(), circle.getCenter().latitude,circle.getCenter().longitude,distance);
+                    if (distance[0] <= circle.getRadius()) {
+                        // Inside The Circle
+                        Log.i("PRUEBA", "Camion " + camionesList.get(i).getId() + " dentro del rango" );
+                    }
+                    else {
+                        // Outside The Circle
+                        Log.i("PRUEBA", "Camion " + camionesList.get(i).getId() + " fuera del rango" );
+                    }
+                }
+
+                for (int i=0; i<circleList.size(); i++) {
+                    circleList.get(i).setTag(i);
+                }
+
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //pass
+            }
+        });
+
+        AlertDialog b = dialogBuilder.create();
+        b.show();
+    }
+
+    public void BorrarAreaSegura(LatLng latitudlongitud) {
+        Log.i("PRUEBA", "circleList: " + circleList.size());
+        for (int i=0; i<circleList.size(); i++) {
+
+            LatLng center = circleList.get(i).getCenter();
+            double radius = circleList.get(i).getRadius();
+            float[] distance = new float[1];
+            //Location.distanceBetween(camionesList.get(i).getUltimaPosicion().getLatitude(), camionesList.get(i).getUltimaPosicion().getLongitude(), circle.getCenter().latitude,circle.getCenter().longitude,distance);
+            Location.distanceBetween(latitudlongitud.latitude, latitudlongitud.longitude, center.latitude, center.longitude, distance);
+            boolean clicked = distance[0] < radius;
+            if (clicked) circleList.get(i).remove();
+        }
+    }
+
+
+    public LatLng getRandomLocation(LatLng point, int radius) {
+
+        List<LatLng> randomPoints = new ArrayList<>();
+        List<Float> randomDistances = new ArrayList<>();
+        Location myLocation = new Location("");
+        myLocation.setLatitude(point.latitude);
+        myLocation.setLongitude(point.longitude);
+
+        //This is to generate 10 random points
+        for(int i = 0; i<10; i++) {
+            double x0 = point.latitude;
+            double y0 = point.longitude;
+
+            Random random = new Random();
+
+            // Convert radius from meters to degrees
+            double radiusInDegrees = radius / 111000f;
+
+            double u = random.nextDouble();
+            double v = random.nextDouble();
+            double w = radiusInDegrees * Math.sqrt(u);
+            double t = 2 * Math.PI * v;
+            double x = w * Math.cos(t);
+            double y = w * Math.sin(t);
+
+            // Adjust the x-coordinate for the shrinking of the east-west distances
+            double new_x = x / Math.cos(y0);
+
+            double foundLatitude = new_x + x0;
+            double foundLongitude = y + y0;
+            LatLng randomLatLng = new LatLng(foundLatitude, foundLongitude);
+            randomPoints.add(randomLatLng);
+            Location l1 = new Location("");
+            l1.setLatitude(randomLatLng.latitude);
+            l1.setLongitude(randomLatLng.longitude);
+            randomDistances.add(l1.distanceTo(myLocation));
+        }
+        //Get nearest point to the centre
+        int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
+        return randomPoints.get(indexOfNearestPointToCentre);
+    }
 
 }

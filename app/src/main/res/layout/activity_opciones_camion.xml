@@ -172,6 +172,7 @@
         android:layout_height="47dp"
         android:clickable="true"
         android:background="?attr/selectableItemBackground"
+        android:onClick="irVelocidadActual"
         >
 
         <TextView

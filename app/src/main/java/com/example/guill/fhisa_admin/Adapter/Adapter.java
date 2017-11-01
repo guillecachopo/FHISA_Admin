@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.Objetos.Camion;
-import com.example.guill.fhisa_admin.OpcionesCamionActivity;
+import com.example.guill.fhisa_admin.Opciones.OpcionesCamionActivity;
 import com.example.guill.fhisa_admin.R;
 
 import java.io.IOException;

@@ -60,6 +60,7 @@ public class AdapterPosiciones extends RecyclerView.Adapter<AdapterPosiciones.Ca
         final long horalong = Long.parseLong(horasString.get(position));
         Date date = new Date(horalong);
         String hora = format.format(date);
+        //String hora = horasString.get(position);
 
         holder.tvPosiciones.setText("Pos: " + latitud + ", " + longitud);
 

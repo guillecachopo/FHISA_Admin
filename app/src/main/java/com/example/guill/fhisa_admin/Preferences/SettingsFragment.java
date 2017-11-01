@@ -1,7 +1,9 @@
-package com.example.guill.fhisa_admin;
+package com.example.guill.fhisa_admin.Preferences;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+
+import com.example.guill.fhisa_admin.R;
 
 /**
  * Created by guill on 30/10/2017.

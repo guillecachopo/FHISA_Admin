@@ -10,7 +10,7 @@
     card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="true"
     android:clickable="true"
-    android:background="?attr/selectableItemBackground"
+    android:foreground="?android:attr/selectableItemBackground"
     >
 
     <LinearLayout

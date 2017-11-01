@@ -11,4 +11,7 @@
     <color name="colorFhisaDark">#376c43</color>
     <color name="colorGris">#d7ccc8</color>
     <color name="colorAccent2">#88f78c</color>
+    <color name="colorRojoOscuro">#de0b0b</color>
+    <color name="colorAmarilloOscuro">#dee608</color>
+
 </resources>

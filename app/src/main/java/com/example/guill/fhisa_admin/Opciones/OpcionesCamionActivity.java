@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin;
+package com.example.guill.fhisa_admin.Opciones;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.example.guill.fhisa_admin.Preferences.CamionPreferences;
+import com.example.guill.fhisa_admin.R;
 
 import java.util.ArrayList;
 
@@ -62,6 +65,17 @@ public class OpcionesCamionActivity extends AppCompatActivity {
         Intent intent = new Intent(view.getContext(), CamionPreferences.class);
         intent.putExtra("id", id);
         startActivity(intent);
+    }
+
+    public void irVelocidadActual(View view) {
+
+        Bundle extras = getIntent().getExtras();
+        id = extras.getString("id");
+
+        Intent intent = new Intent(view.getContext(), VelocidadActualActivity.class);
+        intent.putExtra("id", id);
+        startActivity(intent);
+
     }
 
     //Para volver al fragment anterior cuando hacemos click y no al activity
