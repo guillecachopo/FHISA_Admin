@@ -11,13 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.guill.fhisa_admin.DetalleCamion;
 import com.example.guill.fhisa_admin.Objetos.Camion;
+import com.example.guill.fhisa_admin.Opciones.OpcionesCamionActivity;
 import com.example.guill.fhisa_admin.R;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -76,13 +77,30 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
         holder.tvId.setText("Identificador: " + id);
         holder.tvHora.setText("Hora: " + hora);
 
+        final ArrayList<String> posicionesString = new ArrayList<>();
+        final ArrayList<String> horasString = new ArrayList<>();
+
+        for (int i = 0; i< camion.getPosicionesList().size(); i++) {
+            posicionesString.add(String.valueOf(camion.getPosicionesList().get(i).getLatitude()) + "," + camion.getPosicionesList().get(i).getLongitude());
+        }
+
+
+        for (int i = 0; i < camion.getHorasList().size(); i++) {
+            horasString.add(String.valueOf(camion.getPosicionesList().get(i).getTime()));
+        }
+
 
         holder.cvCamion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, DetalleCamion.class);
+                //Intent intent = new Intent(activity, DetallePosicionesCamion.class);
+                Intent intent = new Intent(activity, OpcionesCamionActivity.class);
                 intent.putExtra("id", id);
+                intent.putStringArrayListExtra("posiciones", posicionesString);
+                intent.putStringArrayListExtra("horas", horasString);
                 activity.startActivity(intent);
+
+
             }
         });
 
@@ -103,7 +121,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
             tvId = itemView.findViewById(R.id.tvNombreCV);
             tvUltimaPosicion = itemView.findViewById(R.id.tvPosicionCV);
             tvHora = itemView.findViewById(R.id.tvHoraCV);
-            cvCamion = itemView.findViewById(R.id.cvContacto);
+            cvCamion = itemView.findViewById(R.id.cvCamion);
         }
     }
 

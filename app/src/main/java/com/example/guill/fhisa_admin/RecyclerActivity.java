@@ -21,7 +21,7 @@ public class RecyclerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler);
+        setContentView(R.layout.activity_posiciones_camiones_recycler);
 
         rv = (RecyclerView) findViewById(R.id.rvCamiones);
 

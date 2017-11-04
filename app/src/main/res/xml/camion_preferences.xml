@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- PREFERENCIAS DEL CAMION -->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference android:title="Trazar ruta del camión"
+        android:defaultValue="true"
+        android:summary="Marcar para mostrar trazo de ruta"
+        android:key="cbxDibujarRuta" />
+    <ListPreference
+        android:title="Color de ruta"
+        android:summary="Selecciona el color deseado para el trazado de ruta"
+        android:key="lpColorTrazo"
+        android:defaultValue="white"
+        android:entries="@array/listColoresArray"
+        android:entryValues="@array/listColoresValues" />
+
+</PreferenceScreen>

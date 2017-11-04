@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.guill.fhisa_admin.Opciones.VelocidadActualActivity">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/actionbar"></include>
+
+    <com.github.anastr.speedviewlib.SpeedView
+        android:id="@+id/speedView"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        app:sv_highSpeedColor="@color/colorRojoOscuro"
+        app:sv_mediumSpeedColor="@color/colorAmarilloOscuro"
+        app:sv_lowSpeedColor="@color/colorFhisa"
+        app:sv_backgroundCircleColor="@color/colorBlack"
+        app:sv_textColor="@color/colorBlanco"
+        app:sv_speedTextColor="@color/colorBlanco"
+        app:sv_unitTextColor="@color/colorBlanco"
+        app:sv_indicatorColor="@color/colorRojoOscuro"
+        app:sv_maxSpeed="135"
+        app:sv_withTremble="true"
+        app:sv_tickNumber="10"
+        tools:layout_editor_absoluteY="158dp"
+        tools:layout_editor_absoluteX="67dp" />
+
+    <TextView
+        android:id="@+id/tvVelocidadActual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/speedView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textColor="@color/colorBlack"
+        android:text="Velocidad"/>
+
+</RelativeLayout>
