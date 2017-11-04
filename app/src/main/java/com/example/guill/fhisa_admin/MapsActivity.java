@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
@@ -66,6 +67,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     long numCamiones;
     MarkerOptions markerOptions;
 
+    ArrayList<Area> areasList;
+    ArrayList<String> IDsAreas;
+    String idArea;
+    ArrayList<Circle> circleList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +80,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
         //        .findFragmentById(R.id.map);
         //mapFragment.getMapAsync(this);
+
     }
 
     @Override
@@ -94,7 +100,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        circleList = new ArrayList<>();
+
         Button btnArea = (Button) mView.findViewById(R.id.btnMarcarArea);
         btnArea.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,18 +167,58 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         CameraUpdate cuOviedo = CameraUpdateFactory.newLatLngZoom(oviedo, 9); //Que el mapa no empiece con asturias muy lejos
         mMap.animateCamera(cuOviedo);
 
-
-
-
+        areasList = new ArrayList<>();
+        IDsAreas = new ArrayList<>();
+        circleList = new ArrayList<>();
+        //recuperarAreas();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance(); //Cualquier referencia tiene que ser igual al mismo tipo pero cogiendo la instancia
+
+        DatabaseReference areasRef = database.getReference(FirebaseReferences.AREAS_REFERENCE);
+
+
+        areasRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    idArea = snapshot.getValue(Area.class).getIdentificador();
+                    Area area = null;
+                    if(!IDsAreas.contains(idArea)) {
+                        area = snapshot.getValue(Area.class);
+                        IDsAreas.add(idArea);
+                        areasList.add(area);
+                        Log.i("Areas", "Area: " + area.getDistancia());
+
+                    }
+                    //LatLng latLng = new LatLng(area.getLatitud(), area.getLongitud());
+                }
+
+                for (int i=0; i<areasList.size(); i++) {
+                    Circle circle = mMap.addCircle(new CircleOptions()
+                            .center(new LatLng(areasList.get(i).getLatitud(), areasList.get(i).getLongitud()))
+                            .radius(areasList.get(i).getDistancia())
+                            .strokeColor(0x70FE2E2E)
+                            .fillColor(0x552E86C1));
+                    circleList.add(circle);
+                }
+                Log.i("Areas y Circulos", "Areas: " + areasList.size() + ", Circulos: " +circleList.size());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
 
         final SharedPreferences pref = PreferenceManager
                 .getDefaultSharedPreferences(getActivity());
 
-        final SharedPreferences settings = getContext().getSharedPreferences(id, 0);
+        final SharedPreferences.Editor editor = pref.edit();
 
         camionesRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -228,6 +274,19 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
 
                 mMap.clear(); //Limpiamos el mapa cada vez que llega una posicion para que se actualice el marcador
+
+                //Si el mapa se actualiza, hay que volver a pintar las areas. Además, este mMap.clear() se ejecuta al iniciarse la app, por lo que
+                //los circulos se borrarían
+                for (int i=0; i<areasList.size(); i++) {
+                    Area area = areasList.get(i);
+                    Circle circle = mMap.addCircle(new CircleOptions()
+                            .center(new LatLng(area.getLatitud(), area.getLongitud()))
+                            .radius(area.getDistancia())
+                            .strokeColor(0x70FE2E2E)
+                            .fillColor(0x552E86C1)); //55 es el % de transparencia
+                    circleList.set(i, circle);
+                }
+
                 for (int i=0; i<camionesList.size(); i++){
                     Camion pintado = camionesList.get(i);
                    // Integer color = coloresLista.get(i); //Cojo un color de la lista de colores random
@@ -241,6 +300,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                   //  dibujaRuta(pintado, color); //Dibujo la ruta del camión con un color
 
                     String prefColor = pref.getString("lpColorTrazo", "random");
+                    String prefColor2 = pref.getString(id, "random");
                     // Comprobamos si se desea dibujar la ruta, en caso de no
                     // estar definida la propiedad por defecto indicamos true.
                     boolean prefTrazoRuta = pref.getBoolean("cbxDibujarRuta", true);
@@ -274,11 +334,14 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         else
                             color = coloresLista.get(i);
 
-                        dibujaRuta(pintado, color);
 
+                        boolean dentro = camionDentroArea(pintado, circleList);
+                        if (!dentro) dibujaRuta(pintado, color);
+                        else pintado.getPosicionesList().clear();
+                        Log.i("PINTADO", "Posiciones de " + pintado.getId() + ": " + pintado.getPosicionesList().size());
                     }
-                }
 
+                }
             } //onDataChange
 
             @Override
@@ -287,21 +350,21 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             }
         }); //ValueEventListener
 
-
     }
 
     //Dibujamos la ruta del camion pasandole un color aleatorio que cambiará en funcion del camion
     public void dibujaRuta(Camion camionPintar, int randomColor) {
 
-        for (int k=0; k<camionPintar.getPosicionesList().size()-1; k++) {
+            for (int k = 0; k < camionPintar.getPosicionesList().size() - 1; k++) {
 
-            mMap.addPolyline(new PolylineOptions().add(
-                    new LatLng(camionPintar.getPosicionesList().get(k).getLatitude(), camionPintar.getPosicionesList().get(k).getLongitude()),
-                    new LatLng(camionPintar.getPosicionesList().get(k+1).getLatitude(), camionPintar.getPosicionesList().get(k+1).getLongitude()))
-                    .width(10)
-                    .color(randomColor)
-            );
-        }
+                mMap.addPolyline(new PolylineOptions().add(
+                        new LatLng(camionPintar.getPosicionesList().get(k).getLatitude(), camionPintar.getPosicionesList().get(k).getLongitude()),
+                        new LatLng(camionPintar.getPosicionesList().get(k + 1).getLatitude(), camionPintar.getPosicionesList().get(k + 1).getLongitude()))
+                        .width(10)
+                        .color(randomColor)
+                );
+            }
+
     }
 
     public int generaColorRandom(){
@@ -392,7 +455,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     long metrosArea;
     Circle circle;
-    ArrayList<Circle> circleList;
+
+
     public void AreaSegura(final LatLng latlng) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater(getArguments());
@@ -412,32 +476,22 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 LatLng randomLatLng = getRandomLocation(latlng, (int) distancia);
                 Log.i("PRUEBA", "Click en: " + latlng.latitude + ", " + latlng.longitude + ", Radio: " + distancia + ", Random: " + randomLatLng.latitude + ", " + randomLatLng.longitude);
 
-                circle = mMap.addCircle(new CircleOptions()
-                        .center(new LatLng(latlng.latitude, latlng.longitude))
-                        .radius(distancia)
-                        .strokeColor(Color.RED)
-                        .fillColor(Color.BLUE));
+                Area area = new Area(String.valueOf(latlng.latitude),latlng.latitude, latlng.longitude, (int) distancia);
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference areasRef = database.getReference(FirebaseReferences.AREAS_REFERENCE);
+                areasRef.push().setValue(area);
+                areasList.add(area);
+
+                Circle circle = mMap.addCircle(new CircleOptions()
+                        .center(new LatLng(area.getLatitud(), area.getLongitud()))
+                        .radius(area.getDistancia())
+                        .strokeColor(0x70FE2E2E)
+                        .fillColor(0x552E86C1));
                 circleList.add(circle);
-                Log.i("CircleList", String.valueOf(circleList.size()));
-                float[] distance = new float[2];
 
-                //Comprobamos si los camiones están dentro del circulo
-                for (int i = 0; i < camionesList.size(); i++) {
-                    //Con esta linea guardamos en distance el valor de la distancia entre la ultima posicion de cada camion y el circulo
-                    Location.distanceBetween(camionesList.get(i).getUltimaPosicion().getLatitude(), camionesList.get(i).getUltimaPosicion().getLongitude(), circle.getCenter().latitude,circle.getCenter().longitude,distance);
-                    if (distance[0] <= circle.getRadius()) {
-                        // Inside The Circle
-                        Log.i("PRUEBA", "Camion " + camionesList.get(i).getId() + " dentro del rango" );
-                    }
-                    else {
-                        // Outside The Circle
-                        Log.i("PRUEBA", "Camion " + camionesList.get(i).getId() + " fuera del rango" );
-                    }
-                }
+                Log.i("AREAS Y CIRCULOS", "Areas: " + areasList.size() + ", Circulos: " + circleList.size());
 
-                for (int i=0; i<circleList.size(); i++) {
-                    circleList.get(i).setTag(i);
-                }
 
             }
         });
@@ -457,12 +511,73 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
             LatLng center = circleList.get(i).getCenter();
             double radius = circleList.get(i).getRadius();
+            final Area areaBorrar =  new Area(center.latitude, center.longitude, (int) radius);
             float[] distance = new float[1];
             //Location.distanceBetween(camionesList.get(i).getUltimaPosicion().getLatitude(), camionesList.get(i).getUltimaPosicion().getLongitude(), circle.getCenter().latitude,circle.getCenter().longitude,distance);
-            Location.distanceBetween(latitudlongitud.latitude, latitudlongitud.longitude, center.latitude, center.longitude, distance);
+            Location.distanceBetween(latitudlongitud.latitude, latitudlongitud.longitude, areaBorrar.getLatitud(), areaBorrar.getLongitud(), distance);
             boolean clicked = distance[0] < radius;
-            if (clicked) circleList.get(i).remove();
+            if (clicked) {
+                circleList.get(i).remove();
+                circleList.remove(i);
+                areasList.remove(i);
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference areasRef = database.getReference(FirebaseReferences.AREAS_REFERENCE);
+                areasRef.addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Log.i("Firebase", snapshot.getValue().toString());
+                            snapshot.getValue().getClass();
+                            Area areaFirebase = snapshot.getValue(Area.class);
+                            if (areaFirebase.getLatitud() == areaBorrar.getLatitud() && areaFirebase.getLongitud() == areaBorrar.getLongitud() && areaFirebase.getDistancia() == areaBorrar.getDistancia()) snapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+        } //for
+        Log.i("AREAS Y CIRCULOS", "Areas: " + areasList.size() + ", Circulos: " + circleList.size());
+    }
+
+
+
+    public boolean camionDentroArea(Camion camionComprobar, ArrayList<Circle> listaCirculos) {
+        ArrayList<Integer> d = new ArrayList<>();
+        boolean dentro = false;
+
+        for (int i=0; i<listaCirculos.size(); i++) {
+            float[] distance = new float[2];
+            //Con esta linea guardamos en distance el valor de la distancia entre la ultima posicion de cada camion y el circulo
+            Location.distanceBetween(camionComprobar.getUltimaPosicion().getLatitude(), camionComprobar.getUltimaPosicion().getLongitude(),
+                    listaCirculos.get(i).getCenter().latitude, listaCirculos.get(i).getCenter().longitude, distance);
+
+            if (distance[0] <= listaCirculos.get(i).getRadius()) { //Camion dentro del circulo
+                // Inside The Circle
+                //Log.i("Areas camion", "Camion " + camionesList.get(i).getId() + " dentro del rango");
+
+                dentro = true;
+                d.add(1);
+            } else {
+                // Outside The Circle
+                //Log.i("PRUEBA", "Camion " + camionesList.get(i).getId() + " fuera del rango");
+
+                dentro = false;
+                d.add(0);
+            }
         }
+        for (int i=0; i<d.size(); i++) {
+            if (d.get(i) == 1) {
+                dentro = true;
+            }
+        }
+        return dentro;
     }
 
 
@@ -507,5 +622,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
         return randomPoints.get(indexOfNearestPointToCentre);
     }
+
+
 
 }

@@ -7,5 +7,6 @@ package com.example.guill.fhisa_admin.Objetos;
 public class FirebaseReferences {
     final public static String FHISA_REFERENCE = "fhisa";
     final public static String CAMIONES_REFERENCE = "camiones";
+    final public static String AREAS_REFERENCE = "areas";
 
 }

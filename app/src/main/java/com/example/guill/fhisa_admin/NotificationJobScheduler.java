@@ -1,10 +1,13 @@
 package com.example.guill.fhisa_admin;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -12,6 +15,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
@@ -48,6 +52,9 @@ public class NotificationJobScheduler extends JobService {
     List<String> IDs;
     long numCamiones;
 
+    ArrayList<Area> areasList;
+    ArrayList<String> IDsAreas;
+    String idArea;
 
 
     @Override
@@ -68,8 +75,33 @@ public class NotificationJobScheduler extends JobService {
         camionesList = new ArrayList<>();
         IDs = new ArrayList<>();
 
+        IDsAreas = new ArrayList<>();
+        areasList = new ArrayList<>();
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
+        final DatabaseReference areasRef = database.getReference(FirebaseReferences.AREAS_REFERENCE);
+
+        areasRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    idArea = snapshot.getValue(Area.class).getIdentificador();
+                    Area area = null;
+                    if(!IDsAreas.contains(idArea)) {
+                        area = snapshot.getValue(Area.class);
+                        IDsAreas.add(idArea);
+                        areasList.add(area);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         Log.i("JobScheduler", "Dentro de Funcion");
 
@@ -115,19 +147,26 @@ public class NotificationJobScheduler extends JobService {
 
                 } //for snapshot (Iterador donde estan las IDs)
 
-                Log.i("JobScheduler", "Tamaño lista camiones: " + String.valueOf(camionesList.size()));
+                //Log.i("JobScheduler", "Tamaño lista camiones: " + String.valueOf(camionesList.size()));
+
+
 
                 for (int i=0; i<camionesList.size(); i++){
+                    int notifId = i;
                     Camion camionNotif = camionesList.get(i);
                     long ultimaHora = camionNotif.getUltimaPosicion().getTime();
                     Date horaActualDate = Calendar.getInstance().getTime();
                     long horaActual = horaActualDate.getTime();
                     long diferencia = horaActual - ultimaHora;
-                    Log.i("JobScheduler", "Diferencia: " + diferencia);
-                    if(diferencia >= 1000 * 60) enviarNotificacion(camionNotif); //Setear en milisegundos cuánto tiempo queremos que puede estar sin recibir una posición antes de que salte
-                    Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (bucle camiones)");
+                    //Log.i("JobScheduler", "Diferencia: " + diferencia);
+
+                    boolean dentro = camionEnArea(camionNotif, areasList);
+                    Log.i("JobScheduler Area", "Camion " + camionesList.get(i).getId() + "en area: " + dentro );
+
+                    if(diferencia >= 1000 * 60 && !dentro) enviarNotificacion(camionNotif, notifId); //Setear en milisegundos cuánto tiempo queremos que puede estar sin recibir una posición antes de que salte
+                    //Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (bucle camiones)");
                 }
-                Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (fuera de bucle)");
+               // Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (fuera de bucle)");
             }
 
             @Override
@@ -138,7 +177,9 @@ public class NotificationJobScheduler extends JobService {
 
     }
 
-    public void enviarNotificacion(Camion camionError) {
+    final static String GROUP_KEY = "group_key";
+
+    public void enviarNotificacion(Camion camionError, int notifId) {
         Log.i("JobScheduler", "Dentro de enviarNotificacion" );
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -150,8 +191,48 @@ public class NotificationJobScheduler extends JobService {
                         .setContentText("No se reciben posiciones de " + camionError.getId())
                         .setSound(alarmSound)
                         .setVibrate(new long[] { 500, 500 })
+                        //.setOngoing(true) //Si se marca, no se puede cerrar la notificacion!
+                        .setAutoCancel(true)
+                        .setGroup(GROUP_KEY)
+                        .setGroupSummary(true)
                         .setLights(Color.RED, 1000, 1000);
-        nManager.notify(12345, mBuilder.build());
+
+        // Create pending intent, mention the Activity which needs to be
+        //triggered when user clicks on notification(MainActivity.class)
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(contentIntent);
+
+
+        nManager.notify(notifId, mBuilder.build());
+    }
+
+
+    public boolean camionEnArea(Camion camionComprobar, ArrayList<Area> listaAreas) {
+        ArrayList<Integer> d = new ArrayList<>();
+        boolean dentro = false;
+
+        for (int i=0; i < listaAreas.size(); i++) {
+            float[] distance = new float[2];
+            Location.distanceBetween(camionComprobar.getUltimaPosicion().getLatitude(), camionComprobar.getUltimaPosicion().getLongitude(),
+                    listaAreas.get(i).getLatitud(), listaAreas.get(i).getLongitud(), distance);
+
+            Log.i("JobScheduler", "distancia: " + distance[0] + ", radio: " + listaAreas.get(i).getDistancia());
+
+            if (distance[0] <= areasList.get(i).getDistancia()) { //Camion dentro del circulo
+                // Inside The Circle
+                dentro = true;
+                d.add(1);
+            } else {
+                dentro = false;
+                d.add(0);
+            }
+        }
+
+        for (int i=0; i<d.size(); i++) {
+            if (d.get(i) == 1) dentro = true;
+        }
+        return dentro;
     }
 
 

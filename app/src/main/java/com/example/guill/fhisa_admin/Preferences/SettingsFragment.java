@@ -11,10 +11,18 @@ import com.example.guill.fhisa_admin.R;
 
 public class SettingsFragment extends PreferenceFragment {
 
+    String id;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         addPreferencesFromResource(R.xml.camion_preferences);
+
+       // Bundle extras = this.getArguments();
+       // String id = extras.getString("id");
+
+       // CheckBoxPreference checkbox = (CheckBoxPreference) findPreference("lpColorTrazo");
+       // checkbox.setKey(id);
+
     }
 }

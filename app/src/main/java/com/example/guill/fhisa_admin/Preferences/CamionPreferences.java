@@ -22,17 +22,22 @@ public class CamionPreferences extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Mostramos el contenido de la pantalla de preferencias.
-        //getFragmentManager().beginTransaction()
-         //       .replace(android.R.id.content, new SettingsFragment()).commit();
+        Bundle extras = getIntent().getExtras();
+        String id = extras.getString("id");
+
+        /*
+        Bundle bundle = new Bundle();
+        bundle.putString("id", id);
+        SettingsFragment settingsFragment = new SettingsFragment();
+        settingsFragment.setArguments(bundle); */
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new SettingsFragment()).commit();
 
-        Bundle extras = getIntent().getExtras();
-        String id = extras.getString("id");
 
        // SharedPreferences sharedPref = this.getSharedPreferences(id, 0);
        // SharedPreferences.Editor editor = sharedPref.edit();
 
     }
+
 }
