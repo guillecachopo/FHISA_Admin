@@ -1,13 +1,19 @@
 package com.example.guill.fhisa_admin;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -21,7 +27,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import me.tatarka.support.job.JobInfo;
 import me.tatarka.support.job.JobScheduler;
@@ -36,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +160,26 @@ public class MainActivity extends AppCompatActivity {
                 isStarted = false;
                 return true;
 
+            case R.id.menuCopiaSeguridad:
+                AlertDialog.Builder alertDialogFirebase = new AlertDialog.Builder(this);
+                alertDialogFirebase
+                        .setTitle("Exportación de Firebase Database")
+                        .setMessage("Firebase Database es la base de datos utilizada para guardar las posiciones de cada camión y las areas correspondientes a las zonas libres de notificaciones. Las copias de seguridad se guardarán en del directorio raíz del dispositivo dentro la carpeta FHISAFirebase.")
+                        .setPositiveButton("GUARDAR", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                new DownloadFileFromURL().execute("https://fhisaservicio.firebaseio.com/.json");
+                                dialog.cancel();
+                            }
+                        })
+                        .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog b = alertDialogFirebase.create();
+                b.show();
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -158,5 +194,90 @@ public class MainActivity extends AppCompatActivity {
 
     //-------------
 
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+
+        /**
+         * Before starting background thread
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            System.out.println("Starting download");
+
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Descargando... Espere, por favor...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        /**
+         * Downloading file in background thread
+         * */
+        @Override
+        protected String doInBackground(String... f_url) {
+            int count;
+            try {
+                String root = Environment.getExternalStorageDirectory().toString();
+                File fhisaDir = new File(Environment.getExternalStorageDirectory(), "FHISAFirebase");
+                if (!fhisaDir.exists()) fhisaDir.mkdirs();
+                String fhisaDirString = fhisaDir.toString();
+
+                System.out.println("Downloading");
+                URL url = new URL(f_url[0]);
+
+                URLConnection conection = url.openConnection();
+                conection.connect();
+                // getting file length
+                int lenghtOfFile = conection.getContentLength();
+
+                // input stream to read file - with 8k buffer
+                InputStream input = new BufferedInputStream(url.openStream(), 8192);
+
+                //Getting hour to file name
+                final Date currentTime = Calendar.getInstance().getTime();
+                final String day = (String) android.text.format.DateFormat.format("dd",   currentTime); // 31
+                final String monthNumber  = (String) android.text.format.DateFormat.format("MM",   currentTime); // 10
+                final String year         = (String) android.text.format.DateFormat.format("yy", currentTime); // 2017
+                final String hour = (String) android.text.format.DateFormat.format("HHmmss", currentTime); //1326
+                // Output stream to write file
+                OutputStream output = new FileOutputStream(fhisaDir+"/firebasebackup"+day+monthNumber+year+hour+".json");
+                byte data[] = new byte[1024];
+
+                long total = 0;
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+
+                    // writing data to file
+                    output.write(data, 0, count);
+
+                }
+
+                // flushing output
+                output.flush();
+
+                // closing streams
+                output.close();
+                input.close();
+
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+            }
+
+            return null;
+        }
+
+
+        /**
+         * After completing background task
+         * **/
+        @Override
+        protected void onPostExecute(String file_url) {
+            Toast.makeText(MainActivity.this, "JSON descargado en la ruta root/FHISAFirebase", Toast.LENGTH_LONG).show();
+
+            pDialog.dismiss();
+        }
+
+    }
 
 }

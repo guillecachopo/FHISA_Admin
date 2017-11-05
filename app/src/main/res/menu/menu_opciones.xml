@@ -15,5 +15,11 @@
         >
     </item>
 
+    <item
+        android:id="@+id/menuCopiaSeguridad"
+        android:title="Copia de seguridad de Firebase"
+        android:orderInCategory="102">
+
+    </item>
 
 </menu>
