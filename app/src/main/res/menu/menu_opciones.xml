@@ -19,7 +19,18 @@
         android:id="@+id/menuCopiaSeguridad"
         android:title="Copia de seguridad de Firebase"
         android:orderInCategory="102">
+    </item>
 
+    <item
+        android:id="@+id/menuImportarCopia"
+        android:title="Importar Backup de Firebase"
+        android:orderInCategory="103">
+    </item>
+
+    <item
+        android:id="@+id/menuBorrarBD"
+        android:title="Borrar Firebase Database"
+        android:orderInCategory="104">
     </item>
 
 </menu>
