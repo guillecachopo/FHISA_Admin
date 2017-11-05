@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +28,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -161,8 +167,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menuCopiaSeguridad:
-                AlertDialog.Builder alertDialogFirebase = new AlertDialog.Builder(this);
+                AlertDialog.Builder alertDialogFirebase = new AlertDialog.Builder(MainActivity.this);
                 alertDialogFirebase
+                        .setIcon(R.drawable.ic_fhisa)
                         .setTitle("Exportación de Firebase Database")
                         .setMessage("Firebase Database es la base de datos utilizada para guardar las posiciones de cada camión y las areas correspondientes a las zonas libres de notificaciones. Las copias de seguridad se guardarán en del directorio raíz del dispositivo dentro la carpeta FHISAFirebase.")
                         .setPositiveButton("GUARDAR", new DialogInterface.OnClickListener() {
@@ -179,6 +186,93 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog b = alertDialogFirebase.create();
                 b.show();
                 return true;
+
+            case R.id.menuImportarCopia:
+                final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                File fhisaDir = new File(Environment.getExternalStorageDirectory(), "FHISAFirebase"); //Cogemos el directorio donde se guardan los backups
+                final String fhisaDirString = fhisaDir.toString();
+                File[] files = fhisaDir.listFiles(); //Cogemos todos los ficheros de la carpeta
+                ArrayList<String> fileNames = new ArrayList<>(); //Vector dnde guardaremos los nombres de los backups
+                for (int i = 0; i < files.length; i++)
+                {
+                    fileNames.add(files[i].getName()); //Guardamos en nuestro vector de nombres todos los nombres
+                }
+                AlertDialog.Builder builderSingle = new AlertDialog.Builder(MainActivity.this); //AlertDialog para elegir cuál queremos importar
+                builderSingle.setIcon(R.drawable.ic_fhisa);
+                builderSingle.setTitle("Seleccionar copia de seguridad");
+                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_singlechoice); //ArrayAdapter para el AlertDialog
+
+                for (int i=0; i<fileNames.size(); i++) arrayAdapter.add(fileNames.get(i)); //Añadimos al ArrayAdapter nuestro Array de nombres
+
+                builderSingle.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, int which) {
+                        final String strName = arrayAdapter.getItem(which); //Este es el item seleccionado que pasaremos al parser
+                        AlertDialog.Builder builderInner = new AlertDialog.Builder(MainActivity.this);
+                        builderInner.setIcon(R.drawable.ic_fhisa);
+                        builderInner.setMessage(strName);
+                        builderInner.setTitle("La copia elegida es: ");
+                        builderInner.setPositiveButton("IMPORTAR", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,int which) {
+                                JSONParser parser = new JSONParser();
+
+                                try {
+                                    Object obj = parser.parse(new FileReader(fhisaDirString+"/"+strName)); //Cogemos el json elegido
+                                    database.getReferenceFromUrl("https://fhisaservicio.firebaseio.com").setValue(obj);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                                dialog.dismiss();
+                            }
+                        });
+                        builderInner.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialog.dismiss();
+                            }
+                        });
+                        builderInner.show();
+                    }
+                });
+                builderSingle.show();
+                return true;
+
+            case R.id.menuBorrarBD:
+                    final FirebaseDatabase db = FirebaseDatabase.getInstance();
+                    AlertDialog.Builder alertDialogBorrar = new AlertDialog.Builder(MainActivity.this);
+                    alertDialogBorrar
+                            .setIcon(R.drawable.ic_fhisa)
+                            .setTitle("ATENCIÓN: Borrado de Firebase Database")
+                            .setMessage("Está a punto de borrar Firebase Database, esto conlleva la pérdida de todas las posiciones, asegúrese de tener guardada una copia de seguridad reciente.")
+                            .setPositiveButton("ELIMINAR", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    db.getReferenceFromUrl("https://fhisaservicio.firebaseio.com/camiones").removeValue();
+                                    dialog.cancel();
+                                }
+                            })
+                            .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alertdialog = alertDialogBorrar.create();
+                    alertdialog.show();
+                return true;
+
+
+
 
         }
         return super.onOptionsItemSelected(item);

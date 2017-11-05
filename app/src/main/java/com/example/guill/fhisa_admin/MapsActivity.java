@@ -292,62 +292,62 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     final Camion pintado = camionesList.get(i);
                    // Integer color = coloresLista.get(i); //Cojo un color de la lista de colores random
 
-                    markerOptions = new MarkerOptions()
-                            .position(new LatLng(pintado.getUltimaPosicion().getLatitude(), pintado.getUltimaPosicion().getLongitude()))
-                            .title(camionesList.get(i).getId());
+                    if (dataSnapshot.exists()) { //Sin este if, cuando se borra la DB crashea la app
+                        markerOptions = new MarkerOptions()
+                                .position(new LatLng(pintado.getUltimaPosicion().getLatitude(), pintado.getUltimaPosicion().getLongitude()))
+                                .title(camionesList.get(i).getId());
 
-                    marcador = mMap.addMarker(markerOptions);
+                        marcador = mMap.addMarker(markerOptions);
 
-                  //  dibujaRuta(pintado, color); //Dibujo la ruta del camión con un color
+                        //  dibujaRuta(pintado, color); //Dibujo la ruta del camión con un color
 
-                    String prefColor = pref.getString("lpColorTrazo", "random");
-                    String prefColor2 = pref.getString(id, "random");
-                    // Comprobamos si se desea dibujar la ruta, en caso de no
-                    // estar definida la propiedad por defecto indicamos true.
-                    boolean prefTrazoRuta = pref.getBoolean("cbxDibujarRuta", true);
+                        String prefColor = pref.getString("lpColorTrazo", "random");
+                        String prefColor2 = pref.getString(id, "random");
+                        // Comprobamos si se desea dibujar la ruta, en caso de no
+                        // estar definida la propiedad por defecto indicamos true.
+                        boolean prefTrazoRuta = pref.getBoolean("cbxDibujarRuta", true);
 
-                    if (prefTrazoRuta) {
-                        Integer color;
-                        if (prefColor.equals("white"))
-                            color = Color.WHITE;
-                        else if (prefColor.equals("green"))
-                            color = Color.GREEN;
-                        else if (prefColor.equals("blue"))
-                            color = Color.BLUE;
-                        else if (prefColor.equals("yellow"))
-                            color = Color.YELLOW;
-                        else if (prefColor.equals("black"))
-                            color = Color.BLACK;
-                        else if (prefColor.equals("grey"))
-                            color = Color.GRAY;
-                        else if (prefColor.equals("cyan"))
-                            color = Color.CYAN;
-                        else if (prefColor.equals("red"))
-                            color = Color.RED;
-                        else if (prefColor.equals("dkgray"))
-                            color = Color.DKGRAY;
-                        else if (prefColor.equals("ltgray"))
-                            color = Color.LTGRAY;
-                        else if (prefColor.equals("magenta"))
-                            color = Color.MAGENTA;
-                        else if (prefColor.equals("aleatorio"))
-                            color = coloresLista.get(i);
-                        else
-                            color = coloresLista.get(i);
+                        if (prefTrazoRuta) {
+                            Integer color;
+                            if (prefColor.equals("white"))
+                                color = Color.WHITE;
+                            else if (prefColor.equals("green"))
+                                color = Color.GREEN;
+                            else if (prefColor.equals("blue"))
+                                color = Color.BLUE;
+                            else if (prefColor.equals("yellow"))
+                                color = Color.YELLOW;
+                            else if (prefColor.equals("black"))
+                                color = Color.BLACK;
+                            else if (prefColor.equals("grey"))
+                                color = Color.GRAY;
+                            else if (prefColor.equals("cyan"))
+                                color = Color.CYAN;
+                            else if (prefColor.equals("red"))
+                                color = Color.RED;
+                            else if (prefColor.equals("dkgray"))
+                                color = Color.DKGRAY;
+                            else if (prefColor.equals("ltgray"))
+                                color = Color.LTGRAY;
+                            else if (prefColor.equals("magenta"))
+                                color = Color.MAGENTA;
+                            else if (prefColor.equals("aleatorio"))
+                                color = coloresLista.get(i);
+                            else
+                                color = coloresLista.get(i);
 
-                        //Comprobamos si el camion está dentro del area
-                        boolean dentro = camionDentroArea(pintado, circleList);
-                        if (!dentro) {
-                            dibujaRuta(pintado, color);
+                            //Comprobamos si el camion está dentro del area
+                            boolean dentro = camionDentroArea(pintado, circleList);
+                            if (!dentro) {
+                                dibujaRuta(pintado, color);
 
+                            } else {
+                                pintado.clearPosiciones();
+                            }
+
+
+                            Log.i("PINTADO", "Posiciones de " + pintado.getId() + ": " + pintado.getPosicionesList().size());
                         }
-                        else {
-                            pintado.clearPosiciones();
-                        }
-
-
-
-                        Log.i("PINTADO", "Posiciones de " + pintado.getId() + ": " + pintado.getPosicionesList().size());
                     }
 
                 }
@@ -387,7 +387,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
 
     private static final CharSequence[] MAP_TYPE_ITEMS =
-            {"Carretera", "Híbrido", "Satélite", "Terreno"};
+            {"Carretera", "Satélite", "Terreno", "Híbrido"};
 
     private void showMapTypeSelectorDialog() {
 
