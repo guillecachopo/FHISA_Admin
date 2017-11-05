@@ -78,7 +78,7 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
         listaPosiciones.setLayoutManager(llm); //Para q el recycleview se comporte como un LinearLayout
 
         this.spFechas = (Spinner) findViewById(R.id.spFechas);
-       // loadSpinnerFechas();
+  //      loadSpinnerFechas();
 
 
         inicializarListaPosiciones(1);
@@ -110,9 +110,9 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
         final Date currentTime = Calendar.getInstance().getTime();
         String currentTimeString = df.format(currentTime);
         String reportDate = df.format(currentTime);
-        final String day = (String) DateFormat.format("dd",   currentTime); // 20
-        final String monthNumber  = (String) DateFormat.format("MM",   currentTime); // 06
-        final String year         = (String) DateFormat.format("yyyy", currentTime); // 2013
+        final String day = (String) DateFormat.format("dd",   currentTime); // 31
+        final String monthNumber  = (String) DateFormat.format("MM",   currentTime); // 10
+        final String year         = (String) DateFormat.format("yyyy", currentTime); // 2017
 
         FirebaseDatabase database = FirebaseDatabase.getInstance(); //Cualquier referencia tiene que ser igual al mismo tipo pero cogiendo la instancia
         final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
@@ -156,6 +156,7 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
 
                         } //for snapshot2 (Iterador donde estan las posiciones)
                     } //for snapshot1 (Iterador donde esta la cadena "posiciones")
+
                     for (int i = 0; i< camion.getPosicionesList().size(); i++) {
                         posicionesAux.add(camion.getPosicionesList().get(i).toString());
                     }
@@ -173,7 +174,9 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
                             horasString.add(horasAux.get(i));
                         }
                     }
+
 /*
+
                     if (numero==1) {
                         for (int i = 0; i < horasString.size(); i++) {
                             final long horalong = Long.parseLong(horasString.get(i)); //Paso la hora del vector y la paso a long
@@ -201,7 +204,9 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
                         }
                         Log.i("RECYCLERNO", "" + h.size() + " " + p.size() + " " +posicionesString.size()+ " " +horasString.size() );
                     }
+
 */
+
 
                 } //for snapshot (Iterador donde estan las IDs)
                 adaptador.notifyDataSetChanged();
@@ -219,23 +224,10 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
         //Crea un objeto de contacto adaptador y le pasa la lista que tenemos para hacer internamente lo configurado en esa activity
 
         adaptador = new AdapterPosiciones(posicionesString, horasString, id, this);
-        //adaptador = new AdapterPosiciones(p, h, id, this);
+      //  adaptador = new AdapterPosiciones(p, h, id, this);
         listaPosiciones.setAdapter(adaptador);
     }
 
-    //Para volver al fragment anterior cuando hacemos click y no al activity
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        super.onOptionsItemSelected(item);
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-
-        return true;
-    }
 
 
 
@@ -256,6 +248,7 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
         // This activity implements the AdapterView.OnItemSelectedListener
         this.spFechas.setOnItemSelectedListener(this);
 
+
     }
 
     @Override
@@ -265,13 +258,15 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
                 Toast.LENGTH_SHORT).show();
 
         if (parent.getItemAtPosition(pos).toString().equals("Hoy")) {
-            //inicializarListaPosiciones(1);
-            //inicializarAdaptador();
+          //  inicializarListaPosiciones(1);
+            // inicializarAdaptador();
+                                     // spFechas.setSelection(0);
         } else if (parent.getItemAtPosition(pos).toString().equals("Última semana")) {
 
         } else if (parent.getItemAtPosition(pos).toString().equals("Todas las posiciones")) {
-            //inicializarListaPosiciones(3);
-            //inicializarAdaptador();
+          //  inicializarListaPosiciones(3);
+                               //spFechas.setSelection(2);
+          //  inicializarAdaptador();
         }
         inicializarAdaptador();
 
@@ -283,4 +278,24 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
         // view. The selection can disappear for instance when touch is
         // activated or when the adapter becomes empty
     }
+
+
+
+
+    //Para volver al fragment anterior cuando hacemos click y no al activity
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+
+        return true;
+    }
+
+
+
 }

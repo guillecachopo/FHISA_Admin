@@ -72,6 +72,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     String idArea;
     ArrayList<Circle> circleList;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,9 +173,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         circleList = new ArrayList<>();
         //recuperarAreas();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance(); //Cualquier referencia tiene que ser igual al mismo tipo pero cogiendo la instancia
+        final FirebaseDatabase database = FirebaseDatabase.getInstance(); //Cualquier referencia tiene que ser igual al mismo tipo pero cogiendo la instancia
 
         DatabaseReference areasRef = database.getReference(FirebaseReferences.AREAS_REFERENCE);
+        final DatabaseReference pintadasRef = database.getReference("pintadas");
 
 
         areasRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -195,6 +197,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     //LatLng latLng = new LatLng(area.getLatitud(), area.getLongitud());
                 }
 
+                //Dibujamos todos las areas que tenemos en firebase
                 for (int i=0; i<areasList.size(); i++) {
                     Circle circle = mMap.addCircle(new CircleOptions()
                             .center(new LatLng(areasList.get(i).getLatitud(), areasList.get(i).getLongitud()))
@@ -234,7 +237,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     id = snapshot.getKey();
                     Camion camion=null;
 
-                    if (!IDs.contains(id)) {
+                    if (!IDs.contains(id)) { //Si la ID no está en la lista añadimos el camion
                         camion = new Camion(id);
                         IDs.add(id);
                         camionesList.add(camion);
@@ -271,8 +274,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 } //for snapshot (Iterador donde estan las IDs)
 
 
-
-
                 mMap.clear(); //Limpiamos el mapa cada vez que llega una posicion para que se actualice el marcador
 
                 //Si el mapa se actualiza, hay que volver a pintar las areas. Además, este mMap.clear() se ejecuta al iniciarse la app, por lo que
@@ -287,8 +288,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     circleList.set(i, circle);
                 }
 
-                for (int i=0; i<camionesList.size(); i++){
-                    Camion pintado = camionesList.get(i);
+                for (int i=0; i<camionesList.size(); i++){ //Recorremos la lista de camiones para pintar sus rutas,
+                    final Camion pintado = camionesList.get(i);
                    // Integer color = coloresLista.get(i); //Cojo un color de la lista de colores random
 
                     markerOptions = new MarkerOptions()
@@ -334,10 +335,18 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         else
                             color = coloresLista.get(i);
 
-
+                        //Comprobamos si el camion está dentro del area
                         boolean dentro = camionDentroArea(pintado, circleList);
-                        if (!dentro) dibujaRuta(pintado, color);
-                        else pintado.getPosicionesList().clear();
+                        if (!dentro) {
+                            dibujaRuta(pintado, color);
+
+                        }
+                        else {
+                            pintado.clearPosiciones();
+                        }
+
+
+
                         Log.i("PINTADO", "Posiciones de " + pintado.getId() + ": " + pintado.getPosicionesList().size());
                     }
 
@@ -349,6 +358,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
             }
         }); //ValueEventListener
+
 
     }
 
@@ -364,7 +374,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         .color(randomColor)
                 );
             }
-
     }
 
     public int generaColorRandom(){
@@ -378,7 +387,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
 
     private static final CharSequence[] MAP_TYPE_ITEMS =
-            {"Carretera", "Hibrido", "Satélite", "Terreno"};
+            {"Carretera", "Híbrido", "Satélite", "Terreno"};
 
     private void showMapTypeSelectorDialog() {
 

@@ -56,11 +56,13 @@ public class AdapterPosiciones extends RecyclerView.Adapter<AdapterPosiciones.Ca
         double latitud = Double.parseDouble(splitter[0]);
         double longitud = Double.parseDouble(splitter[1]);
 
+
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         final long horalong = Long.parseLong(horasString.get(position));
         Date date = new Date(horalong);
         String hora = format.format(date);
-        //String hora = horasString.get(position);
+
+  //      String hora = horasString.get(position); //Es distinto a lo anterior porque intentamos pasar en el DetallePosicionesCamion la hora ya escrita bien
 
         holder.tvPosiciones.setText("Pos: " + latitud + ", " + longitud);
 

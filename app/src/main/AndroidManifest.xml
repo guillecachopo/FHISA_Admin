@@ -59,11 +59,9 @@
         <activity
             android:name=".Opciones.OpcionesCamionActivity"
             android:parentActivityName=".MainActivity" />
-
         <activity
             android:name=".Opciones.VelocidadActualActivity"
-            android:parentActivityName=".MainActivity"
-            />
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
