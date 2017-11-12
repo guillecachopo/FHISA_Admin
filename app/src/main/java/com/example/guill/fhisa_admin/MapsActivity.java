@@ -3,6 +3,8 @@ package com.example.guill.fhisa_admin;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.Camion;
@@ -39,9 +42,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 
@@ -71,6 +76,11 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     ArrayList<String> IDsAreas;
     String idArea;
     ArrayList<Circle> circleList;
+    ArrayList<Marker> markerList;
+
+    String idIrMarcador;
+    boolean ir;
+    boolean doubleBackToExitPressedOnce = false;
 
 
     @Override
@@ -89,7 +99,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                                     Bundle savedInstanceState) {
         //Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.activity_maps, container, false);
-
 
         ImageView button = (ImageView) mView.findViewById(R.id.btnTipoMapa);
         button.setOnClickListener(new View.OnClickListener()
@@ -135,6 +144,11 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        ir = false;
+        if (getArguments()!=null) {
+            idIrMarcador = getArguments().getString("idIrMarcador");
+            ir = getArguments().getBoolean("ir");
+        }
 
         return mView;
     }
@@ -163,9 +177,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         IDs = new ArrayList<>();
         coloresLista = new ArrayList<>();
 
-        final LatLng oviedo = new LatLng(43.3579649511212,-5.8733862770);
+        //final LatLng oviedo = new LatLng(43.3579649511212,-5.8733862770);
+        final LatLng oviedo = new LatLng(43.458979, -5.850589);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(oviedo)); //Ponemos el mapa inicialmente centrado en el centro de asturias
-        CameraUpdate cuOviedo = CameraUpdateFactory.newLatLngZoom(oviedo, 9); //Que el mapa no empiece con asturias muy lejos
+        CameraUpdate cuOviedo = CameraUpdateFactory.newLatLngZoom(oviedo, 10); //Que el mapa no empiece con asturias muy lejos
         mMap.animateCamera(cuOviedo);
 
         areasList = new ArrayList<>();
@@ -177,6 +192,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
         DatabaseReference areasRef = database.getReference(FirebaseReferences.AREAS_REFERENCE);
         final DatabaseReference pintadasRef = database.getReference("pintadas");
+        final DatabaseReference opcionesRef = database.getReference("opciones");
 
 
         areasRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -270,7 +286,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
                         } //for snapshot2 (Iterador donde estan las posiciones)
                     } //for snapshot1 (Iterador donde esta la cadena "posiciones")
-
+                    
                 } //for snapshot (Iterador donde estan las IDs)
 
 
@@ -295,17 +311,49 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     if (dataSnapshot.exists()) { //Sin este if, cuando se borra la DB crashea la app
                         markerOptions = new MarkerOptions()
                                 .position(new LatLng(pintado.getUltimaPosicion().getLatitude(), pintado.getUltimaPosicion().getLongitude()))
+                                .snippet(geolocalizacionInversa(pintado))
                                 .title(camionesList.get(i).getId());
 
                         marcador = mMap.addMarker(markerOptions);
 
+                        //PARA QUE SE ABRA LA ACTIVIDAD EN EL MARCADOR DESEADO EN OpcionesCamionActivity CUANDO EL USUARIO PULSA EN VER EN MAPA
+                        opcionesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) { //IMEI
+                                        for (DataSnapshot snapshot1 : snapshot.getChildren()) { //"ir" (variable booleana)
+                                            Log.i("IR", String.valueOf(snapshot1.getValue()));
+                                            Log.i("IRid", String.valueOf(snapshot.getValue()));
+                                            if (snapshot1.getValue().equals(true) && snapshot.getKey().equals(pintado.getId())) {
+                                                LatLng irLatLng = new LatLng(pintado.getUltimaPosicion().getLatitude(), pintado.getUltimaPosicion().getLongitude());
+                                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(irLatLng, 14)); //Ponemos el mapa inicialmente centrado en el centro de asturias
+                                                //CameraUpdate cuIr = CameraUpdateFactory.newLatLngZoom(irLatLng, 13); //Que el mapa no empiece con asturias muy lejos
+                                                //mMap.animateCamera(cuIr);
+                                                opcionesRef.child(pintado.getId()).child("ir").setValue(false);
+                                            }
+                                        }
+
+                                    }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+
+
                         //  dibujaRuta(pintado, color); //Dibujo la ruta del camión con un color
 
                         String prefColor = pref.getString("lpColorTrazo", "random");
-                        String prefColor2 = pref.getString(id, "random");
+                       // int prefColor = pref.getInt(id+"-color", Color.WHITE);
                         // Comprobamos si se desea dibujar la ruta, en caso de no
                         // estar definida la propiedad por defecto indicamos true.
                         boolean prefTrazoRuta = pref.getBoolean("cbxDibujarRuta", true);
+                        //boolean prefTrazoRuta = pref.getBoolean(id+"-trazar", false);
+
 
                         if (prefTrazoRuta) {
                             Integer color;
@@ -335,6 +383,36 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                                 color = coloresLista.get(i);
                             else
                                 color = coloresLista.get(i);
+
+
+                        /*
+                        if (prefTrazoRuta) {
+                            Integer color;
+                            if (prefColor == Color.WHITE)
+                                color = Color.WHITE;
+                            else if (prefColor == Color.GREEN)
+                                color = Color.GREEN;
+                            else if (prefColor == Color.BLUE)
+                                color = Color.BLUE;
+                            else if (prefColor == Color.YELLOW)
+                                color = Color.YELLOW;
+                            else if (prefColor == Color.BLACK)
+                                color = Color.BLACK;
+                            else if (prefColor == Color.GRAY)
+                                color = Color.GRAY;
+                            else if (prefColor == Color.RED)
+                                color = Color.CYAN;
+                            else if (prefColor == Color.RED)
+                                color = Color.RED;
+                            else if (prefColor == Color.DKGRAY)
+                                color = Color.DKGRAY;
+                            else if (prefColor == Color.LTGRAY)
+                                color = Color.LTGRAY;
+                            else if (prefColor == Color.MAGENTA)
+                                color = Color.MAGENTA;
+                            else
+                                color = coloresLista.get(i);
+                                */
 
                             //Comprobamos si el camion está dentro del area
                             boolean dentro = camionDentroArea(pintado, circleList);
@@ -473,6 +551,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         dialogBuilder.setView(dialogView);
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.etArea);
+        final TextView tvError = (TextView) dialogView.findViewById(R.id.etErrorArea);
 
         dialogBuilder.setTitle("Selección de area");
         dialogBuilder.setMessage("Elija en metros el radio del area.");
@@ -589,6 +668,20 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         return dentro;
     }
 
+    //Geocoder para hacer geolocalización inversa
+    public String geolocalizacionInversa(Camion camionGeo){
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        Address direccion = null;
+        try {
+            List<Address> list = geocoder.getFromLocation(camionGeo.getUltimaPosicion().getLatitude(), camionGeo.getUltimaPosicion().getLongitude(), 1);
+            if (!list.isEmpty()) {
+                direccion = list.get(0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return direccion.getAddressLine(0);
+    }
 
     public LatLng getRandomLocation(LatLng point, int radius) {
 

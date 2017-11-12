@@ -8,8 +8,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.guill.fhisa_admin.MainActivity;
 import com.example.guill.fhisa_admin.Preferences.CamionPreferences;
 import com.example.guill.fhisa_admin.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -40,6 +43,15 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
     }
 
+    public void irMapa(View view) {
+        //Booleano en firebase que servirá para iniciar la activity con el mapa en la posición indicada
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference opcionesRef = database.getReference("opciones");
+        opcionesRef.child(id).child("ir").setValue(true);
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
     public void irPosiciones(View view) {
 
         posicionesString = new ArrayList<>();
@@ -62,6 +74,7 @@ public class OpcionesCamionActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         id = extras.getString("id");
 
+        //Intent intent = new Intent(view.getContext(), CamionPreferences.class);
         Intent intent = new Intent(view.getContext(), CamionPreferences.class);
         intent.putExtra("id", id);
         startActivity(intent);

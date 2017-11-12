@@ -74,6 +74,36 @@
         android:background="@android:color/darker_gray"/>
 
     <RelativeLayout
+        android:id="@+id/rlVerMapa"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:clickable="true"
+        android:onClick="irMapa"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <TextView
+            android:id="@+id/tvVerMapa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="29dp"
+            android:text="Buscar en el mapa"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/rlVerMapa"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
         android:id="@+id/rlVerPosiciones"
         android:onClick="irPosiciones"
         android:layout_width="match_parent"

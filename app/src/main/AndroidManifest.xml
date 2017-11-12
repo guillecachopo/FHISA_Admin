@@ -39,7 +39,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyAam3CoohPwYSWGAJpfYDUC3KoGil5Sszg" />
 
         <activity
             android:name=".MapsActivity"
@@ -62,6 +62,9 @@
         <activity
             android:name=".Opciones.VelocidadActualActivity"
             android:parentActivityName=".MainActivity" />
+        <activity android:name=".Preferences.CamionPreferencesActivity"
+            android:parentActivityName=".MainActivity"
+            ></activity>
     </application>
 
 </manifest>
