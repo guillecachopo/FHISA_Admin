@@ -1,5 +1,9 @@
 package com.example.guill.fhisa_admin;
 
+/**
+ * Created by guill on 14/11/2017.
+ */
+
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -45,21 +49,20 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
 
-public class MapsActivity extends Fragment implements OnMapReadyCallback {
+public class MapsActivity2 extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Marker marcador;
     View mView;
     MapView mMapView;
 
-    Posicion location;
     String id;
-    LatLng latlng;
 
     double altitude;
     double latitude;
@@ -79,33 +82,29 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     String idIrMarcador;
     boolean ir;
-
-    ImageView buttonMapType;
+    HashMap<Marker, Camion > markerCamionMap;
+    ArrayList<Marker> markerList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-        //        .findFragmentById(R.id.map);
-        //mapFragment.getMapAsync(this);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                    Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         //Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.activity_maps, container, false);
 
-        buttonMapType = (ImageView) mView.findViewById(R.id.btnTipoMapa);
-
-
-
-
-
-
+        ImageView button = (ImageView) mView.findViewById(R.id.btnTipoMapa);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                showMapTypeSelectorDialog();
+            }
+        });
 
         Button btnArea = (Button) mView.findViewById(R.id.btnMarcarArea);
         btnArea.setOnClickListener(new View.OnClickListener() {
@@ -173,24 +172,13 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         IDs = new ArrayList<>();
         coloresLista = new ArrayList<>();
 
-        buttonMapType.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                showMapTypeSelectorDialog();
-            }
-        });
+        markerList = new ArrayList<>();
 
         //final LatLng oviedo = new LatLng(43.3579649511212,-5.8733862770);
         final LatLng oviedo = new LatLng(43.458979, -5.850589);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(oviedo)); //Ponemos el mapa inicialmente centrado en el centro de asturias
         CameraUpdate cuOviedo = CameraUpdateFactory.newLatLngZoom(oviedo, 10); //Que el mapa no empiece con asturias muy lejos
         mMap.animateCamera(cuOviedo);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int tipomapa = preferences.getInt("tipomapa", 2);
-        mMap.setMapType(tipomapa);
 
         areasList = new ArrayList<>();
         IDsAreas = new ArrayList<>();
@@ -272,11 +260,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         coloresLista.add(randomColor); //Añado el color aleatorio a una lista
                     }
                     else {
-                         for (int i=0; i<camionesList.size(); i++)
-                             if (camionesList.get(i).getId().compareTo(id)==0) {
-                                 camion = camionesList.get(i);
-                                 camion.clearPosiciones();
-                             }
+                        for (int i=0; i<camionesList.size(); i++)
+                            if (camionesList.get(i).getId().compareTo(id)==0) {
+                                camion = camionesList.get(i);
+                                camion.clearPosiciones();
+                                markerList.clear();
+                            }
                     }
                     Log.i("CAMIONES", String.valueOf(camionesList.size()));
 
@@ -297,11 +286,25 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         } //for snapshot2 (Iterador donde estan las posiciones)
                     } //for snapshot1 (Iterador donde esta la cadena "posiciones")
 
+                    Marker marker = placeMarker(camion);
+                    markerList.add(marker);
 
                 } //for snapshot (Iterador donde estan las IDs)
 
 
                 mMap.clear(); //Limpiamos el mapa cada vez que llega una posicion para que se actualice el marcador
+
+                markerCamionMap = new HashMap<Marker, Camion>();
+                for (int i=0; i<camionesList.size(); i++){
+                    markerCamionMap.put(markerList.get(i), camionesList.get(i));
+                }
+                mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    @Override
+                    public void onInfoWindowClick(Marker marker) {
+                        Camion camion = markerCamionMap.get(marker);
+                        Log.i("InfoWindow", camion.getId());
+                    }
+                });
 
                 //Si el mapa se actualiza, hay que volver a pintar las areas. Además, este mMap.clear() se ejecuta al iniciarse la app, por lo que
                 //los circulos se borrarían
@@ -317,7 +320,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
                 for (int i=0; i<camionesList.size(); i++){ //Recorremos la lista de camiones para pintar sus rutas,
                     final Camion pintado = camionesList.get(i);
-                   // Integer color = coloresLista.get(i); //Cojo un color de la lista de colores random
+                    // Integer color = coloresLista.get(i); //Cojo un color de la lista de colores random
 
                     if (dataSnapshot.exists()) { //Sin este if, cuando se borra la DB crashea la app
                         markerOptions = new MarkerOptions()
@@ -325,9 +328,9 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                                 .snippet(geolocalizacionInversa(pintado))
                                 .title(camionesList.get(i).getId());
 
+                        /*
                         marcador = mMap.addMarker(markerOptions);
 
-                        /*
                         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                             @Override
                             public void onInfoWindowClick(Marker marker) {
@@ -350,20 +353,20 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         opcionesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) { //IMEI
-                                        for (DataSnapshot snapshot1 : snapshot.getChildren()) { //"ir" (variable booleana)
-                                            Log.i("IR", String.valueOf(snapshot1.getValue()));
-                                            Log.i("IRid", String.valueOf(snapshot.getValue()));
-                                            if (snapshot1.getValue().equals(true) && snapshot.getKey().equals(pintado.getId())) {
-                                                LatLng irLatLng = new LatLng(pintado.getUltimaPosicion().getLatitude(), pintado.getUltimaPosicion().getLongitude());
-                                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(irLatLng, 14)); //Ponemos el mapa inicialmente centrado en el centro de asturias
-                                                //CameraUpdate cuIr = CameraUpdateFactory.newLatLngZoom(irLatLng, 13); //Que el mapa no empiece con asturias muy lejos
-                                                //mMap.animateCamera(cuIr);
-                                                opcionesRef.child(pintado.getId()).child("ir").setValue(false);
-                                            }
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) { //IMEI
+                                    for (DataSnapshot snapshot1 : snapshot.getChildren()) { //"ir" (variable booleana)
+                                        Log.i("IR", String.valueOf(snapshot1.getValue()));
+                                        Log.i("IRid", String.valueOf(snapshot.getValue()));
+                                        if (snapshot1.getValue().equals(true) && snapshot.getKey().equals(pintado.getId())) {
+                                            LatLng irLatLng = new LatLng(pintado.getUltimaPosicion().getLatitude(), pintado.getUltimaPosicion().getLongitude());
+                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(irLatLng, 14)); //Ponemos el mapa inicialmente centrado en el centro de asturias
+                                            //CameraUpdate cuIr = CameraUpdateFactory.newLatLngZoom(irLatLng, 13); //Que el mapa no empiece con asturias muy lejos
+                                            //mMap.animateCamera(cuIr);
+                                            opcionesRef.child(pintado.getId()).child("ir").setValue(false);
                                         }
-
                                     }
+
+                                }
                             }
 
                             @Override
@@ -378,7 +381,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         //  dibujaRuta(pintado, color); //Dibujo la ruta del camión con un color
 
                         String prefColor = pref.getString("lpColorTrazo", "random");
-                       // int prefColor = pref.getInt(id+"-color", Color.WHITE);
+                        // int prefColor = pref.getInt(id+"-color", Color.WHITE);
                         // Comprobamos si se desea dibujar la ruta, en caso de no
                         // estar definida la propiedad por defecto indicamos true.
                         boolean prefTrazoRuta = pref.getBoolean("cbxDibujarRuta", true);
@@ -473,15 +476,15 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     //Dibujamos la ruta del camion pasandole un color aleatorio que cambiará en funcion del camion
     public void dibujaRuta(Camion camionPintar, int randomColor) {
 
-            for (int k = 0; k < camionPintar.getPosicionesList().size() - 1; k++) {
+        for (int k = 0; k < camionPintar.getPosicionesList().size() - 1; k++) {
 
-                mMap.addPolyline(new PolylineOptions().add(
-                        new LatLng(camionPintar.getPosicionesList().get(k).getLatitude(), camionPintar.getPosicionesList().get(k).getLongitude()),
-                        new LatLng(camionPintar.getPosicionesList().get(k + 1).getLatitude(), camionPintar.getPosicionesList().get(k + 1).getLongitude()))
-                        .width(10)
-                        .color(randomColor)
-                );
-            }
+            mMap.addPolyline(new PolylineOptions().add(
+                    new LatLng(camionPintar.getPosicionesList().get(k).getLatitude(), camionPintar.getPosicionesList().get(k).getLongitude()),
+                    new LatLng(camionPintar.getPosicionesList().get(k + 1).getLatitude(), camionPintar.getPosicionesList().get(k + 1).getLongitude()))
+                    .width(10)
+                    .color(randomColor)
+            );
+        }
     }
 
     public int generaColorRandom(){
@@ -507,11 +510,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         builder.create();
         Log.i("Click", "Despues de crear builder");
 
-        final float[] tipoMapa = new float[1];
-
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        final SharedPreferences.Editor edit = preferences.edit();
-
         // Find the current map type to pre-check the item representing the current state.
         int checkItem = mMap.getMapType() - 1;
 
@@ -524,27 +522,20 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
                     public void onClick(DialogInterface dialog, int item) {
                         // Locally create a finalised object.
+
                         // Perform an action depending on which item was selected.
                         switch (item) {
+
                             case 1:
-                                tipoMapa[0] = 2;
-                                edit.putInt("tipomapa", 2);
-                                edit.apply();
                                 mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
                                 break;
                             case 2:
-                                edit.putInt("tipomapa", 3);
-                                edit.apply();
                                 mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                                 break;
                             case 3:
-                                edit.putInt("tipomapa", 4);
-                                edit.apply();
                                 mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                                 break;
                             default:
-                                edit.putInt("tipomapa", 1);
-                                edit.apply();
                                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                         }
                         dialog.dismiss();
@@ -712,23 +703,17 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     //Geocoder para hacer geolocalización inversa
     public String geolocalizacionInversa(Camion camionGeo){
-        Geocoder geocoder = null;
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         Address direccion = null;
-        if (getContext()!=null) {
-            try {
-                geocoder = new Geocoder(getContext(), Locale.getDefault());
-                List<Address> list = geocoder.getFromLocation(camionGeo.getUltimaPosicion().getLatitude(), camionGeo.getUltimaPosicion().getLongitude(), 1);
-                if (!list.isEmpty()) {
-                    direccion = list.get(0);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            List<Address> list = geocoder.getFromLocation(camionGeo.getUltimaPosicion().getLatitude(), camionGeo.getUltimaPosicion().getLongitude(), 1);
+            if (!list.isEmpty()) {
+                direccion = list.get(0);
             }
-            return direccion.getAddressLine(0);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        else {
-            return "Cargando dirección...";
-        }
+        return direccion.getAddressLine(0);
     }
 
     public LatLng getRandomLocation(LatLng point, int radius) {

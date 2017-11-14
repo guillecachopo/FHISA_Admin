@@ -91,6 +91,14 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
     }
 
+    public void irAlbaran(View view) {
+        Bundle extras = getIntent().getExtras();
+        id = extras.getString("id");
+
+        Intent intent = new Intent(view.getContext(), AlbaranActivity.class);
+        intent.putExtra("id", id);
+        startActivity(intent);
+    }
     //Para volver al fragment anterior cuando hacemos click y no al activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
