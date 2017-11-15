@@ -9,22 +9,21 @@ import android.app.Application;
 public class Globals extends Application {
     boolean ir;
 
-    public boolean getIr(){
-        return this.ir;
-    }
-
-    public boolean setIr(boolean ir){
-        this.ir=ir;
+    public boolean isIr() {
         return ir;
     }
 
-    boolean doubleBackToExitPressedOnce = false;
-
-    public boolean isDoubleBackToExitPressedOnce() {
-        return doubleBackToExitPressedOnce;
+    public void setIr(boolean ir) {
+        this.ir = ir;
     }
 
-    public void setDoubleBackToExitPressedOnce(boolean doubleBackToExitPressedOnce) {
-        this.doubleBackToExitPressedOnce = doubleBackToExitPressedOnce;
+    String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

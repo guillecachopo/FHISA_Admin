@@ -2,8 +2,10 @@ package com.example.guill.fhisa_admin.Adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -53,17 +55,20 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
     public void onBindViewHolder(CamionesViewHolder holder, int position) {
         final Camion camion = camiones.get(position);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
 
         final String id = camion.getId();
         String latitud = Double.toString(camion.getUltimaPosicion().getLatitude());
         String longitud = Double.toString(camion.getUltimaPosicion().getLongitude());
+        String nombre = preferences.getString(id+"-nombreCamion", id);
+
 
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date(camion.getUltimaPosicion().getTime());
         String hora = format.format(date);
 
         //Geocoder para hacer geolocalización inversa
-        Geocoder geocoder = new Geocoder(holder.tvId.getContext(),Locale.getDefault());
+        Geocoder geocoder = new Geocoder(holder.tvImei.getContext(),Locale.getDefault());
         try {
             List<Address> list = geocoder.getFromLocation(camion.getUltimaPosicion().getLatitude(), camion.getUltimaPosicion().getLongitude(), 1);
             if (!list.isEmpty()) {
@@ -74,7 +79,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        holder.tvId.setText("Identificador: " + id);
+
+        if (!nombre.equals(id)) {
+            holder.tvIdentificador.setText("Identificador: " + nombre);
+        } else {
+            holder.tvIdentificador.setVisibility(View.GONE);
+        }
+        holder.tvImei.setText("IMEI: " + id);
         holder.tvHora.setText("Hora: " + hora);
 
         final ArrayList<String> posicionesString = new ArrayList<>();
@@ -113,12 +124,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
 
     public static class CamionesViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvId, tvUltimaPosicion, tvHora;
+        TextView tvIdentificador, tvImei, tvUltimaPosicion, tvHora;
         CardView cvCamion;
 
         public CamionesViewHolder(View itemView) {
             super(itemView);
-            tvId = itemView.findViewById(R.id.tvNombreCV);
+            tvIdentificador = itemView.findViewById(R.id.tvNombreCV);
+            tvImei = itemView.findViewById(R.id.tvImeiCV);
             tvUltimaPosicion = itemView.findViewById(R.id.tvPosicionCV);
             tvHora = itemView.findViewById(R.id.tvHoraCV);
             cvCamion = itemView.findViewById(R.id.cvCamion);

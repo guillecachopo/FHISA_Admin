@@ -65,57 +65,46 @@ public class CamionPreferencesActivity extends AppCompatActivity {
                             case 1:
                                 editor.putInt(id+"color", Color.WHITE );
                                 editor.apply();
-                                editor.commit();
                                 break;
                             case 2:
                                 editor.putInt(id+"color", Color.GREEN );
                                 editor.apply();
-                                editor.commit();
                                 break;
                             case 3:
                                 editor.putInt(id+"color", Color.BLUE );
                                 editor.apply();
-                                editor.commit();
                                 break;
                             case 4:
                                 editor.putInt(id+"color", Color.YELLOW );
                                 editor.apply();
-                                editor.commit();
                                 break;
                             case 5:
                                 editor.putInt(id+"color", Color.BLACK );
                                 editor.apply();
-                                editor.commit();
                                 break;
                             case 6:
                                 editor.putInt(id+"color", Color.GRAY );
                                 editor.apply();
-                                editor.commit();
                                 break;
                             case 7:
                                 editor.putInt(id+"color", Color.CYAN );
                                 editor.apply();
-                                editor.commit();
                                 break;
                             case 8:
                                 editor.putInt(id+"color", Color.RED );
                                 editor.apply();
-                                editor.commit();
                                 break;
                             case 9:
                                 editor.putInt(id+"color", Color.DKGRAY );
                                 editor.apply();
-                                editor.commit();
                                 break;
                             case 10:
                                 editor.putInt(id+"color", Color.LTGRAY);
                                 editor.apply();
-                                editor.commit();
                                 break;
                             case 11:
                                 editor.putInt(id+"color", Color.MAGENTA );
                                 editor.apply();
-                                editor.commit();
                                 break;
                         }
                     }
@@ -138,4 +127,5 @@ public class CamionPreferencesActivity extends AppCompatActivity {
         int randomColor = Color.rgb(r,g,b);
         return randomColor;
     }
+
 }

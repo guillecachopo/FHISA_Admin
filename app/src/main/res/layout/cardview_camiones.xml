@@ -27,7 +27,16 @@
             android:id="@+id/tvNombreCV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ID"
+            android:text="Identificador"
+            android:textSize="@dimen/nombre_cardview"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvImeiCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="IMEI"
             android:textSize="@dimen/nombre_cardview"
             android:textColor="@color/colorBlack"
             android:textStyle="bold" />
