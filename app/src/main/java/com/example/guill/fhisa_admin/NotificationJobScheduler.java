@@ -17,6 +17,7 @@ import android.util.Log;
 
 import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.Camion;
+import com.example.guill.fhisa_admin.Objetos.ErrorNotificacion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
 import com.google.android.gms.maps.model.LatLng;
@@ -147,9 +148,9 @@ public class NotificationJobScheduler extends JobService {
 
                 } //for snapshot (Iterador donde estan las IDs)
 
-                //Log.i("JobScheduler", "Tamaño lista camiones: " + String.valueOf(camionesList.size()));
 
-
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference erroresRef = database.getReference(FirebaseReferences.ERRORES_REFERENCE);
 
                 for (int i=0; i<camionesList.size(); i++){
                     int notifId = i;
@@ -162,11 +163,14 @@ public class NotificationJobScheduler extends JobService {
 
                     boolean dentro = camionEnArea(camionNotif, areasList);
                     Log.i("JobScheduler Area", "Camion " + camionesList.get(i).getId() + "en area: " + dentro );
-
-                    if(diferencia >= 1000 * 60 && !dentro) enviarNotificacion(camionNotif, notifId); //Setear en milisegundos cuánto tiempo queremos que puede estar sin recibir una posición antes de que salte
-                    //Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (bucle camiones)");
+                    //Setear en milisegundos cuánto tiempo queremos que puede estar sin recibir una posición antes de que salte
+                    if(diferencia >= 1000 * 60 * 10 && !dentro) {
+                        enviarNotificacion(camionNotif, notifId);
+                        ErrorNotificacion errorNotificacion = new ErrorNotificacion(camionNotif.getId(), diferencia, horaActual);
+                        //erroresRef.child(camionNotif.getId()).push().setValue(errorNotificacion);
+                        erroresRef.push().setValue(errorNotificacion);
+                    }
                 }
-               // Log.i("JobScheduler", "Notificacion ya lanzada, estamos de nuevo en dataSnapshot (fuera de bucle)");
             }
 
             @Override

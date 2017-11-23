@@ -256,7 +256,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Log.i("CAMIONES dataSnapshot", String.valueOf(dataSnapshot.getChildrenCount()));
+               // Log.i("CAMIONES dataSnapshot", String.valueOf(dataSnapshot.getChildrenCount()));
                 numCamiones = dataSnapshot.getChildrenCount();
 
                 //AQUI ESTAN LAS ID
@@ -282,7 +282,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                                  camion.clearPosiciones();
                              }
                     }
-                    Log.i("CAMIONES", String.valueOf(camionesList.size()));
+                  //  Log.i("CAMIONES", String.valueOf(camionesList.size()));
 
                     for (DataSnapshot snapshot1 : snapshot.getChildren()) {
 
@@ -353,8 +353,11 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         });
                         */
 
-                        buscadoEnMenu(pintado); //Se entra aquí si se ha buscado el camión desde las opciones
 
+                        if (isAdded()) {
+                            buscadoEnMenu(pintado); //Se entra aquí si se ha buscado el camión desde las opciones
+                            numeroCamiones();
+                        }
 
 
                         //  dibujaRuta(pintado, color); //Dibujo la ruta del camión con un color
@@ -396,36 +399,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                             else
                                 color = coloresLista.get(i);
 
-
-                        /*
-                        if (prefTrazoRuta) {
-                            Integer color;
-                            if (prefColor == Color.WHITE)
-                                color = Color.WHITE;
-                            else if (prefColor == Color.GREEN)
-                                color = Color.GREEN;
-                            else if (prefColor == Color.BLUE)
-                                color = Color.BLUE;
-                            else if (prefColor == Color.YELLOW)
-                                color = Color.YELLOW;
-                            else if (prefColor == Color.BLACK)
-                                color = Color.BLACK;
-                            else if (prefColor == Color.GRAY)
-                                color = Color.GRAY;
-                            else if (prefColor == Color.RED)
-                                color = Color.CYAN;
-                            else if (prefColor == Color.RED)
-                                color = Color.RED;
-                            else if (prefColor == Color.DKGRAY)
-                                color = Color.DKGRAY;
-                            else if (prefColor == Color.LTGRAY)
-                                color = Color.LTGRAY;
-                            else if (prefColor == Color.MAGENTA)
-                                color = Color.MAGENTA;
-                            else
-                                color = coloresLista.get(i);
-                                */
-
                             //Comprobamos si el camion está dentro del area
                             boolean dentro = camionDentroArea(pintado, circleList);
                             if (!dentro) {
@@ -434,8 +407,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                             } else {
                                 pintado.clearPosiciones();
                             }
-
-
                             Log.i("PINTADO", "Posiciones de " + pintado.getId() + ": " + pintado.getPosicionesList().size());
                         }
                     }
@@ -827,13 +798,22 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     }
 
     public void buscadoEnMenu(Camion camionBuscado) {
-        Globals globals = (Globals) getActivity().getApplicationContext();
-        if (globals.isIr() && globals.getId().equals(camionBuscado.getId())) {
-            LatLng irLatLng = new LatLng(camionBuscado.getUltimaPosicion().getLatitude(), camionBuscado.getUltimaPosicion().getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(irLatLng, 14)); //Ponemos el mapa inicialmente centrado en el centro de asturias
-            //CameraUpdate cuIr = CameraUpdateFactory.newLatLngZoom(irLatLng, 13); //Que el mapa no empiece con asturias muy lejos
-            //mMap.animateCamera(cuIr);
-            globals.setIr(false);
+        if (isAdded()) {
+            Globals globals = (Globals) getActivity().getApplicationContext();
+            if (globals.isIr() && globals.getId().equals(camionBuscado.getId())) {
+                LatLng irLatLng = new LatLng(camionBuscado.getUltimaPosicion().getLatitude(), camionBuscado.getUltimaPosicion().getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(irLatLng, 14)); //Ponemos el mapa inicialmente centrado en el centro de asturias
+                //CameraUpdate cuIr = CameraUpdateFactory.newLatLngZoom(irLatLng, 13); //Que el mapa no empiece con asturias muy lejos
+                //mMap.animateCamera(cuIr);
+                globals.setIr(false);
+            }
+        }
+    }
+
+    public void numeroCamiones() {
+        if (isAdded()) {
+            Globals globals = (Globals) getActivity().getApplicationContext();
+            globals.setNumCamiones(numCamiones);
         }
     }
 

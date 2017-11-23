@@ -18,16 +18,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Adapter.PageAdapter;
-import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -45,6 +42,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
 import me.tatarka.support.job.JobInfo;
 import me.tatarka.support.job.JobScheduler;
 
@@ -59,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ProgressDialog pDialog;
+
+    EditText user,password,subject,body;
+    Button enviar;
+    String asunto,textMessage;
+    String usu,pass;
+    Session session = null;
+    boolean validez;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,25 +92,6 @@ public class MainActivity extends AppCompatActivity {
             //tabLayout.setVisibility(View.GONE);
         }
 
-
-        //tvCamionInfo = (TextView) findViewById(R.id.tvCamion);
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance(); //Cualquier referencia tiene que ser igual al mismo tipo pero cogiendo la instancia
-       // final DatabaseReference camionesRef = database.getReference(FirebaseReferences.FHISA_REFERENCE); //referencia a la bdd de firebase
-       // camionesRef.child(FirebaseReferences.CAMION_REFERENCE).addValueEventListener(new ValueEventListener()
-
-        final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
-        camionesRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
 
@@ -106,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragments.add(new MapsActivity());
         fragments.add(new RecyclerViewFragment());
+        fragments.add(new ErroresFragment());
 
         return fragments; //Ya tenemos los fragments en un arraylist
     }
@@ -117,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_map_white);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_truck_white);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_error_blanco);
     }
 
     //-----MENU OPTIONS---------
@@ -135,150 +132,26 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
             case R.id.menuNotificaciones:
-
-
-                ComponentName cp = new ComponentName(this, NotificationJobScheduler.class);
-                JobInfo jb;
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    jb = new JobInfo.Builder(1, cp)
-                            .setBackoffCriteria(4000, JobInfo.BACKOFF_POLICY_LINEAR)
-                            .setPersisted(true)
-                            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                            .setRequiresCharging(false)
-                            .setRequiresDeviceIdle(false)
-                            .setMinimumLatency(10000) //Setear en milisegundos cada cuánto tiempo queremos que se ejecute el job para comprobar posiciones
-                            .build();
-                } else {
-                    jb = new JobInfo.Builder(1, cp)
-                            .setBackoffCriteria(4000, JobInfo.BACKOFF_POLICY_LINEAR)
-                            .setPersisted(true)
-                            .setPeriodic(10000) //Setear en milisegundos cada cuánto tiempo queremos que se ejecute el job para comprobar posiciones
-                            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                            .setRequiresCharging(false)
-                            .setRequiresDeviceIdle(false)
-                            .build();
-                }
-
-                JobScheduler js = JobScheduler.getInstance(this);
-                js.schedule(jb);
-                Toast.makeText(this, "Servicio de notificaciones activo", Toast.LENGTH_LONG).show();
+                recibirNotificaciones();
                 isStarted = true;
                 return true;
 
             case R.id.menuStopNotificaciones:
-                JobScheduler js2 = JobScheduler.getInstance(this);
-                js2.cancelAll();
-                Toast.makeText(this, "Servicio de notificaciones inactivo", Toast.LENGTH_LONG).show();
+                pararNotificaciones();
                 isStarted = false;
                 return true;
 
             case R.id.menuCopiaSeguridad:
-                AlertDialog.Builder alertDialogFirebase = new AlertDialog.Builder(MainActivity.this);
-                alertDialogFirebase
-                        .setIcon(R.drawable.ic_fhisa)
-                        .setTitle("Exportación de Firebase Database")
-                        .setMessage("Firebase Database es la base de datos utilizada para guardar las posiciones de cada camión y las areas correspondientes a las zonas libres de notificaciones. Las copias de seguridad se guardarán en del directorio raíz del dispositivo dentro la carpeta FHISAFirebase.")
-                        .setPositiveButton("GUARDAR", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                new DownloadFileFromURL().execute("https://fhisaservicio.firebaseio.com/.json");
-                                dialog.cancel();
-                            }
-                        })
-                        .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog b = alertDialogFirebase.create();
-                b.show();
+                crearCopiaDB();
                 return true;
 
             case R.id.menuImportarCopia:
-                final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                File fhisaDir = new File(Environment.getExternalStorageDirectory(), "FHISAFirebase"); //Cogemos el directorio donde se guardan los backups
-                final String fhisaDirString = fhisaDir.toString();
-                File[] files = fhisaDir.listFiles(); //Cogemos todos los ficheros de la carpeta
-                ArrayList<String> fileNames = new ArrayList<>(); //Vector dnde guardaremos los nombres de los backups
-                for (int i = 0; i < files.length; i++)
-                {
-                    fileNames.add(files[i].getName()); //Guardamos en nuestro vector de nombres todos los nombres
-                }
-                AlertDialog.Builder builderSingle = new AlertDialog.Builder(MainActivity.this); //AlertDialog para elegir cuál queremos importar
-                builderSingle.setIcon(R.drawable.ic_fhisa);
-                builderSingle.setTitle("Seleccionar copia de seguridad");
-                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_singlechoice); //ArrayAdapter para el AlertDialog
-
-                for (int i=0; i<fileNames.size(); i++) arrayAdapter.add(fileNames.get(i)); //Añadimos al ArrayAdapter nuestro Array de nombres
-
-                builderSingle.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, int which) {
-                        final String strName = arrayAdapter.getItem(which); //Este es el item seleccionado que pasaremos al parser
-                        AlertDialog.Builder builderInner = new AlertDialog.Builder(MainActivity.this);
-                        builderInner.setIcon(R.drawable.ic_fhisa);
-                        builderInner.setMessage(strName);
-                        builderInner.setTitle("La copia elegida es: ");
-                        builderInner.setPositiveButton("IMPORTAR", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,int which) {
-                                JSONParser parser = new JSONParser();
-
-                                try {
-                                    Object obj = parser.parse(new FileReader(fhisaDirString+"/"+strName)); //Cogemos el json elegido
-                                    database.getReferenceFromUrl("https://fhisaservicio.firebaseio.com").setValue(obj);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-
-
-                                dialog.dismiss();
-                            }
-                        });
-                        builderInner.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialog.dismiss();
-                            }
-                        });
-                        builderInner.show();
-                    }
-                });
-                builderSingle.show();
+                importarCopiaDB();
                 return true;
 
             case R.id.menuBorrarBD:
-                    final FirebaseDatabase db = FirebaseDatabase.getInstance();
-                    AlertDialog.Builder alertDialogBorrar = new AlertDialog.Builder(MainActivity.this);
-                    alertDialogBorrar
-                            .setIcon(R.drawable.ic_fhisa)
-                            .setTitle("ATENCIÓN: Borrado de Firebase Database")
-                            .setMessage("Está a punto de borrar Firebase Database, esto conlleva la pérdida de todas las posiciones, asegúrese de tener guardada una copia de seguridad reciente.")
-                            .setPositiveButton("ELIMINAR", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    db.getReferenceFromUrl("https://fhisaservicio.firebaseio.com/camiones").removeValue();
-                                    dialog.cancel();
-                                }
-                            })
-                            .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-                    AlertDialog alertdialog = alertDialogBorrar.create();
-                    alertdialog.show();
+                borrarBD();
                 return true;
-
-
 
 
         }
@@ -292,6 +165,173 @@ public class MainActivity extends AppCompatActivity {
         menu.findItem(R.id.menuStopNotificaciones).setVisible(isStarted);
         return true;
     }
+
+
+
+    /**
+     * Método empleado para recibir notificaciones
+     * @return
+     */
+    public void recibirNotificaciones() {
+        ComponentName cp = new ComponentName(this, NotificationJobScheduler.class);
+        JobInfo jb;
+
+        /*
+        Globals globals = (Globals) this.getApplicationContext();
+        int numeroCamiones = (int) globals.getNumCamiones();
+        Log.i("CamionesNotificaciones", String.valueOf(numeroCamiones));
+        */
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            jb = new JobInfo.Builder(1, cp)
+                    .setBackoffCriteria(4000, JobInfo.BACKOFF_POLICY_LINEAR)
+                    .setPersisted(true)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setRequiresCharging(false)
+                    .setRequiresDeviceIdle(false)
+                    .setMinimumLatency(10000) //Setear en milisegundos cada cuánto tiempo queremos que se ejecute el job para comprobar posiciones
+                    .build();
+        } else {
+            jb = new JobInfo.Builder(1, cp)
+                    .setBackoffCriteria(4000, JobInfo.BACKOFF_POLICY_LINEAR)
+                    .setPersisted(true)
+                    .setPeriodic(10000) //Setear en milisegundos cada cuánto tiempo queremos que se ejecute el job para comprobar posiciones
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setRequiresCharging(false)
+                    .setRequiresDeviceIdle(false)
+                    .build();
+        }
+
+        JobScheduler js = JobScheduler.getInstance(this);
+        js.schedule(jb);
+        Toast.makeText(this, "Servicio de notificaciones activo", Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Método empleado para dejar de recibir notificaciones
+     */
+    public void pararNotificaciones() {
+        JobScheduler js2 = JobScheduler.getInstance(this);
+        js2.cancelAll();
+        Toast.makeText(this, "Servicio de notificaciones inactivo", Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Método empelado para crear una copia de la base de datos en el sistema
+     */
+
+    public void crearCopiaDB() {
+
+        AlertDialog.Builder alertDialogFirebase = new AlertDialog.Builder(MainActivity.this);
+        alertDialogFirebase
+                .setIcon(R.drawable.ic_fhisa)
+                .setTitle("Exportación de Firebase Database")
+                .setMessage("Firebase Database es la base de datos utilizada para guardar las posiciones de cada camión y las areas correspondientes a las zonas libres de notificaciones. Las copias de seguridad se guardarán en del directorio raíz del dispositivo dentro la carpeta FHISAFirebase.")
+                .setPositiveButton("GUARDAR", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new DownloadFileFromURL().execute("https://fhisaservicio.firebaseio.com/.json");
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog b = alertDialogFirebase.create();
+        b.show();
+    }
+
+    /**
+     * Método empleado para importar  a Firebase una copia de seguridad guardada en el dispositivo
+     */
+    public void importarCopiaDB() {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        File fhisaDir = new File(Environment.getExternalStorageDirectory(), "FHISAFirebase"); //Cogemos el directorio donde se guardan los backups
+        final String fhisaDirString = fhisaDir.toString();
+        File[] files = fhisaDir.listFiles(); //Cogemos todos los ficheros de la carpeta
+        ArrayList<String> fileNames = new ArrayList<>(); //Vector dnde guardaremos los nombres de los backups
+        for (int i = 0; i < files.length; i++)
+        {
+            fileNames.add(files[i].getName()); //Guardamos en nuestro vector de nombres todos los nombres
+        }
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(MainActivity.this); //AlertDialog para elegir cuál queremos importar
+        builderSingle.setIcon(R.drawable.ic_fhisa);
+        builderSingle.setTitle("Seleccionar copia de seguridad");
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_singlechoice); //ArrayAdapter para el AlertDialog
+
+        for (int i=0; i<fileNames.size(); i++) arrayAdapter.add(fileNames.get(i)); //Añadimos al ArrayAdapter nuestro Array de nombres
+
+        builderSingle.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, int which) {
+                final String strName = arrayAdapter.getItem(which); //Este es el item seleccionado que pasaremos al parser
+                AlertDialog.Builder builderInner = new AlertDialog.Builder(MainActivity.this);
+                builderInner.setIcon(R.drawable.ic_fhisa);
+                builderInner.setMessage(strName);
+                builderInner.setTitle("La copia elegida es: ");
+                builderInner.setPositiveButton("IMPORTAR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int which) {
+                        JSONParser parser = new JSONParser();
+
+                        try {
+                            Object obj = parser.parse(new FileReader(fhisaDirString+"/"+strName)); //Cogemos el json elegido
+                            database.getReferenceFromUrl("https://fhisaservicio.firebaseio.com").setValue(obj);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                builderInner.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialog.dismiss();
+                    }
+                });
+                builderInner.show();
+            }
+        });
+        builderSingle.show();
+    }
+
+    /**
+     * Método utilizado para borrar los camiones de la base de datos en la nube (FIREBASE)
+     */
+    public void borrarBD() {
+        final FirebaseDatabase db = FirebaseDatabase.getInstance();
+        AlertDialog.Builder alertDialogBorrar = new AlertDialog.Builder(MainActivity.this);
+        alertDialogBorrar
+                .setIcon(R.drawable.ic_fhisa)
+                .setTitle("ATENCIÓN: Borrado de Firebase Database")
+                .setMessage("Está a punto de borrar Firebase Database, esto conlleva la pérdida de todas las posiciones, asegúrese de tener guardada una copia de seguridad reciente.")
+                .setPositiveButton("ELIMINAR", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        db.getReferenceFromUrl("https://fhisaservicio.firebaseio.com/camiones").removeValue();
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertdialog = alertDialogBorrar.create();
+        alertdialog.show();
+    }
+
+
+
 
     //-------------
 
@@ -313,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /**
-         * Downloading file in background thread
+         * Descarga un archivo en una background thread
          * */
         @Override
         protected String doInBackground(String... f_url) {
@@ -380,5 +420,52 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    // -----------------------------------------------------------
+
+
+    //----------------ENVIAR EMAIL----------------------------------
+
+    class RetreiveFeedTask extends AsyncTask<String, Void, String> {
+        @Override
+        //AsyckTask para hacer operaciones en segundo plano (background)
+        protected String doInBackground(String... params) {
+
+            try{
+                BodyPart texto=new MimeBodyPart();
+                texto.setText(textMessage);
+                MimeMultipart multiParte = new MimeMultipart();
+
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(usu
+                        , "[Comentario Peephole]"));
+                message.setRecipients(Message.RecipientType.TO,
+                        InternetAddress.parse("peepholeuniovi@gmail.com"));
+
+
+                // message.setRecipients(Message.RecipientType.TO,
+                //InternetAddress.parse(extra));
+                message.setSubject(asunto);
+                multiParte.addBodyPart(texto);
+                message.setContent(multiParte);
+                Transport.send(message);
+
+
+            } catch(MessagingException e) {
+                e.printStackTrace();
+            } catch(Exception e) {
+                Toast.makeText(getApplicationContext(),
+                        "Error de autenticacion o fallo de conexión", Toast.LENGTH_LONG).show();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(getApplicationContext(), "Mensaje enviado",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
 
 }

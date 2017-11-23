@@ -104,9 +104,25 @@ public class OpcionesCamionActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         id = extras.getString("id");
 
+        /*
         Intent intent = new Intent(view.getContext(), AlbaranActivity.class);
         intent.putExtra("id", id);
-        startActivity(intent);
+        startActivity(intent);*/
+
+        /*
+        Peticiones peticion = new Peticiones("89.17.197.73", 6905);
+        Log.i("Peticion", peticion.getIp());
+        Log.i("Puerto", String.valueOf(peticion.getPuerto()));
+        try {
+            Vehiculo vehiculo = new Vehiculo();
+            vehiculo = peticion.obtenerVehiculo(id);
+            Log.i("Peticion", vehiculo.getMatricula());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+
     }
 
     public void irCamionNombre(final View view){

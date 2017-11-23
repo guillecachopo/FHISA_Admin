@@ -7,6 +7,8 @@ import android.app.Application;
  */
 
 public class Globals extends Application {
+
+    //PARA IR A UN CAMION EN PARTICULAR CUANDO SE BUSCA EN EL MAPA
     boolean ir;
 
     public boolean isIr() {
@@ -17,6 +19,7 @@ public class Globals extends Application {
         this.ir = ir;
     }
 
+    //
     String id;
 
     public String getId() {
@@ -25,5 +28,16 @@ public class Globals extends Application {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+
+    long numCamiones;
+
+    public long getNumCamiones() {
+        return numCamiones;
+    }
+
+    public void setNumCamiones(long numCamiones) {
+        this.numCamiones = numCamiones;
     }
 }

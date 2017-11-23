@@ -17,7 +17,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        pickFirst 'META-INF/LICENSE.txt' // picks the JavaMail license file
+    }
 
+}
+
+repositories {
+    jcenter()
+    maven {
+        url "https://maven.java.net/content/groups/public/"
+    }
 }
 
 dependencies {
@@ -43,6 +53,8 @@ dependencies {
     compile 'com.github.anastr:speedviewlib:1.1.6'
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.googlecode.json-simple:json-simple:1.1'
+    compile 'com.sun.mail:android-mail:1.5.5'
+    compile 'com.sun.mail:android-activation:1.5.5'
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

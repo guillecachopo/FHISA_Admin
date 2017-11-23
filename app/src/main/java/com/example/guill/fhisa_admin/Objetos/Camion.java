@@ -47,7 +47,6 @@ public class Camion {
         this.id = id;
     }
 
-
     public Posicion getUltimaPosicion() {
         return posiciones.get(posiciones.size()-1);
     }
@@ -55,7 +54,6 @@ public class Camion {
     public Posicion getPenultimaPosicion() {
         return posiciones.get(posiciones.size()-2);
     }
-
 
     public void setPosiciones(Posicion posicion) {
         posiciones.add(posicion);

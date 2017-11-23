@@ -60,7 +60,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
         final String id = camion.getId();
         String latitud = Double.toString(camion.getUltimaPosicion().getLatitude());
         String longitud = Double.toString(camion.getUltimaPosicion().getLongitude());
-        String nombre = preferences.getString(id+"-nombreCamion", id);
+        String nombre = preferences.getString(id+"-nombreCamion", "");
 
 
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -80,10 +80,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
             e.printStackTrace();
         }
 
-        if (!nombre.equals(id)) {
-            holder.tvIdentificador.setText("Identificador: " + nombre);
+        if (nombre.equals(id)) { //Si se ha reestablecido el imei como nombre del camion
+            holder.tvIdentificador.setText("Identificador: " );
+            //Sin lo anterior, apareceria -> Identificador: 3843828217 (el imei) y no un blank
+
         } else {
-            holder.tvIdentificador.setVisibility(View.GONE);
+            holder.tvIdentificador.setText("Identificador: " + nombre);
         }
         holder.tvImei.setText("IMEI: " + id);
         holder.tvHora.setText("Hora: " + hora);

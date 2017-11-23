@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cvError"
+    android:layout_below="@+id/actionBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardElevation="4dp"
+    card_view:cardUseCompatPadding="true"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NOTIFICACIÓN DE ERROR"
+            android:textColor="@color/colorRojoOscuro"
+            android:layout_centerHorizontal="true"
+            />
+
+        <ImageView
+            android:id="@+id/ivError"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_error_rojo"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="379dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+
+        <TextView
+            android:id="@+id/tvIdError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ivError"
+            android:text="ID"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/nombre_cardview" />
+
+        <TextView
+            android:id="@+id/tvImeiError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvIdError"
+            android:text="IMEI"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/nombre_cardview" />
+
+        <TextView
+            android:id="@+id/tvHoraError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvImeiError"
+            android:text="Hora notificacion"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/nombre_cardview" />
+
+        <TextView
+            android:id="@+id/tvHoraPosicionError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvHoraError"
+            android:text="Hora posicion error"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/nombre_cardview" />
+
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
