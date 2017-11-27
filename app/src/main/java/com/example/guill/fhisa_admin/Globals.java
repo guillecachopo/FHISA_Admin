@@ -40,4 +40,5 @@ public class Globals extends Application {
     public void setNumCamiones(long numCamiones) {
         this.numCamiones = numCamiones;
     }
+
 }

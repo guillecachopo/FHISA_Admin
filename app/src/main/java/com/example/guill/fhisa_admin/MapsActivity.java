@@ -144,6 +144,15 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        buttonMapType.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                showMapTypeSelectorDialog();
+            }
+        });
+
         ir = false;
         if (getArguments()!=null) {
             idIrMarcador = getArguments().getString("idIrMarcador");
@@ -177,14 +186,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         IDs = new ArrayList<>();
         coloresLista = new ArrayList<>();
 
-        buttonMapType.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                showMapTypeSelectorDialog();
-            }
-        });
+
 
         //final LatLng oviedo = new LatLng(43.3579649511212,-5.8733862770);
         final LatLng oviedo = new LatLng(43.458979, -5.850589);

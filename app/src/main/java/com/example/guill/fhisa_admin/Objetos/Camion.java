@@ -71,6 +71,7 @@ public class Camion {
         this.posiciones = posicionesList;
     }
 
+
     //Lo usaremos más que nada en DetallePosicionesCamion para ver las horas de cada posicion
 
     public void setHoras(Long hora) {
@@ -87,50 +88,3 @@ public class Camion {
         this.horas = horasList;
     }
 }
-
-
-
-/*
-public class Camion {
-
-    double longitud;
-    double latitud;
-    String imei;
-
-    public Camion(){
-
-    }
-
-
-    public Camion(String imei, double latitud, double longitud) {
-        this.imei = imei;
-        this.latitud = latitud;
-        this.longitud = longitud;
-    }
-
-    public String getImei() {
-        return imei;
-    }
-
-    public void setImei(String imei) {
-        this.imei = imei;
-    }
-
-    public double getLongitud() {
-        return longitud;
-    }
-
-    public void setLongitud(double longitud) {
-        this.longitud = longitud;
-    }
-
-    public double getLatitud() {
-        return latitud;
-    }
-
-    public void setLatitud(double latitud) {
-        this.latitud = latitud;
-    }
-
-}
-*/
