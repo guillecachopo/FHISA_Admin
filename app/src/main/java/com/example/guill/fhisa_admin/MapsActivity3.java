@@ -30,14 +30,20 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -468,6 +474,10 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
         return randomColor;
     }
 
+    /**
+     * Método encargado de mostrar en el mapa las areas existentes
+     * @param areasRef
+     */
     public void inicializarAreas(DatabaseReference areasRef) {
         areasRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -500,11 +510,36 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    /**
+     * Método encargado de mostrar los camiones en el mapa
+     * @param camionesRef
+     */
     public void cargarCamiones(DatabaseReference camionesRef) {
 
         camionesRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String id = dataSnapshot.getKey();
+                Camion camion = null;
+                if (!listaIdsCamiones.contains(id)) { //Si la ID no está en la lista añadimos el camion
+                    camion = new Camion(id);
+                    listaIdsCamiones.add(id);
+                    listaCamiones.add(camion);
+                    int randomColor = generaColorRandom(); //Genero un color aleatorio para cada camion
+                    listaColores.add(randomColor); //Añado el color aleatorio a una lista
+
+                }
+                else {
+                    for (int i = 0; i < listaCamiones.size(); i++)
+                        if (listaCamiones.get(i).getId().compareTo(id) == 0) {
+                            camion = listaCamiones.get(i);
+                            //camion.clearPosiciones();
+                        }
+                }
+
+                final Camion camionPos = camion;
+                Log.i("onChildAdded", camion.getId());
+                getUltimasPosiciones(camionPos, dataSnapshot);
             }
 
             @Override
@@ -553,34 +588,68 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    /**
+     * Método encargado de actualizar las posiciones de cada camión en el mapa
+     * @param camionPos
+     * @param dataSnapshot
+     */
+
     private void getUltimasPosiciones(final Camion camionPos, DataSnapshot dataSnapshot) {
-        dataSnapshot.child("posiciones").getRef().orderByKey().limitToLast(1).addChildEventListener(new ChildEventListener() {
+
+        Query q = dataSnapshot.child("posiciones").getRef().orderByKey().limitToLast(1);
+        q.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Posicion posicion = dataSnapshot.getValue(Posicion.class);
-                Log.i("getUltimasPosiciones", String.valueOf(camionPos.getId() + ": " +posicion.getTime()));
-                camionPos.setPosiciones(posicion);
-                //Log.i("getUltimasPosiciones", camionPos.getId() + ": " + String.valueOf(camionPos.getPosicionesList().size()));
-                setMarcador(camionPos);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    Posicion posicion = child.getValue(Posicion.class);
+                    camionPos.setPosiciones(posicion);
+                    Log.i("getUltimasPosiciones", String.valueOf(camionPos.getId() + ": " +posicion.getTime()));
+                    Log.i("getUltimasPosiciones", camionPos.getId() + ": " + String.valueOf(camionPos.getPosicionesList().size()));
+
+                    LatLng latlng = new LatLng(camionPos.getUltimaPosicion().getLatitude(), camionPos.getUltimaPosicion().getLongitude());
+
+                    setMarcador(camionPos, latlng);
+
+                }
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            }
         });
     }
 
-    private void setMarcador(Camion camion) {
-        String nombre = preferences.getString(camion.getId()+"-nombreCamion", camion.getId());
-        //Log.i("setMarcador", nombre);
+    /**
+     * Método utilizado para añadir un marcador en al mapa
+     * @param camionMark
+     * @param latlng
+     * @return
+     */
+    private Marker setMarcador(Camion camionMark, LatLng latlng) {
+        String alias = preferences.getString(camionMark.getId()+"-nombreCamion", camionMark.getId());
+        //LatLng latlng = new LatLng(camionMark.getUltimaPosicion().getLatitude(), camionMark.getUltimaPosicion().getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(latlng)
+                .snippet(ultimaHoraCamion(camionMark))
+                .title(alias);
+
+        Marker marcador = mMap.addMarker(markerOptions);
+        return marcador;
+    }
+
+
+    /**
+     * Método encargado de calcular la hora equivalente a la última posición recibida de un camión
+     * @param camionH
+     * @return Retorna la hora en formato String
+     */
+    public String ultimaHoraCamion(Camion camionH) {
+        long horaLong = camionH.getUltimaPosicion().getTime();
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date(horaLong);
+        String hora = format.format(date);
+        return hora;
     }
 
 }
