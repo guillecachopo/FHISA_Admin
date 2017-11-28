@@ -123,7 +123,6 @@ public class RecyclerViewFragment2 extends Fragment {
 
                 final Camion camionPos = camion;
                 actualizarCamion(camionPos, dataSnapshot);
-                adaptador.notifyDataSetChanged();
             }
 
             @Override
@@ -144,7 +143,6 @@ public class RecyclerViewFragment2 extends Fragment {
 
                 final Camion camionPos = camion;
                 actualizarCamion(camionPos, dataSnapshot);
-                adaptador.notifyDataSetChanged();
             }
 
             @Override
@@ -178,6 +176,7 @@ public class RecyclerViewFragment2 extends Fragment {
                     long time = camionPos.getUltimaPosicion().getTime();
                     camionPos.setHoras(time);
                 }
+                adaptador.notifyDataSetChanged();
             }
 
             @Override

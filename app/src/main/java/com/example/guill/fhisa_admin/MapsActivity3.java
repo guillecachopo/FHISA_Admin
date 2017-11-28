@@ -529,22 +529,7 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();
-                Camion camion = null;
-                if (!listaIdsCamiones.contains(id)) { //Si la ID no está en la lista añadimos el camion
-                    camion = new Camion(id);
-                    listaIdsCamiones.add(id);
-                    listaCamiones.add(camion);
-                    int randomColor = generaColorRandom(); //Genero un color aleatorio para cada camion
-                    listaColores.add(randomColor); //Añado el color aleatorio a una lista
-
-                }
-                else {
-                    for (int i = 0; i < listaCamiones.size(); i++)
-                        if (listaCamiones.get(i).getId().compareTo(id) == 0) {
-                            camion = listaCamiones.get(i);
-                            //camion.clearPosiciones();
-                        }
-                }
+                Camion camion = crearCamion(id);
 
                 final Camion camionPos = camion;
                 Log.i("onChildAdded", camion.getId());
@@ -553,24 +538,8 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
                 String id = dataSnapshot.getKey();
-                Camion camion = null;
-                if (!listaIdsCamiones.contains(id)) { //Si la ID no está en la lista añadimos el camion
-                    camion = new Camion(id);
-                    listaIdsCamiones.add(id);
-                    listaCamiones.add(camion);
-                    int randomColor = generaColorRandom(); //Genero un color aleatorio para cada camion
-                    listaColores.add(randomColor); //Añado el color aleatorio a una lista
-
-                }
-                else {
-                    for (int i = 0; i < listaCamiones.size(); i++)
-                        if (listaCamiones.get(i).getId().compareTo(id) == 0) {
-                            camion = listaCamiones.get(i);
-                            //camion.clearPosiciones();
-                        }
-                }
+                Camion camion = crearCamion(id);
 
                 final Camion camionPos = camion;
                 Log.i("onChildChanged", camion.getId());
@@ -595,6 +564,31 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
             }
 
         });
+    }
+
+    /**
+     * Método empleado para la creación del camion en childAdded y childChanged
+     * @param id
+     * @return
+     */
+    private Camion crearCamion(String id) {
+        Camion camion = null;
+        if (!listaIdsCamiones.contains(id)) { //Si la ID no está en la lista añadimos el camion
+            camion = new Camion(id);
+            listaIdsCamiones.add(id);
+            listaCamiones.add(camion);
+            int randomColor = generaColorRandom(); //Genero un color aleatorio para cada camion
+            listaColores.add(randomColor); //Añado el color aleatorio a una lista
+
+        }
+        else {
+            for (int i = 0; i < listaCamiones.size(); i++)
+                if (listaCamiones.get(i).getId().compareTo(id) == 0) {
+                    camion = listaCamiones.get(i);
+                    //camion.clearPosiciones();
+                }
+        }
+        return camion;
     }
 
     /**

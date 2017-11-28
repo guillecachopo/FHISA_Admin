@@ -58,64 +58,66 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
 
         final String id = camion.getId();
-        String latitud = Double.toString(camion.getUltimaPosicion().getLatitude());
-        String longitud = Double.toString(camion.getUltimaPosicion().getLongitude());
+//        String latitud = Double.toString(camion.getUltimaPosicion().getLatitude());
+ //       String longitud = Double.toString(camion.getUltimaPosicion().getLongitude());
         String nombre = preferences.getString(id+"-nombreCamion", "");
 
+        if (camion.getPosicionesList().size() > 0) { //Damos tiempo a los datos para que carguen
+            DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            Date date = new Date(camion.getUltimaPosicion().getTime());
+            String hora = format.format(date);
 
-        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date date = new Date(camion.getUltimaPosicion().getTime());
-        String hora = format.format(date);
+            //Geocoder para hacer geolocalización inversa
+            Geocoder geocoder = new Geocoder(holder.tvImei.getContext(), Locale.getDefault());
+            try {
+                List<Address> list = geocoder.getFromLocation(camion.getUltimaPosicion().getLatitude(), camion.getUltimaPosicion().getLongitude(), 1);
+                if (!list.isEmpty()) {
+                    Address direccion = list.get(0);
+                    holder.tvUltimaPosicion.setText("Ultima posicion: " + direccion.getAddressLine(0));
+                }
 
-        //Geocoder para hacer geolocalización inversa
-        Geocoder geocoder = new Geocoder(holder.tvImei.getContext(),Locale.getDefault());
-        try {
-            List<Address> list = geocoder.getFromLocation(camion.getUltimaPosicion().getLatitude(), camion.getUltimaPosicion().getLongitude(), 1);
-            if (!list.isEmpty()) {
-                Address direccion = list.get(0);
-                holder.tvUltimaPosicion.setText("Ultima posicion: " + direccion.getAddressLine(0));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            if (nombre.equals(id)) { //Si se ha reestablecido el imei como nombre del camion
+                holder.tvIdentificador.setText("Identificador: ");
+                //Sin lo anterior, apareceria -> Identificador: 3843828217 (el imei) y no un blank
 
-        if (nombre.equals(id)) { //Si se ha reestablecido el imei como nombre del camion
-            holder.tvIdentificador.setText("Identificador: " );
-            //Sin lo anterior, apareceria -> Identificador: 3843828217 (el imei) y no un blank
-
-        } else {
-            holder.tvIdentificador.setText("Identificador: " + nombre);
-        }
-        holder.tvImei.setText("IMEI: " + id);
-        holder.tvHora.setText("Hora: " + hora);
-
-        final ArrayList<String> posicionesString = new ArrayList<>();
-        final ArrayList<String> horasString = new ArrayList<>();
-
-        for (int i = 0; i< camion.getPosicionesList().size(); i++) {
-            posicionesString.add(String.valueOf(camion.getPosicionesList().get(i).getLatitude()) + "," + camion.getPosicionesList().get(i).getLongitude());
-        }
-
-
-        for (int i = 0; i < camion.getHorasList().size(); i++) {
-            horasString.add(String.valueOf(camion.getPosicionesList().get(i).getTime()));
-        }
-
-
-        holder.cvCamion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(activity, DetallePosicionesCamion.class);
-                Intent intent = new Intent(activity, OpcionesCamionActivity.class);
-                intent.putExtra("id", id);
-                intent.putStringArrayListExtra("posiciones", posicionesString);
-                intent.putStringArrayListExtra("horas", horasString);
-                activity.startActivity(intent);
-
-
+            } else {
+                holder.tvIdentificador.setText("Identificador: " + nombre);
             }
-        });
+            holder.tvImei.setText("IMEI: " + id);
+            holder.tvHora.setText("Hora: " + hora);
+
+            final ArrayList<String> posicionesString = new ArrayList<>();
+            final ArrayList<String> horasString = new ArrayList<>();
+
+            for (int i = 0; i < camion.getPosicionesList().size(); i++) {
+                posicionesString.add(String.valueOf(camion.getPosicionesList().get(i).getLatitude()) + "," + camion.getPosicionesList().get(i).getLongitude());
+            }
+
+
+            for (int i = 0; i < camion.getHorasList().size(); i++) {
+                horasString.add(String.valueOf(camion.getPosicionesList().get(i).getTime()));
+            }
+
+
+            holder.cvCamion.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Intent intent = new Intent(activity, DetallePosicionesCamion.class);
+                    Intent intent = new Intent(activity, OpcionesCamionActivity.class);
+                    intent.putExtra("id", id);
+                    intent.putStringArrayListExtra("posiciones", posicionesString);
+                    intent.putStringArrayListExtra("horas", horasString);
+                    activity.startActivity(intent);
+
+
+                }
+            });
+
+        }
 
     }
 
