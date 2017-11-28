@@ -52,8 +52,19 @@ import java.util.Random;
 
 public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
 
+    /**
+     * Vistas del fragment
+     */
     View mView;
+
+    /**
+     * Vistas del mapa
+     */
     MapView mMapView;
+
+    /**
+     * Objeto mapa
+     */
     GoogleMap mMap;
 
     /**
@@ -95,32 +106,32 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
     /**
      * Lista en la que se almacenan las areas
      */
-    ArrayList<Area> listaAreas; //= new ArrayList<>();
+    ArrayList<Area> listaAreas;
 
     /**
      * Lista en la que se almacenan los circulos
      */
-    ArrayList<Circle> listaCirculos; //= new ArrayList<>();
+    ArrayList<Circle> listaCirculos;
 
     /**
      * Lista en la que se almacenan los camiones
      */
-    ArrayList<Camion> listaCamiones; //= new ArrayList<>();
+    ArrayList<Camion> listaCamiones;
 
     /**
      * Lista en la que se almacenan las ID de los camiones (imeis)
      */
-    ArrayList<String> listaIdsCamiones; //= new ArrayList<>();
+    ArrayList<String> listaIdsCamiones;
 
     /**
      * Lista en la que se almacenan las ID de las areas
      */
-    ArrayList<String> listaIdsAreas; //= new ArrayList<>();
+    ArrayList<String> listaIdsAreas;
 
     /**
      * Lista en la que se almacenan colores aleatorios
      */
-    ArrayList<Integer> listaColores; //= new ArrayList<>();
+    ArrayList<Integer> listaColores;
 
     /**
      * Booleano que indica si ir o no ir a un marcador especifico. Lo recogemos de otra activity
