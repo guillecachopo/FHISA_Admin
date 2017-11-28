@@ -222,8 +222,6 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
         inicializarMapa(mMap);
         setTipoMapaInicial(mMap);
 
-        this.listaCamiones = new ArrayList<>();
-
         inicializarAreas(areasRef);
 
         cargarCamiones(camionesRef);
@@ -550,7 +548,7 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
 
                 final Camion camionPos = camion;
                 Log.i("onChildAdded", camion.getId());
-                getUltimasPosiciones(camionPos, dataSnapshot);
+                actualizarCamion(camionPos, dataSnapshot);
             }
 
             @Override
@@ -576,7 +574,7 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
 
                 final Camion camionPos = camion;
                 Log.i("onChildChanged", camion.getId());
-                getUltimasPosiciones(camionPos, dataSnapshot);
+                actualizarCamion(camionPos, dataSnapshot);
 
             } //Id
 
@@ -604,8 +602,7 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
      * @param camionPos
      * @param dataSnapshot
      */
-
-    private void getUltimasPosiciones(final Camion camionPos, DataSnapshot dataSnapshot) {
+    private void actualizarCamion(final Camion camionPos, DataSnapshot dataSnapshot) {
 
         Query q = dataSnapshot.child("posiciones").getRef().orderByKey().limitToLast(1);
         q.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -620,7 +617,6 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
                     LatLng latlng = new LatLng(camionPos.getUltimaPosicion().getLatitude(), camionPos.getUltimaPosicion().getLongitude());
 
                     setMarcador(camionPos, latlng);
-
                 }
             }
 

@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Fragment> fragments = new ArrayList<>();
 
         fragments.add(new MapsActivity3());
-        fragments.add(new RecyclerViewFragment());
+        fragments.add(new RecyclerViewFragment2());
         fragments.add(new ErroresFragment());
 
         return fragments; //Ya tenemos los fragments en un arraylist
