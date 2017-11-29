@@ -609,8 +609,8 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
                     Log.i("getUltimasPosiciones", camionPos.getId() + ": " + String.valueOf(camionPos.getPosicionesList().size()));
 
                     LatLng latlng = new LatLng(camionPos.getUltimaPosicion().getLatitude(), camionPos.getUltimaPosicion().getLongitude());
-
                     setMarcador(camionPos, latlng);
+
                 }
             }
 
@@ -620,6 +620,7 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
             }
         });
     }
+
 
     /**
      * Método utilizado para añadir un marcador en al mapa
@@ -636,6 +637,16 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
                 .title(alias);
 
         Marker marcador = mMap.addMarker(markerOptions);
+        return marcador;
+    }
+
+    /**
+     * Método utilizado para actualizar un marcador en el mapa;
+     * @param marcador
+     */
+    private Marker actualizarMarcador(Camion camionMarker, LatLng latlng, Marker marcador) {
+        marcador.setPosition(latlng);
+        marcador.setVisible(true);
         return marcador;
     }
 

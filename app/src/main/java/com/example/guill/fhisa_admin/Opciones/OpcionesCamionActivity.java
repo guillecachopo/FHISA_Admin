@@ -1,5 +1,6 @@
 package com.example.guill.fhisa_admin.Opciones;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import com.example.guill.fhisa_admin.Globals;
 import com.example.guill.fhisa_admin.MainActivity;
 import com.example.guill.fhisa_admin.Preferences.CamionPreferences;
 import com.example.guill.fhisa_admin.R;
+import com.example.guill.fhisa_admin.Socket.PeticionLlamar;
 
 import java.util.ArrayList;
 
@@ -31,13 +33,15 @@ public class OpcionesCamionActivity extends AppCompatActivity {
     SharedPreferences pref;
     SharedPreferences.Editor editor;
 
+    ProgressDialog pDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opciones_camion);
         toolbar = (Toolbar) findViewById(R.id.actionBar);
-        if (toolbar!=null) {
+        if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -48,6 +52,22 @@ public class OpcionesCamionActivity extends AppCompatActivity {
         tvCamionId.setText("Camion: " + id);
 
 
+    }
+
+    public void verDatosCamion(View view) {
+        Bundle extras = getIntent().getExtras();
+        String imei = extras.getString("id");
+        Intent intent = new Intent(this, VehiculoActivity.class);
+        intent.putExtra("id", imei);
+        startActivity(intent);
+    }
+
+    public void llamarConductor(View view) {
+        Bundle extras = getIntent().getExtras();
+        String imei = extras.getString("id");
+
+        PeticionLlamar llamarTask = new PeticionLlamar(this);
+        llamarTask.execute(imei);
     }
 
     public void irMapa(View view) {
@@ -125,7 +145,7 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
     }
 
-    public void irCamionNombre(final View view){
+    public void irCamionNombre(final View view) {
         Bundle extras = getIntent().getExtras();
         id = extras.getString("id");
 
@@ -149,14 +169,14 @@ public class OpcionesCamionActivity extends AppCompatActivity {
                     String identificador = id;
                     pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     editor = pref.edit();
-                    editor.putString(id+"-nombreCamion", identificador);
+                    editor.putString(id + "-nombreCamion", identificador);
                     editor.apply();
                 } else {
                     String identificador = edt.getText().toString();
-                    Toast.makeText(getApplicationContext(), "El identificador personalizado del camión es: " +identificador , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "El identificador personalizado del camión es: " + identificador, Toast.LENGTH_SHORT).show();
                     pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     editor = pref.edit();
-                    editor.putString(id+"-nombreCamion", identificador);
+                    editor.putString(id + "-nombreCamion", identificador);
                     editor.apply();
                 }
 
@@ -174,7 +194,6 @@ public class OpcionesCamionActivity extends AppCompatActivity {
     }
 
 
-
     //Para volver al fragment anterior cuando hacemos click y no al activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -188,4 +207,5 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
         return true;
     }
+
 }
