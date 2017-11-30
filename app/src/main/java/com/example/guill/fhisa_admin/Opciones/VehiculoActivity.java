@@ -19,9 +19,22 @@ import com.example.guill.fhisa_admin.Socket.PeticionVehiculo;
 
 public class VehiculoActivity extends AppCompatActivity {
 
+    /**
+     * Declaración de TextViews de la actividad
+    */
     public TextView tvAliasVehiculo, tvIdVehiculo, tvImeiVehiculo, tvMatriculaVehiculo, tvTlfVehiculo;
+
+    /**
+     * Declaración de las preferencias compartidas de la aplicación
+     */
     public SharedPreferences preferences;
+    /**
+     * Declaración del editor de las preferencias compartidas de la aplicación
+     */
     public SharedPreferences.Editor editor;
+    /**
+     * Declaración de la Toolbar de la aplicación
+     */
     private Toolbar toolbar;
 
     @Override
@@ -44,17 +57,22 @@ public class VehiculoActivity extends AppCompatActivity {
 
         PeticionVehiculo peticionVehiculo = new PeticionVehiculo(this);
         peticionVehiculo.execute(imei);
-
-
-
     }
 
+    /**
+     * Método para obtener el imei del camión obtenido desde otra Activity
+     * @return imei
+     */
     private String getImei() {
         Bundle extras = getIntent().getExtras();
         String imei = extras.getString("id");
         return imei;
     }
 
+    /**
+     * Método para activar la toolbar
+     * @param toolbar
+     */
     private void setToolbar(Toolbar toolbar) {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -62,6 +80,9 @@ public class VehiculoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    /**
+     * Método que llama a la clase PeticionLlamar para llamar al número de teléfono
+    */
     public void llamarConductor(View view) {
         String imei = getImei();
 
@@ -69,6 +90,9 @@ public class VehiculoActivity extends AppCompatActivity {
         llamarTask.execute(imei);
     }
 
+    /**
+     * Método para cambiar el alias personalizado del camión
+     */
     public void cambiarAlias(final View view) {
         Bundle extras = getIntent().getExtras();
         final String imei = extras.getString("id");
@@ -79,8 +103,8 @@ public class VehiculoActivity extends AppCompatActivity {
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.etAlertDialogCamionNombre);
 
-        dialogBuilder.setTitle("Selección de id");
-        dialogBuilder.setMessage("Nuevo identificador del camión: ");
+        dialogBuilder.setTitle("Selección de Alias");
+        dialogBuilder.setMessage("Nuevo alias personalizado del camión: ");
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
@@ -89,7 +113,7 @@ public class VehiculoActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "No se ha introducido un valor válido", Toast.LENGTH_SHORT).show();
                     cambiarAlias(view);
                 } else if (introducido.equals("IMEI") || introducido.equals("imei")) {
-                    Toast.makeText(getApplicationContext(), "Se ha reestablecido el IMEI como identificador", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Se ha reestablecido el IMEI como alias", Toast.LENGTH_SHORT).show();
                     String identificador = imei;
                     preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     editor = preferences.edit();
@@ -97,7 +121,7 @@ public class VehiculoActivity extends AppCompatActivity {
                     editor.apply();
                 } else {
                     String identificador = edt.getText().toString();
-                    Toast.makeText(getApplicationContext(), "El identificador personalizado del camión es: " + identificador, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "El alias personalizado del camión es: " + identificador, Toast.LENGTH_SHORT).show();
                     preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     editor = preferences.edit();
                     editor.putString(imei + "-nombreCamion", identificador);
@@ -120,6 +144,17 @@ public class VehiculoActivity extends AppCompatActivity {
 
     }
 
+    public void esId(View view) {
+        Toast.makeText(this, "ID FHISA", Toast.LENGTH_SHORT).show();
+    }
+
+    public void esImei(View view) {
+        Toast.makeText(this, "IMEI", Toast.LENGTH_SHORT).show();
+    }
+
+    public void esMatricula(View view) {
+        Toast.makeText(this, "MATRICULA", Toast.LENGTH_SHORT).show();
+    }
 
 
     /**

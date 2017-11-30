@@ -51,7 +51,7 @@
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
 
-            <RelativeLayout
+ <!--           <RelativeLayout
                 android:id="@+id/rlVerVehiculo"
                 android:layout_width="match_parent"
                 android:layout_height="47dp"
@@ -78,7 +78,7 @@
                 android:layout_below="@+id/rlLlamar"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
+                android:background="@android:color/darker_gray"/> -->
 
             <RelativeLayout
                 android:id="@+id/rlLlamar"

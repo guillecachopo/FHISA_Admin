@@ -96,9 +96,9 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
         TextView tvTlfVehiculo = (TextView) activity.findViewById(R.id.tvTlfVehiculo);
 
 
-        tvIdVehiculo.setText("ID Fhisa: " +idFhisa);
-        tvImeiVehiculo.setText("IMEI: " + imei);
-        tvMatriculaVehiculo.setText("Matricula: " + matricula);
+        tvIdVehiculo.setText(idFhisa);
+        tvImeiVehiculo.setText(imei);
+        tvMatriculaVehiculo.setText(matricula);
         tvTlfVehiculo.setText(telefono);
     }
 }

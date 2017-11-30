@@ -54,13 +54,14 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
     }
 
+    /*
     public void verDatosCamion(View view) {
         Bundle extras = getIntent().getExtras();
         String imei = extras.getString("id");
         Intent intent = new Intent(this, VehiculoActivity.class);
         intent.putExtra("id", imei);
         startActivity(intent);
-    }
+    } */
 
     public void llamarConductor(View view) {
         Bundle extras = getIntent().getExtras();

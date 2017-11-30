@@ -12,9 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Opciones.OpcionesCamionActivity;
+import com.example.guill.fhisa_admin.Opciones.VehiculoActivity;
 import com.example.guill.fhisa_admin.R;
 
 import java.io.IOException;
@@ -112,9 +114,19 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
                     intent.putStringArrayListExtra("posiciones", posicionesString);
                     intent.putStringArrayListExtra("horas", horasString);
                     activity.startActivity(intent);
-
-
                 }
+            });
+
+            holder.cvCamion.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Toast.makeText(activity, "Datos del camión", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(activity, VehiculoActivity.class);
+                    intent.putExtra("id", id);
+                    activity.startActivity(intent);
+                    return false;
+                }
+
             });
 
         }

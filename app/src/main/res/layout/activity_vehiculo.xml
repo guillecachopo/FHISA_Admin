@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,76 +12,159 @@
         android:id="@+id/actionBar"
         layout="@layout/actionbar"></include>
 
-    <LinearLayout
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/actionBar"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvAliasVehiculo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:onClick="cambiarAlias"
-            android:background="?attr/selectableItemBackground"
-            android:text=""
-            android:textColor="@color/colorBlack"
-            android:textSize="33dp" />
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="4dp"
+        card_view:cardUseCompatPadding="true"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:onClick="llamarConductor"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin">
-
-            <ImageView
-                android:id="@+id/imgvTelefonoVehiculo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_tlf" />
+            android:layout_below="@+id/actionBar"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvTlfVehiculo"
+                android:id="@+id/tvAliasVehiculo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="cambiarAlias"
                 android:text=""
-                android:textColor="@color/colorBlack"
-                android:textSize="20sp" />
+                android:textColor="@color/colorFhisa"
+                android:textSize="33dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="llamarConductor"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
+
+                <ImageView
+                    android:id="@+id/imgvTelefonoVehiculo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_tlf" />
+
+                <TextView
+                    android:id="@+id/tvTlfVehiculo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Cargando...."
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="esId"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/imgvIdVehiculo"
+                    android:layout_width="21dp"
+                    android:layout_height="33dp"
+                    android:layout_weight="0.02"
+                    android:src="@drawable/ic_car1" />
+
+                <TextView
+                    android:id="@+id/tvIdVehiculo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Cargando..."
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="esImei"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
+
+                <ImageView
+                    android:id="@+id/imgvImeiVehiculo"
+                    android:layout_width="26dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_phone" />
+
+                <TextView
+                    android:id="@+id/tvImeiVehiculo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Cargando..."
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="esMatricula"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
+
+                <ImageView
+                    android:id="@+id/imgvMatriculaVehiculo"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_matricula" />
+
+                <TextView
+                    android:id="@+id/tvMatriculaVehiculo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Cargando..."
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvIdVehiculo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ID Fhisa:"
-            android:textColor="@color/colorBlack" />
 
-        <TextView
-            android:id="@+id/tvImeiVehiculo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="IMEI:"
-            android:textColor="@color/colorBlack" />
-
-        <TextView
-            android:id="@+id/tvMatriculaVehiculo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Matricula:"
-            android:textColor="@color/colorBlack" />
+    </android.support.v7.widget.CardView>
 
 
-    </LinearLayout>
+
+
 
 </LinearLayout>
