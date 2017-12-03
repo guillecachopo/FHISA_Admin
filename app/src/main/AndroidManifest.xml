@@ -67,12 +67,11 @@
         <activity
             android:name=".Preferences.CamionPreferencesActivity"
             android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".Opciones.AlbaranActivity"
-            />
-        <activity
-            android:name=".Opciones.VehiculoActivity"
-            />
+        <activity android:name=".Opciones.AlbaranActivity" />
+        <activity android:name=".Opciones.VehiculoActivity" />
+        <activity android:name=".Opciones.ListaConsumosActivity" />
+        <activity android:name=".Opciones.ListaAlbaranesActivity" />
+        <activity android:name=".Opciones.MantenimientoActivity"></activity>
     </application>
 
 </manifest>

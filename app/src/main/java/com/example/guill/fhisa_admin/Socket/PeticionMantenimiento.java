@@ -2,11 +2,16 @@ package com.example.guill.fhisa_admin.Socket;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.TextView;
 
-import com.example.guill.fhisa_admin.Objetos.Vehiculo;
+import com.example.guill.fhisa_admin.Adapter.AdapterMantenimiento;
+import com.example.guill.fhisa_admin.Objetos.ItvMantenimiento;
+import com.example.guill.fhisa_admin.Objetos.Mantenimiento;
 import com.example.guill.fhisa_admin.R;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,21 +20,25 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
- * Created by guill on 29/11/2017.
+ * Created by guill on 03/12/2017.
  */
 
-public class PeticionVehiculo extends AsyncTask<String, String, String> {
+public class PeticionMantenimiento extends AsyncTask<String, String, String> {
 
     public Activity activity;
-    public PeticionVehiculo(Activity activity) {
+    public RecyclerView recyclerView;
+
+    public PeticionMantenimiento(Activity activity, RecyclerView recyclerView) {
         this.activity = activity;
+        this.recyclerView = recyclerView;
     }
 
     /**
      * Before starting background thread
-     * */
+     */
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -56,7 +65,7 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
         json = "";
         int i = 0;
         do {
-            request = imei[0] + ", vehiculo, ";
+            request = imei[0] + ", mantenimiento, ";
             try {
                 salida.println(request);
                 respuesta = entrada.readLine();
@@ -80,24 +89,29 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
     }
 
     /**
-     *After completing background task
-     * **/
+     * After completing background task
+     **/
     @Override
     protected void onPostExecute(String json) {
-        Vehiculo vehiculo = new Gson().fromJson(json, Vehiculo.class);
-        String idFhisa = vehiculo.getId();
-        String imei = vehiculo.getImei();
-        String telefono = vehiculo.getTlf();
-        String matricula = vehiculo.getMatricula();
+        Gson gson = new GsonBuilder().create();
+        ItvMantenimiento itvMantenimiento = gson.fromJson(json, ItvMantenimiento.class);
+        ArrayList<Mantenimiento> mantenimiento = itvMantenimiento.getMantenimiento();
 
-        TextView tvIdVehiculo = (TextView) activity.findViewById(R.id.tvIdVehiculo);
-        TextView tvImeiVehiculo = (TextView) activity.findViewById(R.id.tvImeiVehiculo);
-        TextView tvMatriculaVehiculo = (TextView) activity.findViewById(R.id.tvMatriculaVehiculo);
-        TextView tvTlfVehiculo = (TextView) activity.findViewById(R.id.tvTlfVehiculo);
+        TextView tvItvMantenimiento = (TextView) activity.findViewById(R.id.tvItvMantenimiento);
+        TextView tvMatriculaMantenimiento = (TextView) activity.findViewById(R.id.tvMatriculaMantenimiento);
+        TextView tvPrecisaMantenimiento = (TextView) activity.findViewById(R.id.tvPrecisaMantenimiento);
 
-        tvIdVehiculo.setText(idFhisa);
-        tvImeiVehiculo.setText(imei);
-        tvMatriculaVehiculo.setText(matricula);
-        tvTlfVehiculo.setText(telefono);
+        tvItvMantenimiento.setText(itvMantenimiento.getITV());
+
+        Log.i("Mantenimiento", String.valueOf(mantenimiento));
+
+        if (String.valueOf(mantenimiento).compareTo("[]") != 0){
+        tvMatriculaMantenimiento.setText(mantenimiento.get(0).getVehiculo());
+        AdapterMantenimiento adapterMantenimiento = new AdapterMantenimiento(activity, mantenimiento);
+        recyclerView.setAdapter(adapterMantenimiento); }
+        else {
+            tvPrecisaMantenimiento.setText("El vehículo no requiere mantenimiento actualmente");
+        }
+
     }
 }

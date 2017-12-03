@@ -125,25 +125,27 @@ public class OpcionesCamionActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         id = extras.getString("id");
 
-        /*
-        Intent intent = new Intent(view.getContext(), AlbaranActivity.class);
+        Intent intent = new Intent(view.getContext(), ListaAlbaranesActivity.class);
         intent.putExtra("id", id);
-        startActivity(intent);*/
+        startActivity(intent);
+    }
 
-        /*
-        Peticiones peticion = new Peticiones("89.17.197.73", 6905);
-        Log.i("Peticion", peticion.getIp());
-        Log.i("Puerto", String.valueOf(peticion.getPuerto()));
-        try {
-            Vehiculo vehiculo = new Vehiculo();
-            vehiculo = peticion.obtenerVehiculo(id);
-            Log.i("Peticion", vehiculo.getMatricula());
+    public void irConsumos(View view) {
+        Bundle extras = getIntent().getExtras();
+        id = extras.getString("id");
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
+        Intent intent = new Intent(view.getContext(), ListaConsumosActivity.class);
+        intent.putExtra("id", id);
+        startActivity(intent);
+    }
 
+    public void irMantenimiento(View view) {
+        Bundle extras = getIntent().getExtras();
+        id = extras.getString("id");
+
+        Intent intent = new Intent(view.getContext(), MantenimientoActivity.class);
+        intent.putExtra("id", id);
+        startActivity(intent);
     }
 
     public void irCamionNombre(final View view) {

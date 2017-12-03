@@ -2,11 +2,13 @@ package com.example.guill.fhisa_admin.Socket;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.widget.TextView;
+import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
-import com.example.guill.fhisa_admin.Objetos.Vehiculo;
-import com.example.guill.fhisa_admin.R;
+import com.example.guill.fhisa_admin.Adapter.AdapterAlbaranes;
+import com.example.guill.fhisa_admin.Objetos.AlbaranReducido;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,26 +16,32 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.net.Socket;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Created by guill on 29/11/2017.
+ * Created by guill on 02/12/2017.
  */
 
-public class PeticionVehiculo extends AsyncTask<String, String, String> {
+public class PeticionAlbaranes extends AsyncTask<String, String, String> {
 
     public Activity activity;
-    public PeticionVehiculo(Activity activity) {
+    public RecyclerView recyclerView;
+
+    public PeticionAlbaranes(Activity activity, RecyclerView recyclerView) {
         this.activity = activity;
+        this.recyclerView = recyclerView;
     }
 
     /**
      * Before starting background thread
-     * */
+     */
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        System.out.println("Starting download");
+        Toast.makeText(activity, "Se están descargando los datos del Servidor...", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -56,7 +64,7 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
         json = "";
         int i = 0;
         do {
-            request = imei[0] + ", vehiculo, ";
+            request = imei[0] + ", albaranes, ";
             try {
                 salida.println(request);
                 respuesta = entrada.readLine();
@@ -76,28 +84,28 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
             e.printStackTrace();
         }
 
-        return json;
+        String jsonImei = imei[0] + "---" +json;
+        return jsonImei;
     }
 
     /**
-     *After completing background task
-     * **/
+     * After completing background task
+     **/
     @Override
-    protected void onPostExecute(String json) {
-        Vehiculo vehiculo = new Gson().fromJson(json, Vehiculo.class);
-        String idFhisa = vehiculo.getId();
-        String imei = vehiculo.getImei();
-        String telefono = vehiculo.getTlf();
-        String matricula = vehiculo.getMatricula();
+    protected void onPostExecute(String jsonImei) {
+        String parts[] = jsonImei.split("---");
+        String imei = parts[0];
+        String json = parts[1];
 
-        TextView tvIdVehiculo = (TextView) activity.findViewById(R.id.tvIdVehiculo);
-        TextView tvImeiVehiculo = (TextView) activity.findViewById(R.id.tvImeiVehiculo);
-        TextView tvMatriculaVehiculo = (TextView) activity.findViewById(R.id.tvMatriculaVehiculo);
-        TextView tvTlfVehiculo = (TextView) activity.findViewById(R.id.tvTlfVehiculo);
+        final Type tipoAlbaranes = new TypeToken<List<AlbaranReducido>>() {
+        }.getType();
+        final List<AlbaranReducido> albaranes = new Gson().fromJson(json, tipoAlbaranes);
 
-        tvIdVehiculo.setText(idFhisa);
-        tvImeiVehiculo.setText(imei);
-        tvMatriculaVehiculo.setText(matricula);
-        tvTlfVehiculo.setText(telefono);
+        Collections.reverse(albaranes);
+
+        AdapterAlbaranes adapterAlbaranes = new AdapterAlbaranes(activity, albaranes, imei);
+        recyclerView.setAdapter(adapterAlbaranes);
+
     }
+
 }

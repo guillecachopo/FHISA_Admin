@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/actionbar"></include>
+
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal"
+         >
+         <ImageView
+             android:layout_width="104dp"
+             android:layout_height="69dp"
+             android:src="@drawable/ic_fhisa_verde" />
+
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginLeft="70dp"
+             android:layout_marginRight="@dimen/activity_horizontal_margin"
+             android:orientation="vertical">
+
+             <TextView
+                 android:id="@+id/textView"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="end"
+                 android:textAlignment="viewEnd"
+                 android:textColor="@color/colorBlack"
+                 android:text="Mantenimiento del vehículo"
+                  />
+
+             <TextView
+                 android:id="@+id/tvMatriculaMantenimiento"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="end"
+                 android:textAlignment="viewEnd"
+                 android:textColor="@color/colorBlack"
+                 android:text=""/>
+
+         </LinearLayout>
+
+     </LinearLayout>
+
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorBlack"
+        android:text="Fábrica de Hormigones Industriales S.A."
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorFhisaLight"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="ITV:"
+            />
+
+        <TextView
+            android:id="@+id/tvItvMantenimiento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:textColor="@color/colorBlack"
+            android:text=""
+            />
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                >
+
+                <TextView
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="15dp"
+                    android:textColor="@color/colorFhisaLight"
+                    android:textStyle="bold"
+                    android:text="Operación"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="60dp"
+                    android:textSize="15dp"
+                    android:textColor="@color/colorFhisaLight"
+                    android:textStyle="bold"
+                    android:text="Ciclo"
+                    />
+
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvMantenimiento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:scrollbars="vertical"
+                />
+
+        </TableLayout>
+
+
+        </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/tvPrecisaMantenimiento"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorBlack"
+        android:text=""
+        />
+
+
+
+
+</LinearLayout>

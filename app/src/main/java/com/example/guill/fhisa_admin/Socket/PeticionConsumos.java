@@ -1,12 +1,17 @@
 package com.example.guill.fhisa_admin.Socket;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.guill.fhisa_admin.Objetos.Vehiculo;
+import com.example.guill.fhisa_admin.Adapter.AdapterConsumos;
+import com.example.guill.fhisa_admin.Objetos.Consumo;
 import com.example.guill.fhisa_admin.R;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,17 +19,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Created by guill on 29/11/2017.
+ * Created by guill on 30/11/2017.
  */
 
-public class PeticionVehiculo extends AsyncTask<String, String, String> {
+public class PeticionConsumos extends AsyncTask<String, String, String> {
 
     public Activity activity;
-    public PeticionVehiculo(Activity activity) {
+    public RecyclerView recyclerView;
+    public ProgressDialog pDialog;
+
+    public PeticionConsumos(Activity activity, RecyclerView recyclerView) {
         this.activity = activity;
+        this.recyclerView = recyclerView;
     }
 
     /**
@@ -33,7 +46,14 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        System.out.println("Starting download");
+        Toast.makeText(activity, "Se están descargando los datos del Servidor..." , Toast.LENGTH_SHORT).show();
+        /*
+        pDialog = new ProgressDialog(activity);
+        pDialog.setMessage("Descargando... Espere, por favor...");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show(); */
+
     }
 
     @Override
@@ -56,7 +76,7 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
         json = "";
         int i = 0;
         do {
-            request = imei[0] + ", vehiculo, ";
+            request = imei[0] + ", consumo, ";
             try {
                 salida.println(request);
                 respuesta = entrada.readLine();
@@ -84,20 +104,31 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
      * **/
     @Override
     protected void onPostExecute(String json) {
-        Vehiculo vehiculo = new Gson().fromJson(json, Vehiculo.class);
-        String idFhisa = vehiculo.getId();
-        String imei = vehiculo.getImei();
-        String telefono = vehiculo.getTlf();
-        String matricula = vehiculo.getMatricula();
+        //pDialog.dismiss();
 
-        TextView tvIdVehiculo = (TextView) activity.findViewById(R.id.tvIdVehiculo);
-        TextView tvImeiVehiculo = (TextView) activity.findViewById(R.id.tvImeiVehiculo);
-        TextView tvMatriculaVehiculo = (TextView) activity.findViewById(R.id.tvMatriculaVehiculo);
-        TextView tvTlfVehiculo = (TextView) activity.findViewById(R.id.tvTlfVehiculo);
+        final Type tipoConsumos = new TypeToken<List<Consumo>>(){}.getType();
+        final List<Consumo> consumos = new Gson().fromJson(json, tipoConsumos);
 
-        tvIdVehiculo.setText(idFhisa);
-        tvImeiVehiculo.setText(imei);
-        tvMatriculaVehiculo.setText(matricula);
-        tvTlfVehiculo.setText(telefono);
+        ArrayList<Consumo> consumos1 = new ArrayList<>();
+
+        for (Consumo consumo : consumos) {
+            if (consumo.getKm().compareTo("0") != 0) consumos1.add(consumo);
+        }
+
+        Collections.reverse(consumos1);
+
+        float suma = 0;
+        float consumoMedio = 0;
+        for (Consumo c : consumos1) {
+            suma += Float.parseFloat(c.getConsumo());
+        }
+        consumoMedio = (suma / consumos1.size()) * 100;
+
+        TextView tvConsumoMedio = (TextView) activity.findViewById(R.id.tvMediaConsumo);
+        tvConsumoMedio.setText(String.format("%.2f",consumoMedio) + " L/100Km");
+
+        AdapterConsumos adapterConsumos = new AdapterConsumos(activity, consumos1);
+        recyclerView.setAdapter(adapterConsumos);
+
     }
 }

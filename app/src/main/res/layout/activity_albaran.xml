@@ -7,66 +7,43 @@
     tools:context="com.example.guill.fhisa_admin.Opciones.AlbaranActivity"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_id"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="id"
-        />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:id="@+id/appBarLayout"
+        android:animateLayoutChanges="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
-    <TextView
-        android:id="@+id/tv_n_alb"
+        <include
+            android:id="@+id/actionBar"
+            layout="@layout/actionbar"></include>
+
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        </android.support.design.widget.TabLayout>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <!-- El ViewPager es el contenedor donde estaran viviendo los fragments -->
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="n_alb"
-        />
-    <TextView
-        android:id="@+id/tv_vehicle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="vehicle"
-        />
-    <TextView
-        android:id="@+id/tv_expedition"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="expedition"
-        />
-    <TextView
-        android:id="@+id/tv_transportDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="transportDate"
-        />
-    <TextView
-        android:id="@+id/tv_loader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="loader"
-        />
-    <TextView
-        android:id="@+id/tv_origin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="origin"
-        />
-    <TextView
-        android:id="@+id/tv_destination"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="destination"
-        />
-    <TextView
-        android:id="@+id/tv_price"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="price"
-        />
-    <TextView
-        android:id="@+id/tv_notes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="notes"
-        />
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/appBarLayout">
+
+    </android.support.v4.view.ViewPager>
 
 </LinearLayout>

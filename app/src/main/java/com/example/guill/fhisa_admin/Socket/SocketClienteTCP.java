@@ -1,8 +1,5 @@
 package com.example.guill.fhisa_admin.Socket;
 
-import com.example.guill.fhisa_admin.Objetos.Vehiculo;
-import com.google.gson.Gson;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -45,7 +42,8 @@ public class SocketClienteTCP {
         json = "";
         int i=0;
         do {
-            request = "860935033015443, vehiculo, ";
+           // request = "860935033015443, albaran, 301226" ;
+            request = "860935033015443, albaran, 301226";
             salida.println(request);
             respuesta = entrada.readLine();
             //System.out.println(i+": " +respuesta);
@@ -60,10 +58,23 @@ public class SocketClienteTCP {
 
         System.out.println(json);
 
-        Vehiculo vehiculo = new Gson().fromJson(json, Vehiculo.class);
 
-        System.out.println("Matricula: " + vehiculo.getMatricula());
-        System.out.println("Numero de tlf: " + vehiculo.getTlf());
+      //  final Type tipoConsumos = new TypeToken<List<Consumo>>(){}.getType();
+     //   final List<Consumo> consumos = new Gson().fromJson(json, tipoConsumos);
+
+        /*
+        System.out.println("Consumos: " + consumos.size());
+        for (Consumo consumo : consumos) {
+            System.out.println("id: " + consumo.getId());
+            System.out.println("vehiculo: " + consumo.getVehiculo());
+            System.out.println("articulo: " + consumo.getArticulo());
+            System.out.println("unidades: " + consumo.getUnidades());
+            System.out.println("consumo: " + consumo.getConsumo());
+            System.out.println("fecha: " + consumo.getFecha());
+            System.out.println("km: " + consumo.getKm());
+            System.out.println("---------------------");
+        }
+        */
 
     }
 }
