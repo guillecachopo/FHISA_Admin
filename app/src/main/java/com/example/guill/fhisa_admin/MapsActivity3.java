@@ -598,7 +598,8 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
      */
     private void actualizarCamion(final Camion camionPos, DataSnapshot dataSnapshot) {
 
-        Query q = dataSnapshot.child("posiciones").getRef().orderByKey().limitToLast(1);
+        Query q = dataSnapshot.child("rutas").child("ruta_actual").getRef().orderByKey();
+
         q.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -619,6 +620,29 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
 
             }
         });
+
+        /*
+        Query q = dataSnapshot.child("posiciones").getRef().orderByKey().limitToLast(1);
+        q.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    Posicion posicion = child.getValue(Posicion.class);
+                    camionPos.setPosiciones(posicion);
+                    Log.i("getUltimasPosiciones", String.valueOf(camionPos.getId() + ": " +posicion.getTime()));
+                    Log.i("getUltimasPosiciones", camionPos.getId() + ": " + String.valueOf(camionPos.getPosicionesList().size()));
+
+                    LatLng latlng = new LatLng(camionPos.getUltimaPosicion().getLatitude(), camionPos.getUltimaPosicion().getLongitude());
+                    setMarcador(camionPos, latlng);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        }); */
     }
 
 
