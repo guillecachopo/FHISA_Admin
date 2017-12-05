@@ -27,11 +27,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,12 +43,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.DirectionsApi;
+import com.google.maps.GeoApiContext;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.TravelMode;
 
+import org.joda.time.DateTime;
+
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by guill on 27/11/2017.
@@ -600,7 +615,7 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
 
         Query q = dataSnapshot.child("rutas").child("ruta_actual").getRef().orderByKey();
 
-        q.addListenerForSingleValueEvent(new ValueEventListener() {
+        q.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
@@ -609,8 +624,9 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
                     Log.i("getUltimasPosiciones", String.valueOf(camionPos.getId() + ": " +posicion.getTime()));
                     Log.i("getUltimasPosiciones", camionPos.getId() + ": " + String.valueOf(camionPos.getPosicionesList().size()));
 
-                    LatLng latlng = new LatLng(camionPos.getUltimaPosicion().getLatitude(), camionPos.getUltimaPosicion().getLongitude());
-                    setMarcador(camionPos, latlng);
+                    final LatLng latlng = new LatLng(camionPos.getUltimaPosicion().getLatitude(), camionPos.getUltimaPosicion().getLongitude());
+                    Marker marcador = setMarcador(camionPos, latlng);
+                    obtenerRutaOptimaDestino(latlng, marcador);
 
                 }
             }
@@ -620,31 +636,7 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
 
             }
         });
-
-        /*
-        Query q = dataSnapshot.child("posiciones").getRef().orderByKey().limitToLast(1);
-        q.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Posicion posicion = child.getValue(Posicion.class);
-                    camionPos.setPosiciones(posicion);
-                    Log.i("getUltimasPosiciones", String.valueOf(camionPos.getId() + ": " +posicion.getTime()));
-                    Log.i("getUltimasPosiciones", camionPos.getId() + ": " + String.valueOf(camionPos.getPosicionesList().size()));
-
-                    LatLng latlng = new LatLng(camionPos.getUltimaPosicion().getLatitude(), camionPos.getUltimaPosicion().getLongitude());
-                    setMarcador(camionPos, latlng);
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); */
     }
-
 
     /**
      * Método utilizado para añadir un marcador en al mapa
@@ -659,6 +651,7 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
                 .position(latlng)
                 .snippet(ultimaHoraCamion(camionMark))
                 .title(alias);
+
 
         Marker marcador = mMap.addMarker(markerOptions);
         return marcador;
@@ -686,6 +679,82 @@ public class MapsActivity3 extends Fragment implements OnMapReadyCallback {
         Date date = new Date(horaLong);
         String hora = format.format(date);
         return hora;
+    }
+
+    private GeoApiContext getGeoContext() {
+        GeoApiContext geoApiContext = new GeoApiContext();
+        return geoApiContext.setQueryRateLimit(3)
+                .setApiKey(getString(R.string.directionsApiKey))
+                .setConnectTimeout(5, TimeUnit.SECONDS)
+                .setReadTimeout(5, TimeUnit.SECONDS)
+                .setWriteTimeout(5, TimeUnit.SECONDS);
+    }
+
+    private Marker addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_blue_marker2);
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress));
+        return mMap.addMarker(new MarkerOptions()
+                .icon(icon)
+                .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
+                .title(results.routes[0].legs[0].startAddress).snippet(getEndLocationTitle(results)));
+    }
+
+    private String getEndLocationTitle(DirectionsResult results){
+        return  "Tiempo estimado: "+ results.routes[0].legs[0].duration.humanReadable +
+                " Distancia: " + results.routes[0].legs[0].distance.humanReadable;
+    }
+
+    private Polyline addPolyline(DirectionsResult results, GoogleMap mMap) {
+        List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
+        Polyline polyline = mMap.addPolyline(new PolylineOptions()
+                .addAll(decodedPath)
+                .color(Color.BLUE));
+        polyline.setWidth(12);
+        return polyline;
+    }
+
+    private void obtenerRutaOptimaDestino(LatLng latlng, final Marker marcadorOrigen) {
+        final String latitudOrigen = String.valueOf(latlng.latitude);
+        final String longitudOrigen = String.valueOf(latlng.longitude);
+        final String latitudlongitudOrigen = latitudOrigen+","+longitudOrigen;
+        final String latitudLongitudDestino = "43.533385,-5.844083";
+
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                DateTime now = new DateTime();
+                try {
+                    Log.i("ClickMarcador", "Click en el marcador");
+                    DirectionsResult results = DirectionsApi.newRequest(getGeoContext())
+                            .mode(TravelMode.DRIVING)
+                            .origin(latitudlongitudOrigen)
+                            .destination(latitudLongitudDestino)
+                            .departureTime(now)
+                            .await();
+
+                    final Marker marcadorDestino = addMarkersToMap(results, mMap);
+                    final Polyline rutaOptima = addPolyline(results, mMap);
+
+                    mMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
+                        @Override
+                        public void onInfoWindowLongClick(Marker marker) {
+                            marcadorDestino.remove();
+                            rutaOptima.remove();
+                        }
+                    });
+
+                } catch (ApiException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                return false;
+            }
+        });
     }
 
 }
