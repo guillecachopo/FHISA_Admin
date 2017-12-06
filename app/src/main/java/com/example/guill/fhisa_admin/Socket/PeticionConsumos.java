@@ -63,7 +63,7 @@ public class PeticionConsumos extends AsyncTask<String, String, String> {
         PrintWriter salida = null;
         try {
             socketCliente = new Socket("89.17.197.73", 6905); //"89.17.197.73", 6905
-            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream(),"ISO-8859-1"));
             salida = new PrintWriter(new BufferedWriter(new
                     OutputStreamWriter(socketCliente.getOutputStream())), true);
         } catch (IOException e) {
@@ -106,29 +106,35 @@ public class PeticionConsumos extends AsyncTask<String, String, String> {
     protected void onPostExecute(String json) {
         //pDialog.dismiss();
 
-        final Type tipoConsumos = new TypeToken<List<Consumo>>(){}.getType();
-        final List<Consumo> consumos = new Gson().fromJson(json, tipoConsumos);
+        if (json.compareTo("error 401") == 0) {
+            TextView tvNoVelneo = (TextView) activity.findViewById(R.id.tvConsumosNoVelneo);
+            tvNoVelneo.setText("El vehículo no está registrado en Velneo");
+        } else {
+            final Type tipoConsumos = new TypeToken<List<Consumo>>() {
+            }.getType();
+            final List<Consumo> consumos = new Gson().fromJson(json, tipoConsumos);
 
-        ArrayList<Consumo> consumos1 = new ArrayList<>();
+            ArrayList<Consumo> consumos1 = new ArrayList<>();
 
-        for (Consumo consumo : consumos) {
-            if (consumo.getKm().compareTo("0") != 0) consumos1.add(consumo);
+            for (Consumo consumo : consumos) {
+                if (consumo.getKm().compareTo("0") != 0) consumos1.add(consumo);
+            }
+
+            Collections.reverse(consumos1);
+
+            float suma = 0;
+            float consumoMedio = 0;
+            for (Consumo c : consumos1) {
+                suma += Float.parseFloat(c.getConsumo());
+            }
+            consumoMedio = (suma / consumos1.size()) * 100;
+
+            TextView tvConsumoMedio = (TextView) activity.findViewById(R.id.tvMediaConsumo);
+            tvConsumoMedio.setText(String.format("%.2f", consumoMedio) + " L/100Km");
+
+            AdapterConsumos adapterConsumos = new AdapterConsumos(activity, consumos1);
+            recyclerView.setAdapter(adapterConsumos);
         }
-
-        Collections.reverse(consumos1);
-
-        float suma = 0;
-        float consumoMedio = 0;
-        for (Consumo c : consumos1) {
-            suma += Float.parseFloat(c.getConsumo());
-        }
-        consumoMedio = (suma / consumos1.size()) * 100;
-
-        TextView tvConsumoMedio = (TextView) activity.findViewById(R.id.tvMediaConsumo);
-        tvConsumoMedio.setText(String.format("%.2f",consumoMedio) + " L/100Km");
-
-        AdapterConsumos adapterConsumos = new AdapterConsumos(activity, consumos1);
-        recyclerView.setAdapter(adapterConsumos);
 
     }
 }

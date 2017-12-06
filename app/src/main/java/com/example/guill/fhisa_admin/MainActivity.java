@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Fragment> agregarFragment(){
         ArrayList<Fragment> fragments = new ArrayList<>();
 
-        fragments.add(new MapsActivity3());
+        fragments.add(new MapsActivity5());
         fragments.add(new RecyclerViewFragment2());
         fragments.add(new ErroresFragment());
 

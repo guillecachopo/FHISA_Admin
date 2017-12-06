@@ -25,7 +25,7 @@ public class SocketClienteTCP {
         try {
             socketCliente = new Socket("89.17.197.73", 6905);
             // Obtenemos el canal de entrada
-            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream(),"ISO-8859-1"));
             // Obtenemos el canal de salida
             salida = new PrintWriter(new BufferedWriter(new
                     OutputStreamWriter(socketCliente.getOutputStream())),true);
@@ -43,11 +43,13 @@ public class SocketClienteTCP {
         int i=0;
         do {
            // request = "860935033015443, albaran, 301226" ;
-            request = "860935033015443, albaran, 301226";
+            request = "860935033015443, ultimo_albaran, ";
             salida.println(request);
             respuesta = entrada.readLine();
             //System.out.println(i+": " +respuesta);
-            if (respuesta!=null) json+=respuesta;
+            if (respuesta!=null) {
+                json+=respuesta;
+            }
             i++;
         } while (respuesta != null);
 
@@ -59,7 +61,7 @@ public class SocketClienteTCP {
         System.out.println(json);
 
 
-      //  final Type tipoConsumos = new TypeToken<List<Consumo>>(){}.getType();
+        //  final Type tipoConsumos = new TypeToken<List<Consumo>>(){}.getType();
      //   final List<Consumo> consumos = new Gson().fromJson(json, tipoConsumos);
 
         /*

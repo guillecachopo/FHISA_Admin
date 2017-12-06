@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.example.guill.fhisa_admin.Objetos.Vehiculo;
 import com.example.guill.fhisa_admin.R;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,7 +44,7 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
         PrintWriter salida = null;
         try {
             socketCliente = new Socket("89.17.197.73", 6905); //"89.17.197.73", 6905
-            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream(),"ISO-8859-1"));
             salida = new PrintWriter(new BufferedWriter(new
                     OutputStreamWriter(socketCliente.getOutputStream())), true);
         } catch (IOException e) {
@@ -84,7 +85,8 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
      * **/
     @Override
     protected void onPostExecute(String json) {
-        Vehiculo vehiculo = new Gson().fromJson(json, Vehiculo.class);
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        Vehiculo vehiculo = gson.fromJson(json, Vehiculo.class);
         String idFhisa = vehiculo.getId();
         String imei = vehiculo.getImei();
         String telefono = vehiculo.getTlf();

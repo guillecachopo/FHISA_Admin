@@ -52,7 +52,7 @@ public class PeticionMantenimiento extends AsyncTask<String, String, String> {
         PrintWriter salida = null;
         try {
             socketCliente = new Socket("89.17.197.73", 6905); //"89.17.197.73", 6905
-            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream(),"ISO-8859-1"));
             salida = new PrintWriter(new BufferedWriter(new
                     OutputStreamWriter(socketCliente.getOutputStream())), true);
         } catch (IOException e) {
@@ -94,23 +94,29 @@ public class PeticionMantenimiento extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String json) {
         Gson gson = new GsonBuilder().create();
-        ItvMantenimiento itvMantenimiento = gson.fromJson(json, ItvMantenimiento.class);
-        ArrayList<Mantenimiento> mantenimiento = itvMantenimiento.getMantenimiento();
 
-        TextView tvItvMantenimiento = (TextView) activity.findViewById(R.id.tvItvMantenimiento);
-        TextView tvMatriculaMantenimiento = (TextView) activity.findViewById(R.id.tvMatriculaMantenimiento);
-        TextView tvPrecisaMantenimiento = (TextView) activity.findViewById(R.id.tvPrecisaMantenimiento);
+        if (json.compareTo("error 401") == 0) {
+            TextView tvNoVelneo = (TextView) activity.findViewById(R.id.tvMantenimientoNoVelneo);
+            tvNoVelneo.setText("El vehículo no está registrado en Velneo");
+        } else {
+            ItvMantenimiento itvMantenimiento = gson.fromJson(json, ItvMantenimiento.class);
+            ArrayList<Mantenimiento> mantenimiento = itvMantenimiento.getMantenimiento();
 
-        tvItvMantenimiento.setText(itvMantenimiento.getITV());
+            TextView tvItvMantenimiento = (TextView) activity.findViewById(R.id.tvItvMantenimiento);
+            TextView tvMatriculaMantenimiento = (TextView) activity.findViewById(R.id.tvMatriculaMantenimiento);
+            TextView tvPrecisaMantenimiento = (TextView) activity.findViewById(R.id.tvPrecisaMantenimiento);
 
-        Log.i("Mantenimiento", String.valueOf(mantenimiento));
+            tvItvMantenimiento.setText(itvMantenimiento.getITV());
 
-        if (String.valueOf(mantenimiento).compareTo("[]") != 0){
-        tvMatriculaMantenimiento.setText(mantenimiento.get(0).getVehiculo());
-        AdapterMantenimiento adapterMantenimiento = new AdapterMantenimiento(activity, mantenimiento);
-        recyclerView.setAdapter(adapterMantenimiento); }
-        else {
-            tvPrecisaMantenimiento.setText("El vehículo no requiere mantenimiento actualmente");
+            Log.i("Mantenimiento", String.valueOf(mantenimiento));
+
+            if (String.valueOf(mantenimiento).compareTo("[]") != 0) {
+                tvMatriculaMantenimiento.setText(mantenimiento.get(0).getVehiculo());
+                AdapterMantenimiento adapterMantenimiento = new AdapterMantenimiento(activity, mantenimiento);
+                recyclerView.setAdapter(adapterMantenimiento);
+            } else {
+                tvPrecisaMantenimiento.setText("El vehículo no requiere mantenimiento actualmente");
+            }
         }
 
     }

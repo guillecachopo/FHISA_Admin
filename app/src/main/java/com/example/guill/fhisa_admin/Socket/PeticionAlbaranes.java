@@ -3,10 +3,12 @@ package com.example.guill.fhisa_admin.Socket;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Adapter.AdapterAlbaranes;
 import com.example.guill.fhisa_admin.Objetos.AlbaranReducido;
+import com.example.guill.fhisa_admin.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -51,7 +53,7 @@ public class PeticionAlbaranes extends AsyncTask<String, String, String> {
         PrintWriter salida = null;
         try {
             socketCliente = new Socket("89.17.197.73", 6905); //"89.17.197.73", 6905
-            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream(),"ISO-8859-1"));
             salida = new PrintWriter(new BufferedWriter(new
                     OutputStreamWriter(socketCliente.getOutputStream())), true);
         } catch (IOException e) {
@@ -97,14 +99,26 @@ public class PeticionAlbaranes extends AsyncTask<String, String, String> {
         String imei = parts[0];
         String json = parts[1];
 
-        final Type tipoAlbaranes = new TypeToken<List<AlbaranReducido>>() {
-        }.getType();
-        final List<AlbaranReducido> albaranes = new Gson().fromJson(json, tipoAlbaranes);
+        if (json.compareTo("[ ]]") != 0) {
 
-        Collections.reverse(albaranes);
+            if (json.compareTo("error 401") == 0) {
+                TextView tvNoVelneo = (TextView) activity.findViewById(R.id.tvAlbaranesNoVelneo);
+                tvNoVelneo.setText("El vehículo no está registrado en Velneo");
+            } else {
 
-        AdapterAlbaranes adapterAlbaranes = new AdapterAlbaranes(activity, albaranes, imei);
-        recyclerView.setAdapter(adapterAlbaranes);
+                final Type tipoAlbaranes = new TypeToken<List<AlbaranReducido>>() {
+                }.getType();
+                final List<AlbaranReducido> albaranes = new Gson().fromJson(json, tipoAlbaranes);
+
+                Collections.reverse(albaranes);
+
+                AdapterAlbaranes adapterAlbaranes = new AdapterAlbaranes(activity, albaranes, imei);
+                recyclerView.setAdapter(adapterAlbaranes);
+            }
+        } else {
+            TextView tvNoAlbaranes = (TextView) activity.findViewById(R.id.tvNoHayAlbaranes);
+            tvNoAlbaranes.setText("Este vehículo no dispone de ningún albarán hoy");
+        }
 
     }
 

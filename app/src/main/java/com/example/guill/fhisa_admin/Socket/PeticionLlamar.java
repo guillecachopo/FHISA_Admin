@@ -46,7 +46,7 @@ public class PeticionLlamar extends AsyncTask<String, String, String> {
         PrintWriter salida = null;
         try {
             socketCliente = new Socket("89.17.197.73", 6905); //"89.17.197.73", 6905
-            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+            entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream(),"ISO-8859-1"));
             salida = new PrintWriter(new BufferedWriter(new
                     OutputStreamWriter(socketCliente.getOutputStream())), true);
         } catch (IOException e) {
