@@ -166,7 +166,7 @@ public class RecyclerViewFragment2 extends Fragment {
      */
     private void actualizarCamion(final Camion camionPos, DataSnapshot dataSnapshot) {
 
-        Query q = dataSnapshot.child("posiciones").getRef().orderByKey().limitToLast(1);
+        Query q = dataSnapshot.child("rutas").child("ruta_actual").getRef().orderByKey().limitToLast(1);
         q.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -98,8 +98,7 @@ public class MapsActivity5 extends Fragment implements OnMapReadyCallback {
     /**
      * Referencia de los camiones en Firebase
      */
-    //final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
-    final DatabaseReference camionesRef = database.getReference("camioness");
+    final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
 
 
     /**
@@ -163,6 +162,9 @@ public class MapsActivity5 extends Fragment implements OnMapReadyCallback {
      */
     String idIrMarcador;
 
+    private Map<String, Marker> mMarkerMap = new HashMap<>();
+
+
 
 
     @Override
@@ -220,6 +222,7 @@ public class MapsActivity5 extends Fragment implements OnMapReadyCallback {
             }
         });
 
+
         return mView;
     }
 
@@ -243,53 +246,15 @@ public class MapsActivity5 extends Fragment implements OnMapReadyCallback {
         setTipoMapaInicial(mMap);
 
         inicializarAreas(areasRef);
-
         cargarCamiones(camionesRef);
-
-        final Map<String, Marker> mMarkerMap = new HashMap<>();
 
         camionesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Camion> listaCamiones = new ArrayList<Camion>();
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String imei = snapshot.getKey();
-                    String json = preferences.getString(imei, "");
-                    Log.i("PRUEBAS", json);
-                    Gson gson = new Gson();
-                    Camion camion = gson.fromJson(json, Camion.class);
-                    listaCamiones.add(camion);
-                }
-
-                //Log.i("PRUEBAS", "Posiciones: " + listaCamiones.get(0).getPosicionesList().size());
-
-                for (Camion camion : listaCamiones) {
-                    final LatLng latlng = new LatLng(camion.getUltimaPosicion().getLatitude(), camion.getUltimaPosicion().getLongitude());
-
-                    Marker previousMarker = mMarkerMap.get(camion.getId());
-
-                    if (previousMarker != null) {
-                        //previous marker exists, update position:
-                        previousMarker.setPosition(latlng);
-                        previousMarker.setSnippet(ultimaHoraCamion(camion));
-                    } else {
-
-                        String alias = preferences.getString(camion.getId() + "-nombreCamion", camion.getId());
-                        MarkerOptions markerOptions = new MarkerOptions()
-                                .position(latlng)
-                                .snippet(ultimaHoraCamion(camion))
-                                .title(alias);
-
-                        Marker marcador = mMap.addMarker(markerOptions);
-
-                        //put this new marker in the HashMap:
-                        mMarkerMap.put(camion.getId(), marcador);
-                    }
-
-                }
-
-
+                listaCamiones = addCamionesLista(listaCamiones, dataSnapshot);
+                addMarcadoresCamiones(mMarkerMap, listaCamiones);
             }
 
             @Override
@@ -297,10 +262,63 @@ public class MapsActivity5 extends Fragment implements OnMapReadyCallback {
 
             }
         });
+    }
 
 
+    /**
+     * Recoge los datos guardados en las Shared Preferences de los camiones y los añade a la lista de camiones
+     * @param listaCamiones
+     * @param dataSnapshot
+     * @return
+     */
+    private ArrayList<Camion> addCamionesLista(ArrayList<Camion> listaCamiones, DataSnapshot dataSnapshot) {
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            String imei = snapshot.getKey();
+            if (imei.compareTo("353762096491053")!=0 && imei.compareTo("359122080005498")!=0 && imei.compareTo("860935033015443")!=0) {
+                String json = preferences.getString(imei, "");
+                Log.i("PRUEBAS", json);
+                Gson gson = new Gson();
+                Camion camion = gson.fromJson(json, Camion.class);
+                listaCamiones.add(camion);
 
+                buscadoEnMenu(camion); //Se entra aquí si se ha buscado el camión desde las opciones
 
+            }
+        }
+        return listaCamiones;
+    }
+
+    /**
+     * Modifica el HashMap para crear y actualizar los marcadores de los camiones
+     * @param mMarkerMap
+     */
+    private void addMarcadoresCamiones(Map<String, Marker> mMarkerMap, ArrayList<Camion> listaCamiones) {
+        for (final Camion camion : listaCamiones) {
+            final LatLng latlng = new LatLng(camion.getUltimaPosicion().getLatitude(), camion.getUltimaPosicion().getLongitude());
+
+            Marker previousMarker = mMarkerMap.get(camion.getId());
+
+            if (previousMarker != null) {
+                //previous marker exists, update position:
+                previousMarker.setPosition(latlng);
+                previousMarker.setSnippet(ultimaHoraCamion(camion));
+            } else {
+
+                String alias = preferences.getString(camion.getId() + "-nombreCamion", camion.getId());
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(latlng)
+                        .snippet(ultimaHoraCamion(camion))
+                        .title(alias);
+
+                final Marker marcador = mMap.addMarker(markerOptions);
+                marcador.setTag(camion.getId());
+
+                //put this new marker in the HashMap:
+                mMarkerMap.put(camion.getId(), marcador);
+
+            }
+
+        }
     }
 
     /**
@@ -377,10 +395,6 @@ public class MapsActivity5 extends Fragment implements OnMapReadyCallback {
             }
         });
 
-
-
-
-
     }
 
     /**
@@ -429,64 +443,6 @@ public class MapsActivity5 extends Fragment implements OnMapReadyCallback {
         }
 
         camionPos.setPosicionesList(listaPosiciones);
-
-        //return camionPos;
-
-        /*
-        Query q = dataSnapshot.child("rutas").child("ruta_actual").getRef().orderByKey().limitToLast(1);
-
-        q.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Posicion posicion = child.getValue(Posicion.class);
-                    camionPos.setPosiciones(posicion);
-                    Log.i("getUltimasPosiciones", String.valueOf(camionPos.getId() + ": " +posicion.getTime()));
-                    Log.i("getUltimasPosiciones", camionPos.getId() + ": " + String.valueOf(camionPos.getPosicionesList().size()));
-
-                    final LatLng latlng = new LatLng(camionPos.getUltimaPosicion().getLatitude(), camionPos.getUltimaPosicion().getLongitude());
-                    Marker marcador = setMarcador(camionPos, latlng);
-                    obtenerRutaOptimaDestino(latlng, marcador);
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        */
-    }
-
-    /**
-     * Método utilizado para añadir un marcador en al mapa
-     * @param camionMark
-     * @param latlng
-     * @return
-     */
-    private Marker setMarcador(Camion camionMark, LatLng latlng) {
-        String alias = preferences.getString(camionMark.getId()+"-nombreCamion", camionMark.getId());
-        //LatLng latlng = new LatLng(camionMark.getUltimaPosicion().getLatitude(), camionMark.getUltimaPosicion().getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions()
-                .position(latlng)
-                .snippet(ultimaHoraCamion(camionMark))
-                .title(alias);
-
-
-        Marker marcador = mMap.addMarker(markerOptions);
-        return marcador;
-    }
-
-    /**
-     * Método utilizado para actualizar un marcador en el mapa;
-     * @param marcador
-     */
-    private Marker actualizarMarcador(Camion camionMarker, LatLng latlng, Marker marcador) {
-        marcador.setPosition(latlng);
-        marcador.setVisible(true);
-        return marcador;
     }
 
 
@@ -502,8 +458,6 @@ public class MapsActivity5 extends Fragment implements OnMapReadyCallback {
         String hora = format.format(date);
         return hora;
     }
-
-
 
 
     /**
@@ -809,10 +763,11 @@ public class MapsActivity5 extends Fragment implements OnMapReadyCallback {
     }
 
     private Marker addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_blue_marker2);
+        //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_blue_marker2);
+        BitmapDescriptor icon2 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
         //mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress));
         return mMap.addMarker(new MarkerOptions()
-                .icon(icon)
+                .icon(icon2)
                 .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))
                 .title(results.routes[0].legs[0].startAddress).snippet(getEndLocationTitle(results)));
     }
@@ -837,42 +792,64 @@ public class MapsActivity5 extends Fragment implements OnMapReadyCallback {
         final String latitudlongitudOrigen = latitudOrigen+","+longitudOrigen;
         final String latitudLongitudDestino = "43.533385,-5.844083";
 
+        final Polyline[] ruta = new Polyline[1];
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                DateTime now = new DateTime();
-                try {
-                    Log.i("ClickMarcador", "Click en el marcador");
-                    DirectionsResult results = DirectionsApi.newRequest(getGeoContext())
-                            .mode(TravelMode.DRIVING)
-                            .origin(latitudlongitudOrigen)
-                            .destination(latitudLongitudDestino)
-                            .departureTime(now)
-                            .await();
 
-                    final Marker marcadorDestino = addMarkersToMap(results, mMap);
-                    final Polyline rutaOptima = addPolyline(results, mMap);
+                if (marker.getTag().equals(marcadorOrigen.getTag())) {
+                    DateTime now = new DateTime();
+                    try {
+                        Log.i("ClickMarcador", "Click en el marcador");
+                        DirectionsResult results = DirectionsApi.newRequest(getGeoContext())
+                                .mode(TravelMode.DRIVING)
+                                .origin(latitudlongitudOrigen)
+                                .destination(latitudLongitudDestino)
+                                .departureTime(now)
+                                .await();
 
-                    mMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
-                        @Override
-                        public void onInfoWindowLongClick(Marker marker) {
-                            marcadorDestino.remove();
-                            rutaOptima.remove();
-                        }
-                    });
+                        final Marker marcadorDestino = addMarkersToMap(results, mMap);
+                        marcadorDestino.setTag("destino-"+marcadorOrigen.getTag());
+                        final Polyline rutaOptima = addPolyline(results, mMap);
+                        ruta[0] = rutaOptima;
 
-                } catch (ApiException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+                    } catch (ApiException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-
                 return false;
             }
         });
+
+        mMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
+            @Override
+            public void onInfoWindowLongClick(Marker marker) {
+                if (marker.getTag().equals("destino-"+marcadorOrigen.getTag()))
+                marker.remove();
+                ruta[0].remove();
+            }
+        });
+    }
+
+    /**
+     * Se comprueba si el camión se ha buscado. Si se ha buscado, se accederá a él
+     * @param camionBuscado
+     */
+    public void buscadoEnMenu(Camion camionBuscado) {
+        if (isAdded()) {
+            Globals globals = (Globals) getActivity().getApplicationContext();
+            if (globals.isIr() && globals.getId().equals(camionBuscado.getId())) {
+                LatLng irLatLng = new LatLng(camionBuscado.getUltimaPosicion().getLatitude(), camionBuscado.getUltimaPosicion().getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(irLatLng, 14)); //Ponemos el mapa inicialmente centrado en el centro de asturias
+                globals.setIr(false);
+            }
+        }
     }
 
 }
