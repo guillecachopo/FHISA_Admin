@@ -102,11 +102,13 @@ public class Albaran {
     }
 
     public String getAditivos_kgm3() {
+        if (aditivos_kgm3==null) aditivos_kgm3 = "0";
         return aditivos_kgm3;
     }
 
     public void setAditivos_kgm3(String aditivos_kgm3) {
-        this.aditivos_kgm3 = aditivos_kgm3;
+        if (aditivos_kgm3==null) aditivos_kgm3 = "0";
+        else this.aditivos_kgm3 = aditivos_kgm3;
     }
 
     public String getAditivos_tipo() {
