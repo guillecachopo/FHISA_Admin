@@ -111,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
         //Con la linea anterior pasamos soporte fragment manager y la lista de fragments q queremos agregar al page adapter (viewpager)
         tabLayout.setupWithViewPager(viewPager); //Lo agregamos al tabLayout
 
+        viewPager.setOffscreenPageLimit(2); //Para poder navegar entre fragments sin que se recarguen desde 0
+
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_map_white);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_truck_white);
         tabLayout.getTabAt(2).setIcon(R.drawable.ic_error_blanco);

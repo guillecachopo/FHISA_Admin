@@ -162,21 +162,63 @@ public class RecyclerViewFragment2 extends Fragment {
     /**
      * Método encargado de actualizar las posiciones de cada camión en el mapa
      * @param camionPos
-     * @param dataSnapshot
+     * @param snapshot
      */
-    private void actualizarCamion(final Camion camionPos, DataSnapshot dataSnapshot) {
+    private void actualizarCamion(final Camion camionPos, final DataSnapshot snapshot) {
 
-        Query q = dataSnapshot.child("rutas").child("ruta_actual").getRef().orderByKey().limitToLast(1);
+        Query q = snapshot.child("rutas").child("ruta_actual").getRef().orderByKey().limitToLast(1);
+        //Log.i("PRUEBAS", q.getRef().toString());
+
+
         q.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Posicion posicion = child.getValue(Posicion.class);
-                    camionPos.setPosiciones(posicion);
-                    long time = camionPos.getUltimaPosicion().getTime();
-                    camionPos.setHoras(time);
+                if (dataSnapshot.getValue() == null) {
+                    Query queryRuta_completada = snapshot.child("rutas").child("rutas_completadas").getRef().orderByKey().limitToLast(1);
+                    queryRuta_completada.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            long ultimoValor = dataSnapshot.getChildrenCount();
+                            for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                                Posicion posicion = snapshot1.getValue(Posicion.class);
+                                camionPos.setPosiciones(posicion);
+                                long time = camionPos.getUltimaPosicion().getTime();
+                                camionPos.setHoras(time);
+                            }
+                            adaptador.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                } else {
+
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        Posicion posicion = child.getValue(Posicion.class);
+                        camionPos.setPosiciones(posicion);
+                        long time = camionPos.getUltimaPosicion().getTime();
+                        camionPos.setHoras(time);
+                    }
                 }
                 adaptador.notifyDataSetChanged();
+
             }
 
             @Override

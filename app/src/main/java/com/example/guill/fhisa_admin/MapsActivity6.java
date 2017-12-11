@@ -336,7 +336,7 @@ public class MapsActivity6 extends Fragment implements OnMapReadyCallback {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();
-                if (id.compareTo("353762096491053")!=0 && id.compareTo("359122080005498")!=0 && id.compareTo("860935033015443")!=0) {
+                if (id.compareTo("860935033015443")!=0) {
                     Camion camion = crearCamion(id);
 
                     addPosicionesCamion(camion, dataSnapshot);
@@ -346,7 +346,7 @@ public class MapsActivity6 extends Fragment implements OnMapReadyCallback {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();
-                if (id.compareTo("353762096491053")!=0 && id.compareTo("359122080005498")!=0 && id.compareTo("860935033015443")!=0) {
+                if (id.compareTo("860935033015443")!=0) {
                     Camion camion = crearCamion(id);
 
                     final Camion camionPos = camion;
@@ -430,19 +430,57 @@ public class MapsActivity6 extends Fragment implements OnMapReadyCallback {
      * @param camionPos
      * @param dataSnapshot
      */
-    private void addPosicionesCamion(final Camion camionPos, DataSnapshot dataSnapshot) {
-        ArrayList<Posicion> listaPosiciones = new ArrayList<>();
+    private void addPosicionesCamion(final Camion camionPos, final DataSnapshot dataSnapshot) {
+        final ArrayList<Posicion> listaPosiciones = new ArrayList<>();
+
+        boolean existeRutaActual = false;
 
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
             for (DataSnapshot snapshot2 : snapshot.getChildren()) {
                 if (snapshot2.getKey().equals("ruta_actual")) {
+                    existeRutaActual = true;
                     for (DataSnapshot snapshot3 : snapshot2.getChildren()) {
                         Posicion posicion = snapshot3.getValue(Posicion.class);
                         listaPosiciones.add(posicion);
                     }
                 }
+                if (!existeRutaActual) { //El camion no tiene ruta actual, pero hay que mostrarlo tambien en el mapa
+                    Query queryRuta_completada = dataSnapshot.child("rutas")
+                            .child("rutas_completadas").getRef().orderByKey().limitToLast(1);
+                    queryRuta_completada.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            long ultimoValor = dataSnapshot.getChildrenCount();
+                            for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                                Posicion posicion = snapshot1.getValue(Posicion.class);
+                                listaPosiciones.add(posicion);
+                            }
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
             }
         }
+
 
         camionPos.setPosicionesList(listaPosiciones);
         //Ahora tendria que actualizar listaCamiones:
