@@ -44,7 +44,7 @@
             android:value="AIzaSyAam3CoohPwYSWGAJpfYDUC3KoGil5Sszg" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".Antiguo.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".Opciones.DetallePosicionesCamion"

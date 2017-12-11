@@ -2,6 +2,7 @@ package com.example.guill.fhisa_admin.Socket;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.os.Process;
 
 import com.example.guill.fhisa_admin.Objetos.Albaran;
 import com.google.gson.Gson;
@@ -14,6 +15,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+
+import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
+import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
 
 /**
  * Created by guill on 10/12/2017.
@@ -37,6 +41,7 @@ import java.net.Socket;
 
         @Override
         protected String doInBackground(String... imei) {
+            Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND + THREAD_PRIORITY_MORE_FAVORABLE);
             Socket socketCliente = null;
             BufferedReader entrada = null;
             PrintWriter salida = null;
@@ -88,7 +93,7 @@ import java.net.Socket;
          **/
         @Override
         protected void onPostExecute(String destino) {
-            super.onPostExecute(destino);
+            super.onPostExecute(destino);;
         }
 
     }
