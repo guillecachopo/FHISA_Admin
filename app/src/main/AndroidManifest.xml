@@ -72,6 +72,9 @@
         <activity android:name=".Opciones.ListaConsumosActivity" />
         <activity android:name=".Opciones.ListaAlbaranesActivity" />
         <activity android:name=".Opciones.MantenimientoActivity"></activity>
+
+        <activity android:name=".OpcionesMenuActivity"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

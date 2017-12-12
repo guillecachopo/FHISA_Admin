@@ -33,4 +33,10 @@
         android:orderInCategory="104">
     </item>
 
+    <item
+        android:id="@+id/menuOpciones"
+        android:title="Opciones"
+        android:orderInCategory="105">
+    </item>
+
 </menu>

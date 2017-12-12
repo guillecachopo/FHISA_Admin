@@ -173,8 +173,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      */
     public Map<String, Polyline> mPolylineMap = new HashMap<>();
 
-
-
+    /**
+     * HashMap que maneja las polilineas de ruta de un camión
+     */
+    public Map<String, Polyline> mPolylineRutaMap = new HashMap<>();
 
 
     @Override
@@ -193,8 +195,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             idIrMarcador = getArguments().getString("idIrMarcador");
             irMarcador = getArguments().getBoolean("ir");
         }
-
-
 
     }
 
@@ -271,7 +271,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         });
     }
 
-
     /**
      * Escucha los eventos en marcadores para crear rutas a destinos
      * @param mMap
@@ -295,7 +294,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         });
     }
 
-
     /**
      * Modifica el HashMap para crear y actualizar los marcadores de los camiones
      * @param mMarkerMap
@@ -303,36 +301,81 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     private void addMarcadoresCamiones(Map<String, Marker> mMarkerMap, ArrayList<Camion> listaCamiones) {
         for (final Camion camion : listaCamiones) {
 
-            if (camion.getPosicionesList().size() > 0) {
+            Log.i("DataSnapshot", camion.getId() + " posiciones: " + camion.getPosicionesList().size());
+            if (camion.getPosicionesList().size() > 0) { // Todos los camiones en ruta tendrán minimo 2 posiciones
                 final LatLng latlng = new LatLng(camion.getUltimaPosicion().getLatitude(), camion.getUltimaPosicion().getLongitude());
+                Marker previousMarker = mMarkerMap.get(camion.getId());
 
-            Marker previousMarker = mMarkerMap.get(camion.getId());
+                if (previousMarker != null) {
+                    //previous marker exists, update position:
+                    previousMarker.setPosition(latlng);
+                    previousMarker.setSnippet(ultimaHoraCamion(camion));
 
-            if (previousMarker != null) {
-                //previous marker exists, update position:
-                previousMarker.setPosition(latlng);
-                previousMarker.setSnippet(ultimaHoraCamion(camion));
-            } else {
+                } else {
+                    String alias = preferences.getString(camion.getId() + "-nombreCamion", camion.getId());
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(latlng)
+                            .snippet(ultimaHoraCamion(camion))
+                            .title(alias);
+                    final Marker marcador = mMap.addMarker(markerOptions);
+                    marcador.setTag(camion.getId());
+                    //put this new marker in the HashMap:
+                    mMarkerMap.put(camion.getId(), marcador);
 
-                String alias = preferences.getString(camion.getId() + "-nombreCamion", camion.getId());
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .position(latlng)
-                        .snippet(ultimaHoraCamion(camion))
-                        .title(alias);
+                    buscadoEnMenu(camion); //Se entra aquí si se ha buscado el camión desde las opciones
 
-                final Marker marcador = mMap.addMarker(markerOptions);
-                marcador.setTag(camion.getId());
+                }
 
-                //put this new marker in the HashMap:
-                mMarkerMap.put(camion.getId(), marcador);
-
-                buscadoEnMenu(camion); //Se entra aquí si se ha buscado el camión desde las opciones
-
+                Polyline previousPolyline = mPolylineRutaMap.get(camion.getId());
+                if (previousPolyline != null) { //Existe polyline
+                    actualizarDibujoRuta(camion);
+                } else { //No hay polyline
+                    dibujarRuta(camion);
+                }
             }
-        }
 
+            if (camion.getPosicionesList().size() == 0) borrarDibujoRuta(camion);
         }
     }
+
+    private void borrarDibujoRuta(Camion camionBorrar) {
+        Polyline polylineBorrar = mPolylineRutaMap.get(camionBorrar.getId());
+        if (polylineBorrar != null) {
+            polylineBorrar.remove();
+            mPolylineRutaMap.put(camionBorrar.getId(), null);
+        }
+    }
+
+    private void actualizarDibujoRuta(Camion camionPintar) {
+        List<LatLng> latlngs = new ArrayList<>();
+        for (Posicion posicion :camionPintar.getPosicionesList()) {
+            LatLng latlng = new LatLng(posicion.getLatitude(), posicion.getLongitude());
+            latlngs.add(latlng);
+        }
+        Polyline previousPolyline = mPolylineRutaMap.get(camionPintar.getId());
+        previousPolyline.setPoints(latlngs);
+    }
+
+    private void dibujarRuta(Camion camionPintar) {
+        boolean dibujar = preferences.getBoolean("cbxAddPolylines", false);
+
+        if (dibujar) {
+
+            List<LatLng> latlngs = new ArrayList<>();
+            for (Posicion posicion :camionPintar.getPosicionesList()) {
+                LatLng latlng = new LatLng(posicion.getLatitude(), posicion.getLongitude());
+                latlngs.add(latlng);
+            }
+            PolylineOptions polylineOptions = new PolylineOptions()
+                    .color(Color.RED)
+                    .width(10);
+            Polyline polyline = mMap.addPolyline(polylineOptions);
+            polyline.setPoints(latlngs);
+            mPolylineRutaMap.put(camionPintar.getId(), polyline);
+        }
+
+    }
+
 
     /**
      * Método encargado de mostrar los camiones en el mapa
@@ -340,27 +383,20 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      */
     public void cargarCamiones(DatabaseReference camionesRef) {
 
-
         camionesRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();
-                if (id.compareTo("860935033015443")!=0) {
-                    Camion camion = crearCamion(id);
-
-                    addPosicionesCamion(camion, dataSnapshot);
-                }
+                Camion camion = crearCamion(id);
+                addPosicionesCamion(camion, dataSnapshot);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();
-                if (id.compareTo("860935033015443")!=0) {
-                    Camion camion = crearCamion(id);
-
-                    final Camion camionPos = camion;
-                    actualizarCamion(camionPos, dataSnapshot);
-                }
+                Camion camion = crearCamion(id);
+                final Camion camionPos = camion;
+                actualizarCamion(camionPos, dataSnapshot);
             } //Id
 
 
@@ -390,27 +426,42 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     private void actualizarCamion(final Camion camionPos, DataSnapshot dataSnapshot) {
         //camionPos no tiene ninguna posición. Pero tiene un ID que nos sirve para actualizarlo en la listaCamiones
 
-        Query q = dataSnapshot.child("rutas").child("ruta_actual").getRef().orderByKey().limitToLast(1);
+        //Un camion que estaba en ruta y ya no entrará en onChildChanged una vez
+        int childNumber = (int) dataSnapshot.child("rutas").getChildrenCount(); //ruta_actual + rutas_completadas (?)
+        Log.i("DataSnapshot", camionPos.getId() +": " + childNumber);
 
-        q.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Posicion posicion = child.getValue(Posicion.class);
 
-                    for (Camion camionRefresh : listaCamiones) {
-                        if (camionRefresh.getId().compareTo(camionPos.getId()) == 0) {
-                            camionRefresh.setPosiciones(posicion); //setPosiciones añade una posición.
+        if (childNumber == 2) {
+
+            Query q = dataSnapshot.child("rutas").child("ruta_actual").getRef().orderByKey().limitToLast(1);
+
+            q.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        Posicion posicion = child.getValue(Posicion.class);
+
+                        for (Camion camionRefresh : listaCamiones) {
+                            if (camionRefresh.getId().compareTo(camionPos.getId()) == 0) {
+                                camionRefresh.setPosiciones(posicion); //setPosiciones añade una posición.
+                            }
                         }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
+                }
+            });
+
+        } else {
+            for (Camion camionBorrar : listaCamiones) {
+                if (camionBorrar.getId().compareTo(camionPos.getId()) == 0) {
+                    camionBorrar.clearPosiciones();
+                }
             }
-        });
+        }
 
     }
 
@@ -465,10 +516,13 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                             long ultimoValor = dataSnapshot.getChildrenCount();
+                            ArrayList<Posicion> ultimaPosicion = new ArrayList<Posicion>();
                             for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
                                 Posicion posicion = snapshot1.getValue(Posicion.class);
-                                listaPosiciones.add(posicion);
+                                ultimaPosicion.add(posicion); //antes listaPosiciones.add(posicion);
                             }
+                            //Coge todas las de su ultima ruta completada, le seteamos solo la última
+                            listaPosiciones.add(ultimaPosicion.get(ultimaPosicion.size()-1));
                         }
 
                         @Override
@@ -494,7 +548,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 }
             }
         }
-
 
         camionPos.setPosicionesList(listaPosiciones);
         //Ahora tendria que actualizar listaCamiones:

@@ -22,7 +22,6 @@ import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
-import com.example.guill.fhisa_admin.OnGetDataListener;
 import com.example.guill.fhisa_admin.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;

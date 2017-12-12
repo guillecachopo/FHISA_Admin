@@ -3,6 +3,7 @@ package com.example.guill.fhisa_admin;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -153,6 +154,10 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menuBorrarBD:
                 borrarBD();
+                return true;
+
+            case R.id.menuOpciones:
+                startActivity(new Intent(this, OpcionesMenuActivity.class));
                 return true;
 
 
