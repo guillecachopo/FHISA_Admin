@@ -59,24 +59,5 @@ public class SocketClienteTCP {
         socketCliente.close();
 
         System.out.println(json);
-
-
-        //  final Type tipoConsumos = new TypeToken<List<Consumo>>(){}.getType();
-     //   final List<Consumo> consumos = new Gson().fromJson(json, tipoConsumos);
-
-        /*
-        System.out.println("Consumos: " + consumos.size());
-        for (Consumo consumo : consumos) {
-            System.out.println("id: " + consumo.getId());
-            System.out.println("vehiculo: " + consumo.getVehiculo());
-            System.out.println("articulo: " + consumo.getArticulo());
-            System.out.println("unidades: " + consumo.getUnidades());
-            System.out.println("consumo: " + consumo.getConsumo());
-            System.out.println("fecha: " + consumo.getFecha());
-            System.out.println("km: " + consumo.getKm());
-            System.out.println("---------------------");
-        }
-        */
-
     }
 }
