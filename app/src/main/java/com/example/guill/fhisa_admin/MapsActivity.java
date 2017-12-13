@@ -213,6 +213,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(getContext(), "Actualizando estados de los camiones....", Toast.LENGTH_SHORT).show();
                 for (Camion camion : listaCamiones) {
                     Marker marcador = mMarkerMap.get(camion.getId());
                     if (marcador!=null)
@@ -306,6 +307,17 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                marker.showInfoWindow();
+                String imei = marker.getTag().toString();
+                new PeticionEstado(getActivity(), marker).execute(imei);
+                return true;
+            }
+        });
+
     }
 
     /**

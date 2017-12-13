@@ -31,7 +31,7 @@ public class PeticionEstado extends AsyncTask<String, String, String> {
     BitmapDescriptor icon0 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
     //Llegada Obra -- azul claro
     BitmapDescriptor icon1 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-    //Inicio descarga -- morado o azul oscuro
+    //Inicio descarga -- azul oscuro
     BitmapDescriptor icon2 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
     //Salida Obra -- naranja
     BitmapDescriptor icon3 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);

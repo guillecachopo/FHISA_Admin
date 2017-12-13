@@ -16,8 +16,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -178,7 +180,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void infoLeyenda() {
+        AlertDialog.Builder alertadd = new AlertDialog.Builder(getApplicationContext());
+        LayoutInflater factory = LayoutInflater.from(MainActivity.this);
+        final View view = factory.inflate(R.layout.marcadores_leyenda, null);
+        alertadd.setView(view);
+        alertadd.setNeutralButton("Here!", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dlg, int sumthin) {
 
+            }
+        });
+
+        alertadd.show();
     }
 
 
