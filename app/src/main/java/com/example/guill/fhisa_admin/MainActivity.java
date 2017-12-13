@@ -156,6 +156,10 @@ public class MainActivity extends AppCompatActivity {
                 borrarBD();
                 return true;
 
+            case R.id.menuLeyenda:
+                infoLeyenda();
+                return true;
+
             case R.id.menuOpciones:
                 startActivity(new Intent(this, OpcionesMenuActivity.class));
                 return true;
@@ -171,6 +175,10 @@ public class MainActivity extends AppCompatActivity {
         menu.findItem(R.id.menuNotificaciones).setVisible(!isStarted);
         menu.findItem(R.id.menuStopNotificaciones).setVisible(isStarted);
         return true;
+    }
+
+    public void infoLeyenda() {
+
     }
 
 
@@ -336,7 +344,6 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog alertdialog = alertDialogBorrar.create();
         alertdialog.show();
     }
-
 
 
 

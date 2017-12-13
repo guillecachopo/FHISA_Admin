@@ -2,10 +2,11 @@ package com.example.guill.fhisa_admin.Socket;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 
-import com.example.guill.fhisa_admin.MapsActivity;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,22 +23,24 @@ import java.net.Socket;
 public class PeticionEstado extends AsyncTask<String, String, String> {
 
     public Activity activity;
+    public Marker marcador;
 
-    //Libre
-    BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
-    //Cargado
+    //Libre -- verde
+    BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+    //Cargado -- rojo
     BitmapDescriptor icon0 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-    //Llegada Obra
-    BitmapDescriptor icon1 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
-    //Inicio descarga
-    BitmapDescriptor icon2 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
-    //Salida Obra
-    BitmapDescriptor icon3 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-    //Llegada planta
-    BitmapDescriptor icon4 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+    //Llegada Obra -- azul claro
+    BitmapDescriptor icon1 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+    //Inicio descarga -- morado o azul oscuro
+    BitmapDescriptor icon2 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+    //Salida Obra -- naranja
+    BitmapDescriptor icon3 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+    //Llegada planta -- verde
+    BitmapDescriptor icon4 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
 
-    public PeticionEstado(Activity activity) {
+    public PeticionEstado(Activity activity, Marker marcador) {
         this.activity = activity;
+        this.marcador = marcador;
     }
 
     /**
@@ -89,24 +92,8 @@ public class PeticionEstado extends AsyncTask<String, String, String> {
             e.printStackTrace();
         }
 
-        int estado = Integer.parseInt(json.substring(1,2));
-        MapsActivity map = new MapsActivity();
-
-        if (estado==-1) {
-            map.mMarkerMap.get(imei[0]).setIcon(icon);
-        } else if (estado==0) {
-            map.mMarkerMap.get(imei[0]).setIcon(icon0);
-        } else if (estado==0) {
-            map.mMarkerMap.get(imei[0]).setIcon(icon1);
-        } else if (estado==0) {
-            map.mMarkerMap.get(imei[0]).setIcon(icon2);
-        } else if (estado==0) {
-            map.mMarkerMap.get(imei[0]).setIcon(icon3);
-        } else if (estado==0) {
-            map.mMarkerMap.get(imei[0]).setIcon(icon4);
-        }
-        
-        return null;
+        Log.i("AsyncTask", "Json: " + json);
+        return json;
     }
 
     /**
@@ -115,5 +102,29 @@ public class PeticionEstado extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String json) {
 
+        if (json.compareTo("error 401")!=0) {
+            int estado = 0;
+
+            if (json.compareTo("[-1 ]") == 0) {
+                estado = -1;
+            } else {
+                estado = Integer.parseInt(json.substring(1, 2));
+            }
+
+            if (estado==-1) {
+                marcador.setIcon(icon);
+            } else  if (estado==0) {
+                marcador.setIcon(icon0);
+            } else if (estado==1) {
+                marcador.setIcon(icon1);
+            } else if (estado==2) {
+                marcador.setIcon(icon2);
+            } else if (estado==3) {
+                marcador.setIcon(icon3);
+            } else if (estado==4) {
+                marcador.setIcon(icon4);
+            }
+
+        }
     }
 }

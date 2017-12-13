@@ -4,11 +4,13 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -17,7 +19,6 @@ import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Globals;
 import com.example.guill.fhisa_admin.MainActivity;
-import com.example.guill.fhisa_admin.Preferences.CamionPreferences;
 import com.example.guill.fhisa_admin.R;
 import com.example.guill.fhisa_admin.Socket.PeticionLlamar;
 
@@ -32,6 +33,9 @@ public class OpcionesCamionActivity extends AppCompatActivity {
     TextView tvCamionId;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
+
+    private static final CharSequence[] COLORES_ITEMS =
+            {"Blanco", "Verde", "Azul", "Amarillo", "Negro", "Gris", "Cyan", "Rojo", "Gris oscuro", "Gris claro", "Morado"};
 
     ProgressDialog pDialog;
 
@@ -101,14 +105,98 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
     public void irConfiguracion(View view) {
 
+
         Bundle extras = getIntent().getExtras();
         id = extras.getString("id");
 
+/*
         //Intent intent = new Intent(view.getContext(), CamionPreferences.class);
         Intent intent = new Intent(view.getContext(), CamionPreferences.class);
         intent.putExtra("id", id);
-        startActivity(intent);
+        startActivity(intent); */
+
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences.Editor editor = pref.edit();
+        final String fDialogTitle = "Seleccione un color";
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(fDialogTitle);
+        builder.create();
+        builder.setSingleChoiceItems(
+                COLORES_ITEMS,
+                11,
+                new DialogInterface.OnClickListener() {
+
+
+                    public void onClick(DialogInterface dialog, int item) {
+                        // Locally create a finalised object.
+
+                        // Perform an action depending on which item was selected.
+                        switch (item) {
+
+                            case 0:
+                                Log.i("Color", id);
+                                editor.putInt(id+"-color", Color.WHITE );
+                                editor.apply();
+                                dialog.dismiss();
+                                break;
+                            case 1:
+                                editor.putInt(id+"-color", Color.GREEN );
+                                dialog.dismiss();
+                                editor.apply();
+                                break;
+                            case 2:
+                                editor.putInt(id+"-color", Color.BLUE );
+                                editor.apply();
+                                dialog.dismiss();
+                                break;
+                            case 3:
+                                editor.putInt(id+"-color", Color.YELLOW );
+                                editor.apply();
+                                dialog.dismiss();
+                                break;
+                            case 4:
+                                editor.putInt(id+"-color", Color.BLACK );
+                                editor.apply();
+                                dialog.dismiss();
+                                break;
+                            case 5:
+                                editor.putInt(id+"-color", Color.GRAY );
+                                editor.apply();
+                                dialog.dismiss();
+                                break;
+                            case 6:
+                                editor.putInt(id+"-color", Color.CYAN );
+                                editor.apply();
+                                dialog.dismiss();
+                                break;
+                            case 7:
+                                editor.putInt(id+"-color", Color.RED );
+                                editor.apply();
+                                dialog.dismiss();
+                                break;
+                            case 8:
+                                editor.putInt(id+"-color", Color.DKGRAY );
+                                editor.apply();
+                                dialog.dismiss();
+                                break;
+                            case 9:
+                                editor.putInt(id+"-color", Color.LTGRAY);
+                                editor.apply();
+                                dialog.dismiss();
+                                break;
+                            case 10:
+                                editor.putInt(id+"-color", Color.MAGENTA );
+                                editor.apply();
+                                dialog.dismiss();
+                                break;
+                        }
+                    }
+                }
+        );
+        builder.show();
     }
+
 
     public void irVelocidadActual(View view) {
 

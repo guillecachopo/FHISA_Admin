@@ -11,6 +11,7 @@
     <color name="colorFhisaLight">#2ab549</color>
     <color name="colorFhisaDark">#376c43</color>
     <color name="colorGris">#d7ccc8</color>
+    <color name="colorGrisBoton">#ddd2cf</color>
     <color name="colorAccent2">#88f78c</color>
     <color name="colorRojoOscuro">#de0b0b</color>
     <color name="colorRojo">#eadd2b2b</color>

@@ -23,6 +23,7 @@ import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
+import com.example.guill.fhisa_admin.Socket.PeticionEstado;
 import com.example.guill.fhisa_admin.Socket.PeticionUltimoAlbaran;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -178,7 +179,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      */
     public Map<String, Polyline> mPolylineRutaMap = new HashMap<>();
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,6 +207,20 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         ImageView btnTipoMapa = (ImageView) mView.findViewById(R.id.btnTipoMapa);
         Button btnArea = (Button) mView.findViewById(R.id.btnMarcarArea);
         Button btnBorrarArea = (Button) mView.findViewById(R.id.btnBorrarArea);
+        ImageView btnRefresh = (ImageView) mView.findViewById(R.id.btnRefresh);
+
+
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (Camion camion : listaCamiones) {
+                    Marker marcador = mMarkerMap.get(camion.getId());
+                    if (marcador!=null)
+                    new PeticionEstado(getActivity(), marcador).execute(camion.getId());
+                }
+
+            }
+        });
 
         btnTipoMapa.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -311,6 +325,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     previousMarker.setPosition(latlng);
                     previousMarker.setSnippet(ultimaHoraCamion(camion));
 
+
                 } else {
                     String alias = preferences.getString(camion.getId() + "-nombreCamion", camion.getId());
                     MarkerOptions markerOptions = new MarkerOptions()
@@ -348,16 +363,19 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     private void actualizarDibujoRuta(Camion camionPintar) {
         List<LatLng> latlngs = new ArrayList<>();
+        int colorRuta = preferences.getInt(camionPintar.getId()+"-color", Color.RED);
         for (Posicion posicion :camionPintar.getPosicionesList()) {
             LatLng latlng = new LatLng(posicion.getLatitude(), posicion.getLongitude());
             latlngs.add(latlng);
         }
         Polyline previousPolyline = mPolylineRutaMap.get(camionPintar.getId());
         previousPolyline.setPoints(latlngs);
+        previousPolyline.setColor(colorRuta);
     }
 
     private void dibujarRuta(Camion camionPintar) {
         boolean dibujar = preferences.getBoolean("cbxAddPolylines", false);
+        int colorRuta = preferences.getInt(camionPintar.getId()+"-color", Color.RED);
 
         if (dibujar) {
 
@@ -367,7 +385,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 latlngs.add(latlng);
             }
             PolylineOptions polylineOptions = new PolylineOptions()
-                    .color(Color.RED)
+                    .color(colorRuta)
                     .width(10);
             Polyline polyline = mMap.addPolyline(polylineOptions);
             polyline.setPoints(latlngs);
@@ -888,7 +906,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      * @return
      */
     public Marker addMarkersToMap(DirectionsResult results, GoogleMap mMap, Camion camion) {
-        BitmapDescriptor icon2 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        BitmapDescriptor icon2 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
         MarkerOptions markerOptions = new MarkerOptions()
                 .icon(icon2)
                 .position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng))

@@ -34,9 +34,30 @@
     </item>
 
     <item
+        android:id="@+id/menuLeyenda"
+        android:title="Leyenda"
+        android:orderInCategory="199">
+    </item>
+
+    <item
         android:id="@+id/menuOpciones"
         android:title="Opciones"
+        android:orderInCategory="200">
+    </item>
+
+    <!--
+    <item
+        android:id="@+id/menuMarcarArea"
+        android:title="Crear Base Operativa"
         android:orderInCategory="105">
     </item>
+
+    <item
+        android:id="@+id/menuBorrarArea"
+        android:title="Eliminar Base Operativa"
+        android:orderInCategory="106">
+    </item> -->
+
+
 
 </menu>
