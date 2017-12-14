@@ -1,39 +1,6 @@
 package com.example.guill.fhisa_admin.Opciones;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.guill.fhisa_admin.Adapter.AdapterPosiciones;
-import com.example.guill.fhisa_admin.Objetos.Camion;
-import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
-import com.example.guill.fhisa_admin.Objetos.Posicion;
-import com.example.guill.fhisa_admin.R;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
+/*
 public class DetallePosicionesCamion extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private Toolbar toolbar;
@@ -207,7 +174,7 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
 
 */
 
-
+/*
                 } //for snapshot (Iterador donde estan las IDs)
                 adaptador.notifyDataSetChanged();
             } //onDataChange
@@ -230,11 +197,10 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
 
 
 
-
     /**
      * Populate the Spinner.
      */
-    private void loadSpinnerFechas() {
+/*    private void loadSpinnerFechas() {
 
         // Create an ArrayAdapter using the string array and a default spinner
         // layout
@@ -299,3 +265,4 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
 
 
 }
+*/

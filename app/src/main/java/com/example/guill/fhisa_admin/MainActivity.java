@@ -180,17 +180,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void infoLeyenda() {
-        AlertDialog.Builder alertadd = new AlertDialog.Builder(getApplicationContext());
-        LayoutInflater factory = LayoutInflater.from(MainActivity.this);
-        final View view = factory.inflate(R.layout.marcadores_leyenda, null);
-        alertadd.setView(view);
-        alertadd.setNeutralButton("Here!", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dlg, int sumthin) {
-
-            }
-        });
-
-        alertadd.show();
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.marcadores_leyenda, null);
+        dialogBuilder.setView(dialogView);
+        AlertDialog b = dialogBuilder.create();
+        b.show();
     }
 
 

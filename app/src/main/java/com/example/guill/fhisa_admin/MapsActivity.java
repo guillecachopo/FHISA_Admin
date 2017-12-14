@@ -311,10 +311,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                marker.showInfoWindow();
+               // marker.showInfoWindow();
                 String imei = marker.getTag().toString();
                 new PeticionEstado(getActivity(), marker).execute(imei);
-                return true;
+                return false;
             }
         });
 

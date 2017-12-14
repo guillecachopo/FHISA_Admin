@@ -88,6 +88,7 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
     public void irPosiciones(View view) {
 
+        /*
         posicionesString = new ArrayList<>();
         horasString = new ArrayList<>();
 
@@ -100,10 +101,19 @@ public class OpcionesCamionActivity extends AppCompatActivity {
         intent.putExtra("id", id);
         intent.putStringArrayListExtra("posiciones", posicionesString);
         intent.putStringArrayListExtra("horas", horasString);
+        startActivity(intent); */
+
+        Bundle extras = getIntent().getExtras();
+        id = extras.getString("id");
+
+        Intent intent = new Intent(view.getContext(), RutasActivity.class);
+        intent.putExtra("id", id);
         startActivity(intent);
+
+
     }
 
-    public void irConfiguracion(View view) {
+    public void setColorRuta(View view) {
 
 
         Bundle extras = getIntent().getExtras();
@@ -142,8 +152,8 @@ public class OpcionesCamionActivity extends AppCompatActivity {
                                 break;
                             case 1:
                                 editor.putInt(id+"-color", Color.GREEN );
-                                dialog.dismiss();
                                 editor.apply();
+                                dialog.dismiss();
                                 break;
                             case 2:
                                 editor.putInt(id+"-color", Color.BLUE );

@@ -30,7 +30,7 @@ public class MantenimientoActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         rvMantenimiento.setLayoutManager(llm);
-        rvMantenimiento.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        rvMantenimiento.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)); //Linea
 
         String imei = getImei();
         PeticionMantenimiento peticionMantenimiento = new PeticionMantenimiento(this, rvMantenimiento);

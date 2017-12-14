@@ -160,7 +160,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="29dp"
-                    android:text="Posiciones"
+                    android:text="Rutas"
                     android:textColor="@color/colorBlack"
                     android:textSize="16sp" />
 
@@ -200,37 +200,6 @@
 
             <View
                 android:layout_below="@+id/rlVerAlbaranes"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
-
-            <RelativeLayout
-                android:id="@+id/rlGraficaVelocidades"
-                android:layout_width="match_parent"
-                android:layout_height="47dp"
-                android:clickable="true"
-                android:background="?attr/selectableItemBackground"
-
-                >
-
-                <TextView
-                    android:id="@+id/tvGraficaVelocidades"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="29dp"
-                    android:text="Gráfica de velocidades"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="16sp" />
-
-            </RelativeLayout>
-
-            <View
-                android:layout_below="@+id/rlGraficaVelocidades"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
@@ -332,7 +301,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:clickable="true"
-                android:onClick="irConfiguracion"
+                android:onClick="setColorRuta"
                 android:background="?attr/selectableItemBackground"
                 >
 
@@ -345,7 +314,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="29dp"
-                    android:text="Configuración"
+                    android:text="Cambiar color de ruta"
                     android:textColor="@color/colorBlack"
                     android:textSize="16sp" />
 

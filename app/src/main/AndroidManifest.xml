@@ -71,10 +71,11 @@
         <activity android:name=".Opciones.VehiculoActivity" />
         <activity android:name=".Opciones.ListaConsumosActivity" />
         <activity android:name=".Opciones.ListaAlbaranesActivity" />
-        <activity android:name=".Opciones.MantenimientoActivity"></activity>
-
-        <activity android:name=".OpcionesMenuActivity"
+        <activity android:name=".Opciones.MantenimientoActivity" />
+        <activity
+            android:name=".OpcionesMenuActivity"
             android:parentActivityName=".MainActivity" />
+        <activity android:name=".Opciones.RutasActivity"></activity>
     </application>
 
 </manifest>

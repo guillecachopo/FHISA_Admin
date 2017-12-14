@@ -46,10 +46,10 @@
     </string-array>
     
     
-    <string-array name="listFechas">
+    <string-array name="fechas_array">
         <item>Hoy</item>
-        <item>Última semana</item>
-        <item>Todas las posiciones</item>
+        <item>Esta semana</item>
+        <item>Este mes</item>
     </string-array>
     
     
