@@ -11,9 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,7 +69,8 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
      */
     List<String> listaHorasInicioRuta = new ArrayList<>();
 
-    TextView tvFechaElegida;
+    EditText tvFechaElegida;
+    ImageView btnBuscar;
     int anio, mes, dia;
 
 
@@ -88,7 +92,13 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
         rvRutasCamion = (RecyclerView) findViewById(R.id.rvRutasCamion);
         setLinearLayout(rvRutasCamion);
 
-        tvFechaElegida = (TextView) findViewById(R.id.tvFechaElegida);
+        tvFechaElegida = (EditText) findViewById(R.id.tvFechaElegida);
+        //Para quitar el focus del Edit Text
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        tvFechaElegida.setCursorVisible(false);
+
+        btnBuscar = (ImageView) findViewById(R.id.btnBuscar);
+
         Calendar calendar = java.util.Calendar.getInstance();
         anio = calendar.get(java.util.Calendar.YEAR);
         mes = calendar.get(java.util.Calendar.MONTH);
@@ -124,11 +134,38 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
 
     }
 
+    /**
+     * Buscar rutas por fecha elegida cuando se hace click en el botón
+     * @param view
+     */
+    public void buscarRutaPorFecha(View view) {
+        rvRutasCamion.setAdapter(null);
+        listaHorasInicioRuta.clear();
+        listaRutas.clear();
+        inicializarRutasFecha(rvRutasCamion);
+    }
+
+    /**
+     * Acceder a la ruta elegida
+     * @param view
+     */
+    public void irRutaElegida(View view) {
+        TextView tvRuta = (TextView) findViewById(R.id.tvRuta);
+        TextView tvHoraFinRuta = (TextView) findViewById(R.id.tvHoraFinRuta);
+
+        Log.i("RutaElegida", tvRuta.getText().toString() + ", " + tvHoraFinRuta.getText().toString());
+    }
+
+    /**
+     * Hacemos visible el parpadeo del cursor para elegir fecha
+     * @param view
+     */
+    public void makeCursorVisible(View view) {
+        tvFechaElegida.setCursorVisible(true);
+    }
 
     public void setDate(View view) {
         showDialog(999);
-        Toast.makeText(getApplicationContext(), "Filtrar por fecha específica", Toast.LENGTH_LONG)
-                .show();
     }
 
     @Override
@@ -269,6 +306,66 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
 
 
                     if (rutaYear == hoyYear && rutaMes == hoyMes)
+                        listaRutas.add(rutaNombre.getKey());
+                }
+
+                Log.i("Lista Rutas", String.valueOf(listaRutas.size()));
+                getHoraInicioRuta(dataSnapshot, listaRutas);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void inicializarRutasFecha(RecyclerView rvRutasCamion) {
+        String imei = getImei();
+
+        String fechaElegida = tvFechaElegida.getText().toString();
+        Log.i("Fechas", fechaElegida);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date dateRutaElegida = new Date();
+        try {
+            dateRutaElegida = dateFormat.parse(fechaElegida);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar calendarFechaElegida = Calendar.getInstance();
+        calendarFechaElegida.setTime(dateRutaElegida);
+        dia = calendarFechaElegida.get(Calendar.DAY_OF_MONTH);
+        mes = calendarFechaElegida.get(Calendar.MONTH);
+        anio = calendarFechaElegida.get(Calendar.YEAR);
+        Log.i("Fechas", "Dia: " + dia + " , mes: " + mes + ", año: " + anio);
+
+
+        DatabaseReference rutasRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE)
+                .child(imei).child("rutas").child("rutas_completadas");
+
+        rutasRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) { //rutas
+
+                for (DataSnapshot rutaNombre : dataSnapshot.getChildren()) {
+                    String ruta = rutaNombre.getKey();
+                    String[] parts = ruta.split("_");
+                    String fechaRuta = parts[1];
+
+                    SimpleDateFormat df = new SimpleDateFormat("ddMMyyyy");
+                    Date dateRuta = new Date();
+                    try {
+                        dateRuta = df.parse(fechaRuta);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    Calendar calendarRuta = Calendar.getInstance();
+                    calendarRuta.setTime(dateRuta);
+                    int rutaDia = calendarRuta.get(Calendar.DAY_OF_MONTH);
+                    int rutaMes = calendarRuta.get(Calendar.MONTH);
+                    int rutaYear = calendarRuta.get(Calendar.YEAR);
+
+                    if (rutaYear == anio && rutaMes == mes && rutaDia == dia)
                         listaRutas.add(rutaNombre.getKey());
                 }
 

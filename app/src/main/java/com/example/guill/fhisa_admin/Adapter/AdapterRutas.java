@@ -1,6 +1,7 @@
 package com.example.guill.fhisa_admin.Adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.guill.fhisa_admin.Opciones.MapaRutaElegidaActivity;
 import com.example.guill.fhisa_admin.R;
 
 import java.util.List;
@@ -26,7 +28,6 @@ public class AdapterRutas extends RecyclerView.Adapter<AdapterRutas.RutasViewHol
         this.listaRutas = listaRutas;
         this.activity = activity;
         this.listaHorasInicioRuta = listaHorasInicioRuta;
-
     }
 
     public static class RutasViewHolder extends RecyclerView.ViewHolder {
@@ -59,7 +60,7 @@ public class AdapterRutas extends RecyclerView.Adapter<AdapterRutas.RutasViewHol
 
     @Override
     public void onBindViewHolder(AdapterRutas.RutasViewHolder holder, int position) {
-        String ruta = listaRutas.get(position);
+        final String ruta = listaRutas.get(position);
         String[] parts = ruta.split("_");
         String fechaRuta = parts[1];
         String horaFinRuta = parts[2];
@@ -74,6 +75,14 @@ public class AdapterRutas extends RecyclerView.Adapter<AdapterRutas.RutasViewHol
         holder.tvRuta.setText(diaRuta+"/"+mesRuta+"/"+anioRuta);
         holder.tvHoraInicioRuta.setText(listaHorasInicioRuta.get(position));
         holder.tvHoraFinRuta.setText(horaFin+":"+minutosFin);
+
+        holder.cvRuta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, MapaRutaElegidaActivity.class);
+                activity.startActivity(intent);
+            }
+        });
 
     }
 }

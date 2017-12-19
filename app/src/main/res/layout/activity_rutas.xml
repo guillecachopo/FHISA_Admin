@@ -63,13 +63,17 @@
                 android:adjustViewBounds="true"
                 android:text="Elegir fecha" />
 
-            <TextView
+            <EditText
                 android:id="@+id/tvFechaElegida"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:background="@color/colorBlanco"
+                android:background="@drawable/edit_text_background"
                 android:textColor="@color/colorBlack"
+                android:textStyle="italic"
+                android:clickable="true"
+                android:onClick="makeCursorVisible"
+                android:inputType="date"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <ImageView
@@ -79,6 +83,7 @@
                 android:layout_marginLeft="20dp"
                 android:clickable="true"
                 android:background="?attr/selectableItemBackground"
+                android:onClick="buscarRutaPorFecha"
                 android:src="@drawable/ic_search"
                 android:adjustViewBounds="true"
                 android:text="Elegir fecha" />

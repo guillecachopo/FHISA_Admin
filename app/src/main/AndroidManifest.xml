@@ -76,6 +76,9 @@
             android:name=".OpcionesMenuActivity"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".Opciones.RutasActivity"></activity>
+
+        <activity android:name="com.example.guill.fhisa_admin.Opciones.MapaRutaElegidaActivity"
+            android:label="@string/title_activity_mapa_ruta_elegida"></activity>
     </application>
 
 </manifest>
