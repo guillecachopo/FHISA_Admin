@@ -254,8 +254,12 @@ public class MainActivity extends AppCompatActivity {
                 .setMessage("Firebase Database es la base de datos utilizada para guardar las posiciones de cada camión y las areas correspondientes a las zonas libres de notificaciones. Las copias de seguridad se guardarán en del directorio raíz del dispositivo dentro la carpeta FHISAFirebase.")
                 .setPositiveButton("GUARDAR", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        new DownloadFileFromURL().execute("https://fhisaservicio.firebaseio.com/.json");
-                        new EnviarEmail(getApplicationContext(), preferences).execute();
+                        new CopiaSeguridadFirebase(getApplicationContext(), preferences)
+                                .execute("https://fhisaservicio.firebaseio.com/.json");
+                        //new EnviarEmail(getApplicationContext(), preferences).execute();
+
+                        //new DownloadFileFromURL().execute("https://fhisaservicio.firebaseio.com/.json");
+                        //new EnviarEmail(getApplicationContext(), preferences).execute();
                         dialog.cancel();
                     }
                 })
@@ -388,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
                 File fhisaDir = new File(Environment.getExternalStorageDirectory(), "FHISAFirebase");
                 if (!fhisaDir.exists()) fhisaDir.mkdirs();
                 String fhisaDirString = fhisaDir.toString();
-                
+
                 URL url = new URL(f_url[0]);
 
                 URLConnection conection = url.openConnection();

@@ -7,9 +7,14 @@ import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -30,13 +35,15 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
 
     public Context context;
     public SharedPreferences preferences;
+    public String rutaFichero;
 
     Session session = null;
     String from = "fhisaautomatico@gmail.com";
 
-    public EnviarEmail(Context context, SharedPreferences preferences) {
+    public EnviarEmail(Context context, SharedPreferences preferences, String rutaFichero) {
         this.context = context;
         this.preferences = preferences;
+        this.rutaFichero = rutaFichero;
     }
 
     private boolean valido(String email) {
@@ -53,11 +60,18 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
 
     @Override
     protected String doInBackground(String... strings) {
+        //Getting hour to file name
+        final Date currentTime = Calendar.getInstance().getTime();
+        final String day = (String) android.text.format.DateFormat.format("dd",   currentTime); // 31
+        final String monthNumber  = (String) android.text.format.DateFormat.format("MM",   currentTime); // 10
+        final String year         = (String) android.text.format.DateFormat.format("yy", currentTime); // 2017
+        final String hour = (String) android.text.format.DateFormat.format("HHmmss", currentTime); //1326
+
         // Recipient's email ID needs to be mentioned.
         String to = preferences.getString("etEmail", "paco@gmail.com");
         Log.i("EMAIL", to);
         //Asunto del mensaje
-        String asunto = "Copia de seguridad";
+        String asunto = "Copia de seguridad " + day+"/"+monthNumber+"/"+year+" " + hour;
 
         //Conectamos con los servicios de gmail
         Properties props = new Properties();
@@ -83,8 +97,13 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
             } else {
                 Log.i("EMAIL", "Correo no valido");
             }
-            BodyPart texto=new MimeBodyPart();
-            texto.setText("Texto del mensaje");
+            BodyPart messageBodyPart=new MimeBodyPart();
+            messageBodyPart.setText("Mensaje generado automáticamente.");
+
+            DataSource source = new FileDataSource(rutaFichero);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(rutaFichero);
+
             MimeMultipart multiParte = new MimeMultipart();
 
             Message message = new MimeMessage(session);
@@ -94,7 +113,7 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
                     InternetAddress.parse(to));
 
             message.setSubject(asunto);
-            multiParte.addBodyPart(texto);
+            multiParte.addBodyPart(messageBodyPart);
             message.setContent(multiParte);
             Transport.send(message);
 
