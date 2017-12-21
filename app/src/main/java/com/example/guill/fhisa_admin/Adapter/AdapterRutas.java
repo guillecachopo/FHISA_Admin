@@ -23,11 +23,14 @@ public class AdapterRutas extends RecyclerView.Adapter<AdapterRutas.RutasViewHol
     List<String> listaRutas;
     Activity activity;
     List<String> listaHorasInicioRuta;
+    String imei;
 
-    public AdapterRutas(List<String> listaRutas, List<String> listaHorasInicioRuta, Activity activity) {
+    public AdapterRutas(List<String> listaRutas, List<String> listaHorasInicioRuta, Activity activity
+    , String imei) {
         this.listaRutas = listaRutas;
         this.activity = activity;
         this.listaHorasInicioRuta = listaHorasInicioRuta;
+        this.imei = imei;
     }
 
     public static class RutasViewHolder extends RecyclerView.ViewHolder {
@@ -80,6 +83,8 @@ public class AdapterRutas extends RecyclerView.Adapter<AdapterRutas.RutasViewHol
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(activity, MapaRutaElegidaActivity.class);
+                intent.putExtra("ruta", ruta);
+                intent.putExtra("imei", imei);
                 activity.startActivity(intent);
             }
         });

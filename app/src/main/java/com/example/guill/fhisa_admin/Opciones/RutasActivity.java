@@ -73,7 +73,6 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
     ImageView btnBuscar;
     int anio, mes, dia;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,7 +194,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     private void inicializarRutasHoy(RecyclerView rvRutasCamion) {
-        String imei = getImei();
+        final String imei = getImei();
         Calendar calendar = Calendar.getInstance();
         final String hoyDia = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
         final String hoyMes = String.valueOf(calendar.get(Calendar.MONTH)+1);
@@ -217,7 +216,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
                 }
 
                 Log.i("Lista Rutas", String.valueOf(listaRutas.size()));
-                getHoraInicioRuta(dataSnapshot, listaRutas);
+                getHoraInicioRuta(dataSnapshot, listaRutas, imei);
             }
 
             @Override
@@ -228,7 +227,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     private void inicializarRutasSemana(RecyclerView rvRutasCamion) {
-        String imei = getImei();
+        final String imei = getImei();
         final Calendar calendar = Calendar.getInstance();
         final int hoyYear = calendar.get(Calendar.YEAR);
         final int hoySemana =calendar.get(Calendar.WEEK_OF_YEAR);
@@ -264,7 +263,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
                 }
 
                 Log.i("Lista Rutas", String.valueOf(listaRutas.size()));
-                getHoraInicioRuta(dataSnapshot, listaRutas);
+                getHoraInicioRuta(dataSnapshot, listaRutas, imei);
             }
 
             @Override
@@ -275,7 +274,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     private void inicializarRutasMes(RecyclerView rvRutasCamion) {
-        String imei = getImei();
+        final String imei = getImei();
         final Calendar calendar = Calendar.getInstance();
         final int hoyYear = calendar.get(Calendar.YEAR);
         final int hoyMes =calendar.get(Calendar.MONTH);
@@ -310,7 +309,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
                 }
 
                 Log.i("Lista Rutas", String.valueOf(listaRutas.size()));
-                getHoraInicioRuta(dataSnapshot, listaRutas);
+                getHoraInicioRuta(dataSnapshot, listaRutas, imei);
             }
 
             @Override
@@ -321,7 +320,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     private void inicializarRutasFecha(RecyclerView rvRutasCamion) {
-        String imei = getImei();
+        final String imei = getImei();
 
         String fechaElegida = tvFechaElegida.getText().toString();
         Log.i("Fechas", fechaElegida);
@@ -370,7 +369,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
                 }
 
                 Log.i("Lista Rutas", String.valueOf(listaRutas.size()));
-                getHoraInicioRuta(dataSnapshot, listaRutas);
+                getHoraInicioRuta(dataSnapshot, listaRutas, imei);
             }
 
             @Override
@@ -381,7 +380,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
 
-    private void getHoraInicioRuta(DataSnapshot dataSnapshot, final List<String> listaRutas) {
+    private void getHoraInicioRuta(DataSnapshot dataSnapshot, final List<String> listaRutas, final String imei) {
 
         for (String ruta : listaRutas) {
             dataSnapshot.child(ruta).getRef().orderByKey().limitToFirst(1).
@@ -395,7 +394,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
                             listaHorasInicioRuta.add(horaInicioRuta);
 
                             if (listaHorasInicioRuta.size() == listaRutas.size()) {
-                                inicializarAdaptador(rvRutasCamion, listaHorasInicioRuta);
+                                inicializarAdaptador(rvRutasCamion, listaHorasInicioRuta, imei);
                             }
                         }
 
@@ -438,9 +437,9 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
      * Método encargado de inicializar el adaptador del RecyclerView
      * @param recyclerView
      */
-    private void inicializarAdaptador(RecyclerView recyclerView, List<String> listaHorasInicioRuta) {
+    private void inicializarAdaptador(RecyclerView recyclerView, List<String> listaHorasInicioRuta, String imei) {
         //Crea un objeto de contacto adaptador y le pasa la lista que tenemos para hacer internamente lo configurado en esa activity
-        adaptador = new AdapterRutas(listaRutas, listaHorasInicioRuta, this);
+        adaptador = new AdapterRutas(listaRutas, listaHorasInicioRuta, this, imei);
         recyclerView.setAdapter(adaptador);
     }
 

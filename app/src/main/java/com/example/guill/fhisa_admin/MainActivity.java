@@ -4,11 +4,13 @@ import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -243,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     public void crearCopiaDB() {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         AlertDialog.Builder alertDialogFirebase = new AlertDialog.Builder(MainActivity.this);
         alertDialogFirebase
@@ -252,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("GUARDAR", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         new DownloadFileFromURL().execute("https://fhisaservicio.firebaseio.com/.json");
+                        new EnviarEmail(getApplicationContext(), preferences).execute();
                         dialog.cancel();
                     }
                 })
@@ -384,8 +388,7 @@ public class MainActivity extends AppCompatActivity {
                 File fhisaDir = new File(Environment.getExternalStorageDirectory(), "FHISAFirebase");
                 if (!fhisaDir.exists()) fhisaDir.mkdirs();
                 String fhisaDirString = fhisaDir.toString();
-
-                System.out.println("Downloading");
+                
                 URL url = new URL(f_url[0]);
 
                 URLConnection conection = url.openConnection();

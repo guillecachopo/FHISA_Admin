@@ -4,6 +4,8 @@
         android:title="Dirección de correo electrónico"
         android:key="etEmail"
         android:summary="%s"
+        android:inputType="textEmailAddress"
+        android:defaultValue="Introduce una dirección de correo electrónico"
         />
 
     <SwitchPreference android:title="Trazar rutas de los camiones"
