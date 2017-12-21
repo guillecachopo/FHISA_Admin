@@ -93,29 +93,28 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
         try {
 
             if (valido(from)) {
-                Log.i("EMAIL", "Correo valido");
+                BodyPart messageBodyPart = new MimeBodyPart();
+                messageBodyPart.setText("Mensaje generado automáticamente.");
+
+                DataSource source = new FileDataSource(rutaFichero);
+                messageBodyPart.setDataHandler(new DataHandler(source));
+                messageBodyPart.setFileName(rutaFichero);
+
+                MimeMultipart multiParte = new MimeMultipart();
+
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(from
+                        , "FHISA Auto Message"));
+                message.setRecipients(Message.RecipientType.TO,
+                        InternetAddress.parse(to));
+
+                message.setSubject(asunto);
+                multiParte.addBodyPart(messageBodyPart);
+                message.setContent(multiParte);
+                Transport.send(message);
             } else {
-                Log.i("EMAIL", "Correo no valido");
+                Toast.makeText(context, "La dirección de correo electrónico no es válida", Toast.LENGTH_LONG).show();
             }
-            BodyPart messageBodyPart=new MimeBodyPart();
-            messageBodyPart.setText("Mensaje generado automáticamente.");
-
-            DataSource source = new FileDataSource(rutaFichero);
-            messageBodyPart.setDataHandler(new DataHandler(source));
-            messageBodyPart.setFileName(rutaFichero);
-
-            MimeMultipart multiParte = new MimeMultipart();
-
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(from
-                    , "FHISA Auto Message"));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(to));
-
-            message.setSubject(asunto);
-            multiParte.addBodyPart(messageBodyPart);
-            message.setContent(multiParte);
-            Transport.send(message);
 
         } catch(MessagingException e) {
             e.printStackTrace();
@@ -123,6 +122,7 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
             Toast.makeText(context,
                     "Error de autenticacion o fallo de conexión", Toast.LENGTH_LONG).show();
         }
+
         return null;
     }
 
