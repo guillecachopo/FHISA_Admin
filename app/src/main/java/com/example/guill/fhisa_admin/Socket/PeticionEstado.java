@@ -3,6 +3,8 @@ package com.example.guill.fhisa_admin.Socket;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -24,6 +26,7 @@ public class PeticionEstado extends AsyncTask<String, String, String> {
 
     public Activity activity;
     public Marker marcador;
+    public ProgressBar progressBar;
 
     //Libre -- verde
     BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
@@ -38,9 +41,10 @@ public class PeticionEstado extends AsyncTask<String, String, String> {
     //Llegada planta -- verde
     BitmapDescriptor icon4 = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
 
-    public PeticionEstado(Activity activity, Marker marcador) {
+    public PeticionEstado(Activity activity, Marker marcador, ProgressBar progressBar) {
         this.activity = activity;
         this.marcador = marcador;
+        this.progressBar = progressBar;
     }
 
     /**
@@ -50,6 +54,7 @@ public class PeticionEstado extends AsyncTask<String, String, String> {
     protected void onPreExecute() {
         super.onPreExecute();
         System.out.println("Starting download");
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -124,7 +129,7 @@ public class PeticionEstado extends AsyncTask<String, String, String> {
             } else if (estado==4) {
                 marcador.setIcon(icon4);
             }
-
         }
+        progressBar.setVisibility(View.GONE);
     }
 }

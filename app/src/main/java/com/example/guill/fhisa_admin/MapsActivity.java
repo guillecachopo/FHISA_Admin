@@ -217,6 +217,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         Button btnBorrarArea = (Button) mView.findViewById(R.id.btnBorrarArea);
         ImageView btnRefresh = (ImageView) mView.findViewById(R.id.btnRefresh);
 
+        progressBar = (ProgressBar) mView.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,7 +227,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 for (Camion camion : listaCamiones) {
                     Marker marcador = mMarkerMap.get(camion.getId());
                     if (marcador!=null)
-                    new PeticionEstado(getActivity(), marcador).execute(camion.getId());
+                    new PeticionEstado(getActivity(), marcador, progressBar).execute(camion.getId());
                 }
 
             }
@@ -321,7 +323,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             public boolean onMarkerClick(Marker marker) {
                // marker.showInfoWindow();
                 String imei = marker.getTag().toString();
-                new PeticionEstado(getActivity(), marker).execute(imei);
+                new PeticionEstado(getActivity(), marker, progressBar).execute(imei);
                 return false;
             }
         });
