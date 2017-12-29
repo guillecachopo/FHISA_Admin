@@ -88,6 +88,7 @@ public class MapaRutaElegidaActivity extends AppCompatActivity implements OnMapR
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.getUiSettings().setZoomControlsEnabled(true);
         // Add a marker in Sydney and move the camera
         LatLng oviedo = new LatLng(43.458979, -5.850589);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(oviedo));

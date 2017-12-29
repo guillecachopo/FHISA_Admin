@@ -3,6 +3,8 @@ package com.example.guill.fhisa_admin.Socket;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.Objetos.Albaran;
@@ -26,9 +28,11 @@ import java.text.Normalizer;
 public class PeticionAlbaran extends AsyncTask<String, String, String> {
 
     public Activity activity;
+    public ProgressBar progressBar;
 
-    public PeticionAlbaran(Activity activity) {
+    public PeticionAlbaran(Activity activity, ProgressBar progressBar) {
         this.activity = activity;
+        this.progressBar = progressBar;
     }
 
     /**
@@ -144,6 +148,7 @@ public class PeticionAlbaran extends AsyncTask<String, String, String> {
         tvDestinoObraAlbaran.setText(albaran.getDestino_obra());
         tvTransportistaNombreAlbaran.setText(albaran.getTransp_nombre());
         tvTransportistaCifAlbaran.setText(albaran.getTrans_cif());
+        tvTransportistaDireccionAlbaran.setText(albaran.getTransp_dir());
         tvTransportistaPoblacionAlbaran.setText(albaran.getTransp_poblacion());
         tvCantidadAlbaran.setText(String.format("%.2f", Float.parseFloat(albaran.getCarga_cantidad())));
         tvTipoCargaAlbaran.setText(albaran.getCarga_tipo());
@@ -159,6 +164,8 @@ public class PeticionAlbaran extends AsyncTask<String, String, String> {
         tvPedidoAlbaran.setText(albaran.getCarga_pedido());
         tvSuministradoAlbaran.setText(albaran.getCarga_suministrado());
         tvPteSumAlbaran.setText(albaran.getCarga_pte_sum());
+
+        progressBar.setVisibility(View.GONE);
     }
 
     public static String normalizarTexto(String cadena) {

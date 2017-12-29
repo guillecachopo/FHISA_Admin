@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -36,14 +38,16 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
     public Context context;
     public SharedPreferences preferences;
     public String rutaFichero;
+    public ProgressBar progressBar;
 
     Session session = null;
     String from = "fhisaautomatico@gmail.com";
 
-    public EnviarEmail(Context context, SharedPreferences preferences, String rutaFichero) {
+    public EnviarEmail(Context context, SharedPreferences preferences, String rutaFichero, ProgressBar progressBar) {
         this.context = context;
         this.preferences = preferences;
         this.rutaFichero = rutaFichero;
+        this.progressBar = progressBar;
     }
 
     private boolean valido(String email) {
@@ -96,9 +100,10 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
                 BodyPart messageBodyPart = new MimeBodyPart();
                 messageBodyPart.setText("Mensaje generado automáticamente.");
 
+                BodyPart attachmentBodyPart = new MimeBodyPart();
                 DataSource source = new FileDataSource(rutaFichero);
-                messageBodyPart.setDataHandler(new DataHandler(source));
-                messageBodyPart.setFileName(rutaFichero);
+                attachmentBodyPart.setDataHandler(new DataHandler(source));
+                attachmentBodyPart.setFileName(rutaFichero);
 
                 MimeMultipart multiParte = new MimeMultipart();
 
@@ -110,6 +115,7 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
 
                 message.setSubject(asunto);
                 multiParte.addBodyPart(messageBodyPart);
+                multiParte.addBodyPart(attachmentBodyPart);
                 message.setContent(multiParte);
                 Transport.send(message);
             } else {
@@ -130,5 +136,6 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
     protected void onPostExecute(String result) {
         Toast.makeText(context, "Mensaje enviado",
                 Toast.LENGTH_LONG).show();
+        progressBar.setVisibility(View.GONE);
     }
 }

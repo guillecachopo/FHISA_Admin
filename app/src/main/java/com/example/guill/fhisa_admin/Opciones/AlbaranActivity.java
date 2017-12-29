@@ -7,6 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.guill.fhisa_admin.Adapter.PageAdapter;
 import com.example.guill.fhisa_admin.R;
@@ -19,6 +21,7 @@ public class AlbaranActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    public ProgressBar progressBar;
 
 
     @Override
@@ -36,7 +39,9 @@ public class AlbaranActivity extends AppCompatActivity {
         String imei = getImei();
         String imeiIdAlbaran = imei + "---" + idAlbaran;
 
-        PeticionAlbaran peticionAlbaran = new PeticionAlbaran(this);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+        PeticionAlbaran peticionAlbaran = new PeticionAlbaran(this, progressBar);
         peticionAlbaran.execute(imeiIdAlbaran);
 
 

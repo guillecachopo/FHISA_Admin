@@ -12,6 +12,17 @@
         android:id="@+id/actionBar"
         layout="@layout/actionbar"></include>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:max="100"
+        android:backgroundTint="@color/colorBlanco"
+        android:indeterminateTint="#1a09d6"
+        android:layout_marginTop="-7dp"/>
+
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
@@ -30,16 +41,36 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvAliasVehiculo"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:onClick="cambiarAlias"
-                android:text=""
-                android:textColor="@color/colorFhisa"
-                android:textSize="33dp" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvAliasVehiculo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:onClick="cambiarAlias"
+                    android:text=""
+                    android:textColor="@color/colorFhisa"
+                    android:textSize="33dp" />
+
+
+                <ImageView
+                    android:id="@+id/imgvIrOpcionesCamion"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_plus"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:onClick="irOpcionesCamion"
+                    />
+            </RelativeLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -149,6 +180,34 @@
 
                 <TextView
                     android:id="@+id/tvMatriculaVehiculo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Cargando..."
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="esBateria"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
+
+                <ImageView
+                    android:id="@+id/imgvBateriaVehiculo"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_bateria" />
+
+                <TextView
+                    android:id="@+id/tvBateriaVehiculo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"

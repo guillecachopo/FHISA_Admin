@@ -81,6 +81,37 @@
                 android:background="@android:color/darker_gray"/> -->
 
             <RelativeLayout
+                android:id="@+id/rlDetallesCamion"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:clickable="true"
+                android:onClick="detallesCamion"
+                android:background="?attr/selectableItemBackground"
+                >
+
+                <TextView
+                    android:id="@+id/tvDetallesCamion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="29dp"
+                    android:text="Detalles del camión"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_below="@+id/rlDetallesCamion"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+
+            <RelativeLayout
                 android:id="@+id/rlLlamar"
                 android:layout_width="match_parent"
                 android:layout_height="47dp"
@@ -353,6 +384,36 @@
 
             <View
                 android:layout_below="@+id/rlCambiarNombre"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <RelativeLayout
+                android:id="@+id/rlFrecuenciasEnvio"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:clickable="true"
+                android:onClick="frecuenciasEnvio"
+                android:background="?attr/selectableItemBackground"
+                >
+
+                <TextView
+                    android:id="@+id/tvFrecuenciasEnvio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="29dp"
+                    android:text="Frecuencias de envío"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_below="@+id/rlFrecuenciasEnvio"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>

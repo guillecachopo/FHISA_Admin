@@ -1,6 +1,7 @@
 package com.example.guill.fhisa_admin;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
@@ -17,12 +18,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
+import com.example.guill.fhisa_admin.Opciones.VehiculoActivity;
 import com.example.guill.fhisa_admin.Socket.PeticionEstado;
 import com.example.guill.fhisa_admin.Socket.PeticionUltimoAlbaran;
 import com.google.android.gms.maps.CameraUpdate;
@@ -179,6 +182,11 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      */
     public Map<String, Polyline> mPolylineRutaMap = new HashMap<>();
 
+    /**
+     * ProgressBar que se mostrará cuando se actualicen los estados de los camiones
+     */
+    public ProgressBar progressBar;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -315,6 +323,25 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 String imei = marker.getTag().toString();
                 new PeticionEstado(getActivity(), marker).execute(imei);
                 return false;
+            }
+        });
+
+        mMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
+            @Override
+            public void onInfoWindowLongClick(Marker marker) {
+                if (marker.getTag().toString().startsWith("destino")) {
+                    mPolylineMap.get(marker.getTag().toString()).remove();
+                    marker.remove();
+                } else {
+                    for (Camion camion : listaCamiones) {
+                        String imei = camion.getId();
+                        if (imei.compareTo(marker.getTag().toString()) == 0) {
+                            Intent intent = new Intent(getContext(), VehiculoActivity.class);
+                            intent.putExtra("id", imei);
+                            startActivity(intent);
+                        }
+                    }
+                }
             }
         });
 
@@ -540,6 +567,28 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     }
                 }
                 if (!existeRutaActual) { //El camion no tiene ruta actual, pero hay que mostrarlo tambien en el mapa
+
+                    dataSnapshot.child("rutas").child("rutas_completadas").getRef().limitToLast(1)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            long ultimoValor = dataSnapshot.getChildrenCount();
+                            ArrayList<Posicion> ultimaPosicion = new ArrayList<Posicion>();
+                            for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                                Posicion posicion = snapshot1.getValue(Posicion.class);
+                                ultimaPosicion.add(posicion); //antes listaPosiciones.add(posicion);
+                            }
+                            //Coge todas las de su ultima ruta completada, le seteamos solo la última
+                            listaPosiciones.add(ultimaPosicion.get(ultimaPosicion.size()-1));
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
                     Query queryRuta_completada = dataSnapshot.child("rutas")
                             .child("rutas_completadas").getRef().orderByKey().limitToLast(1);
                     queryRuta_completada.addChildEventListener(new ChildEventListener() {
@@ -579,6 +628,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             }
         }
 
+
         camionPos.setPosicionesList(listaPosiciones);
         //Ahora tendria que actualizar listaCamiones:
         for (Camion camionRefresh : listaCamiones) {
@@ -586,6 +636,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 camionRefresh.setPosicionesList(camionPos.getPosicionesList()); //o camionRefresh = camion;
             }
         }
+
+
     }
 
 

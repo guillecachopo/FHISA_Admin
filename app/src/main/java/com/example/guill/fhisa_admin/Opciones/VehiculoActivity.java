@@ -1,6 +1,7 @@
 package com.example.guill.fhisa_admin.Opciones;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,19 +11,26 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.R;
 import com.example.guill.fhisa_admin.Socket.PeticionLlamar;
 import com.example.guill.fhisa_admin.Socket.PeticionVehiculo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class VehiculoActivity extends AppCompatActivity {
 
     /**
      * Declaración de TextViews de la actividad
     */
-    public TextView tvAliasVehiculo, tvIdVehiculo, tvImeiVehiculo, tvMatriculaVehiculo, tvTlfVehiculo;
+    public TextView tvAliasVehiculo, tvIdVehiculo, tvImeiVehiculo, tvMatriculaVehiculo, tvTlfVehiculo,
+    tvBateriaVehiculo;
 
     /**
      * Declaración de las preferencias compartidas de la aplicación
@@ -36,6 +44,8 @@ public class VehiculoActivity extends AppCompatActivity {
      * Declaración de la Toolbar de la aplicación
      */
     private Toolbar toolbar;
+
+    public ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +62,40 @@ public class VehiculoActivity extends AppCompatActivity {
         tvImeiVehiculo = (TextView) findViewById(R.id.tvImeiVehiculo);
         tvMatriculaVehiculo = (TextView) findViewById(R.id.tvMatriculaVehiculo);
         tvTlfVehiculo = (TextView) findViewById(R.id.tvTlfVehiculo);
+        tvBateriaVehiculo = (TextView) findViewById(R.id.tvBateriaVehiculo);
 
         tvAliasVehiculo.setText(alias);
+        getBateria(imei);
 
-        PeticionVehiculo peticionVehiculo = new PeticionVehiculo(this);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+        PeticionVehiculo peticionVehiculo = new PeticionVehiculo(this, progressBar);
         peticionVehiculo.execute(imei);
+    }
+
+    /**
+     * Retorna el porcentaje de batería del teléfono
+     * @param imei
+     */
+    private void getBateria(String imei) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference bateriaRef = database.getReference("bateria");
+        bateriaRef.child(imei).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    long bateria = (long) dataSnapshot.getValue();
+                    tvBateriaVehiculo.setText(bateria + "%");
+                } else {
+                    tvBateriaVehiculo.setText("No hay información de batería.");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
@@ -154,6 +193,16 @@ public class VehiculoActivity extends AppCompatActivity {
 
     public void esMatricula(View view) {
         Toast.makeText(this, "MATRICULA", Toast.LENGTH_SHORT).show();
+    }
+
+    public void esBateria(View view) {
+        Toast.makeText(this, "BATERÍA", Toast.LENGTH_SHORT).show();
+    }
+
+    public void irOpcionesCamion(View view) {
+        Intent intent = new Intent(this, OpcionesCamionActivity.class);
+        intent.putExtra("id", getImei());
+        startActivity(intent);
     }
 
 

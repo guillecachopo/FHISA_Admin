@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.guill.fhisa_admin.Opciones.FrecuenciasEnvioActivity"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/actionbar"></include>
+
+    <RelativeLayout
+        android:id="@+id/rlCamionOpcionesId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <TextView
+            android:id="@+id/tvImeiFrecuencias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Camion"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="15dp"
+            android:textAlignment="center"
+            android:textColor="@color/colorFhisa"
+            android:textStyle="bold"
+
+            />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/rlFrecuenciaPosiciones"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:clickable="true"
+        android:onClick="frecuenciaPosiciones"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <TextView
+        android:id="@+id/tvFrecuenciaPosiciones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:text="Frecuencia de envío de posiciones"
+        android:textColor="@color/colorBlack"
+        android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvFrecuenciaPosiciones"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:id="@+id/tvFrecuenciaActualPosiciones"
+                android:layout_below="@id/tvFrecuenciaPosiciones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="1dp"
+                android:text="Frecuencia actual"
+                android:textColor="@color/colorFhisaDark"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="1dp"
+                android:text=" minuto/s"
+                android:textColor="@color/colorFhisaDark"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/rlFrecuenciaErrores"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:clickable="true"
+        android:onClick="frecuenciaErrores"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <TextView
+            android:id="@+id/tvFrecuenciaErrores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:text="Frecuencia de envío de notificaciones de error"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvFrecuenciaErrores"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvFrecuenciaActualErrores"
+                android:layout_below="@id/tvFrecuenciaErrores"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="1dp"
+                android:text="Frecuencia actual"
+                android:textColor="@color/colorFhisaDark"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="1dp"
+                android:text=" minuto/s"
+                android:textColor="@color/colorFhisaDark"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/darker_gray"/>
+
+
+
+</LinearLayout>

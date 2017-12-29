@@ -2,6 +2,8 @@ package com.example.guill.fhisa_admin.Socket;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.Objetos.Vehiculo;
@@ -24,8 +26,10 @@ import java.net.Socket;
 public class PeticionVehiculo extends AsyncTask<String, String, String> {
 
     public Activity activity;
-    public PeticionVehiculo(Activity activity) {
+    public ProgressBar progressBar;
+    public PeticionVehiculo(Activity activity, ProgressBar progressBar) {
         this.activity = activity;
+        this.progressBar = progressBar;
     }
 
     /**
@@ -101,5 +105,7 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
         tvImeiVehiculo.setText(imei);
         tvMatriculaVehiculo.setText(matricula);
         tvTlfVehiculo.setText(telefono);
+
+        progressBar.setVisibility(View.GONE);
     }
 }

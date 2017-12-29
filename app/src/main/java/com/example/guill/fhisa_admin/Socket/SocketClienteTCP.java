@@ -43,9 +43,10 @@ public class SocketClienteTCP {
         int i=0;
         do {
            // request = "860935033015443, albaran, 301226" ;
-            request = "351823057902157, estado, ";
+            request = "351823057902157, consumo, ";
             salida.println(request);
             respuesta = entrada.readLine();
+            System.out.println(respuesta);
             //System.out.println(i+": " +respuesta);
             if (respuesta!=null) {
                 json+=respuesta;

@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.R;
@@ -17,6 +19,7 @@ public class MantenimientoActivity extends AppCompatActivity {
     public TextView tvItvMantenimiento;
     public RecyclerView rvMantenimiento;
     private Toolbar toolbar;
+    public ProgressBar progressBar;
 
 
     @Override
@@ -32,8 +35,10 @@ public class MantenimientoActivity extends AppCompatActivity {
         rvMantenimiento.setLayoutManager(llm);
         rvMantenimiento.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)); //Linea
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
         String imei = getImei();
-        PeticionMantenimiento peticionMantenimiento = new PeticionMantenimiento(this, rvMantenimiento);
+        PeticionMantenimiento peticionMantenimiento = new PeticionMantenimiento(this, rvMantenimiento, progressBar);
         peticionMantenimiento.execute(imei);
 
         tvItvMantenimiento = (TextView) findViewById(R.id.tvItvMantenimiento);

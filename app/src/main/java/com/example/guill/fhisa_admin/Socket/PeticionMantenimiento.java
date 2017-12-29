@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.Adapter.AdapterMantenimiento;
@@ -30,10 +32,12 @@ public class PeticionMantenimiento extends AsyncTask<String, String, String> {
 
     public Activity activity;
     public RecyclerView recyclerView;
+    public ProgressBar progressBar;
 
-    public PeticionMantenimiento(Activity activity, RecyclerView recyclerView) {
+    public PeticionMantenimiento(Activity activity, RecyclerView recyclerView, ProgressBar progressBar) {
         this.activity = activity;
         this.recyclerView = recyclerView;
+        this.progressBar = progressBar;
     }
 
     /**
@@ -118,6 +122,8 @@ public class PeticionMantenimiento extends AsyncTask<String, String, String> {
                 tvPrecisaMantenimiento.setText("El vehículo no requiere mantenimiento actualmente");
             }
         }
+
+        progressBar.setVisibility(View.GONE);
 
     }
 }

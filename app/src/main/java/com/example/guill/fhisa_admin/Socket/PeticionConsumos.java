@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,10 +36,12 @@ public class PeticionConsumos extends AsyncTask<String, String, String> {
     public Activity activity;
     public RecyclerView recyclerView;
     public ProgressDialog pDialog;
+    public ProgressBar progressBar;
 
-    public PeticionConsumos(Activity activity, RecyclerView recyclerView) {
+    public PeticionConsumos(Activity activity, RecyclerView recyclerView, ProgressBar progressBar) {
         this.activity = activity;
         this.recyclerView = recyclerView;
+        this.progressBar = progressBar;
     }
 
     /**
@@ -136,5 +140,6 @@ public class PeticionConsumos extends AsyncTask<String, String, String> {
             recyclerView.setAdapter(adapterConsumos);
         }
 
+        progressBar.setVisibility(View.GONE);
     }
 }

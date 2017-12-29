@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.guill.fhisa_admin.R;
 import com.example.guill.fhisa_admin.Socket.PeticionAlbaranes;
@@ -14,6 +16,7 @@ public class ListaAlbaranesActivity extends AppCompatActivity {
 
     RecyclerView rvListaAlbaranes;
     private Toolbar toolbar;
+    public ProgressBar progressBar;
 
 
     @Override
@@ -29,8 +32,10 @@ public class ListaAlbaranesActivity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         rvListaAlbaranes.setLayoutManager(llm);
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
         String imei = getImei();
-        PeticionAlbaranes peticionAlbaranes = new PeticionAlbaranes(this, rvListaAlbaranes);
+        PeticionAlbaranes peticionAlbaranes = new PeticionAlbaranes(this, rvListaAlbaranes, progressBar);
         peticionAlbaranes.execute(imei);
     }
 

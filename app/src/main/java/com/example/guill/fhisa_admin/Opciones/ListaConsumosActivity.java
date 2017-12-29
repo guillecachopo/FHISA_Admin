@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.guill.fhisa_admin.R;
 import com.example.guill.fhisa_admin.Socket.PeticionConsumos;
@@ -20,6 +22,7 @@ public class ListaConsumosActivity extends AppCompatActivity {
     RecyclerView rvListaConsumos;
 
     private Toolbar toolbar;
+    public ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,8 +38,10 @@ public class ListaConsumosActivity extends AppCompatActivity {
         rvListaConsumos.setLayoutManager(llm);
         rvListaConsumos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
         String imei = getImei();
-        PeticionConsumos peticionConsumos = new PeticionConsumos(this, rvListaConsumos);
+        PeticionConsumos peticionConsumos = new PeticionConsumos(this, rvListaConsumos, progressBar);
         peticionConsumos.execute(imei);
 
     }

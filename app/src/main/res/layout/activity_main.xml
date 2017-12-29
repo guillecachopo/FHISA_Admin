@@ -21,14 +21,24 @@
             android:id="@+id/actionBar"
             layout="@layout/actionbar"></include>
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:max="100"
+            android:backgroundTint="@color/colorBlanco"
+            android:indeterminateTint="#1a09d6"
+            android:layout_marginTop="-7dp"/>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
-
         </android.support.design.widget.TabLayout>
+
 
 
     </android.support.design.widget.AppBarLayout>
@@ -45,33 +55,6 @@
         android:layout_below="@+id/appBarLayout">
 
     </android.support.v4.view.ViewPager>
-
-    <!--
-
-    <Button
-        android:id="@+id/btnIrMapa"
-        android:layout_width="368dp"
-        android:layout_height="wrap_content"
-        android:text="@string/ir_mapas"
-        android:onClick="irMapa"
-        />
-
-    <TextView
-        android:id="@+id/tvCamion"
-        android:layout_below="@+id/btnIrMapa"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/btnIrCamiones"
-        android:layout_below="@+id/tvCamion"
-        android:layout_width="368dp"
-        android:layout_height="wrap_content"
-        android:text="@string/ver_camiones"
-        android:onClick="irCamiones"
-        />
-
-        -->
 
 
 

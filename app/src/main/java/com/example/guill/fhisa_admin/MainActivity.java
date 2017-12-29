@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
     Session session = null;
     boolean validez;
 
+    public ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().hide();
             //tabLayout.setVisibility(View.GONE);
         }
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
     }
 
@@ -254,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                 .setMessage("Firebase Database es la base de datos utilizada para guardar las posiciones de cada camión y las areas correspondientes a las zonas libres de notificaciones. Las copias de seguridad se guardarán en del directorio raíz del dispositivo dentro la carpeta FHISAFirebase.")
                 .setPositiveButton("GUARDAR", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        new CopiaSeguridadFirebase(getApplicationContext(), preferences)
+                        new CopiaSeguridadFirebase(getApplicationContext(), preferences, progressBar)
                                 .execute("https://fhisaservicio.firebaseio.com/.json");
                         //new EnviarEmail(getApplicationContext(), preferences).execute();
 

@@ -3,6 +3,8 @@ package com.example.guill.fhisa_admin.Socket;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,10 +33,12 @@ public class PeticionAlbaranes extends AsyncTask<String, String, String> {
 
     public Activity activity;
     public RecyclerView recyclerView;
+    public ProgressBar progressBar;
 
-    public PeticionAlbaranes(Activity activity, RecyclerView recyclerView) {
+    public PeticionAlbaranes(Activity activity, RecyclerView recyclerView, ProgressBar progressBar) {
         this.activity = activity;
         this.recyclerView = recyclerView;
+        this.progressBar = progressBar;
     }
 
     /**
@@ -119,6 +123,8 @@ public class PeticionAlbaranes extends AsyncTask<String, String, String> {
             TextView tvNoAlbaranes = (TextView) activity.findViewById(R.id.tvNoHayAlbaranes);
             tvNoAlbaranes.setText("Este vehículo no dispone de ningún albarán hoy");
         }
+
+        progressBar.setVisibility(View.GONE);
 
     }
 

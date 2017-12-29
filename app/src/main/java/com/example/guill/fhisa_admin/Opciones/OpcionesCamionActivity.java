@@ -50,22 +50,25 @@ public class OpcionesCamionActivity extends AppCompatActivity {
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+
+
         Bundle extras = getIntent().getExtras();
         id = extras.getString("id");
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String alias = pref.getString(id + "-nombreCamion", id);
         tvCamionId = (TextView) findViewById(R.id.tvCamionOpcionesId);
-        tvCamionId.setText("Camion: " + id);
+        tvCamionId.setText("Camión: " + alias);
 
 
     }
 
-    /*
-    public void verDatosCamion(View view) {
+    public void detallesCamion(View view) {
         Bundle extras = getIntent().getExtras();
         String imei = extras.getString("id");
         Intent intent = new Intent(this, VehiculoActivity.class);
         intent.putExtra("id", imei);
         startActivity(intent);
-    } */
+    }
 
     public void llamarConductor(View view) {
         Bundle extras = getIntent().getExtras();
@@ -292,6 +295,14 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
         AlertDialog b = dialogBuilder.create();
         b.show();
+    }
+
+    public void frecuenciasEnvio(View view) {
+        Bundle extras = getIntent().getExtras();
+        String imei = extras.getString("id");
+        Intent intent = new Intent(this, FrecuenciasEnvioActivity.class);
+        intent.putExtra("id", imei);
+        startActivity(intent);
     }
 
 

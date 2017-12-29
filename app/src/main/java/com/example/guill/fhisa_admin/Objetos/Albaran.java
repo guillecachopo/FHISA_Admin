@@ -31,6 +31,7 @@ public class Albaran {
     String lim_uso;
     String trans_cif;
     String transp_nombre;
+    String transp_dir;
     String transp_poblacion;
     String vehiculo;
 
@@ -45,7 +46,7 @@ public class Albaran {
                    String cemento_kgm3, String cemento_marca, String cemento_tipo, String chofer,
                    String destino, String destino_cif, String destino_cliente, String destino_obra,
                    String fecha, String hora_carga, String id_albaran, String lim_uso,
-                   String trans_cif, String transp_nombre, String transp_poblacion, String vehiculo) {
+                   String trans_cif, String transp_nombre, String transp_dir, String transp_poblacion, String vehiculo) {
 
         this.adicciones_kgm3 = adicciones_kgm3;
         this.adicciones_marca = adicciones_marca;
@@ -73,6 +74,7 @@ public class Albaran {
         this.lim_uso = lim_uso;
         this.trans_cif = trans_cif;
         this.transp_nombre = transp_nombre;
+        this.transp_dir = transp_dir;
         this.transp_poblacion = transp_poblacion;
         this.vehiculo = vehiculo;
     }
@@ -285,6 +287,14 @@ public class Albaran {
 
     public void setTransp_nombre(String transp_nombre) {
         this.transp_nombre = transp_nombre;
+    }
+
+    public String getTransp_dir() {
+        return transp_dir;
+    }
+
+    public void setTransp_dir(String transp_dir) {
+        this.transp_dir = transp_dir;
     }
 
     public String getTransp_poblacion() {
