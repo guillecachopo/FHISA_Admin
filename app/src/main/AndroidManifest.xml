@@ -51,7 +51,7 @@
             android:parentActivityName=".MainActivity" />
 
         <service
-            android:name=".NotificationJobScheduler"
+            android:name=".NotificacionesScheduler"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
@@ -61,9 +61,7 @@
         <activity
             android:name=".Opciones.OpcionesCamionActivity"
             android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".Opciones.VelocidadActualActivity"
-            android:parentActivityName=".MainActivity" />
+
         <activity
             android:name=".Preferences.CamionPreferencesActivity"
             android:parentActivityName=".MainActivity" />
@@ -72,6 +70,7 @@
         <activity android:name=".Opciones.ListaConsumosActivity" />
         <activity android:name=".Opciones.ListaAlbaranesActivity" />
         <activity android:name=".Opciones.MantenimientoActivity" />
+        <activity android:name=".Opciones.VelocidadActualActivity" />
         <activity
             android:name=".OpcionesMenuActivity"
             android:parentActivityName=".MainActivity" />

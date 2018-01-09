@@ -59,8 +59,6 @@ public class RecyclerViewFragment2 extends Fragment {
      */
     final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
 
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -160,7 +158,7 @@ public class RecyclerViewFragment2 extends Fragment {
     }
 
     /**
-     * Método encargado de actualizar las posiciones de cada camión en el mapa
+     * Método encargado de actualizar las posiciones de cada camión
      * @param camionPos
      * @param snapshot
      */
