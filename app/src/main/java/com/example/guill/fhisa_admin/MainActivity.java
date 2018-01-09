@@ -219,13 +219,13 @@ public class MainActivity extends AppCompatActivity {
                     .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setRequiresCharging(false)
                     .setRequiresDeviceIdle(false)
-                    .setMinimumLatency(1000 * 60 * 1) //Setear en milisegundos cada cuánto tiempo queremos que se ejecute el job para comprobar posiciones
+                    .setMinimumLatency(1000 * 60 * 5) //Setear en milisegundos cada cuánto tiempo queremos que se ejecute el job para comprobar posiciones
                     .build();
         } else {
             jb = new JobInfo.Builder(1, cp)
                     .setBackoffCriteria(4000, JobInfo.BACKOFF_POLICY_LINEAR)
                     .setPersisted(true)
-                    .setPeriodic(1000 * 60 * 1) //Setear en milisegundos cada cuánto tiempo queremos que se ejecute el job para comprobar posiciones
+                    .setPeriodic(1000 * 60 * 5) //Setear en milisegundos cada cuánto tiempo queremos que se ejecute el job para comprobar posiciones
                     .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setRequiresCharging(false)
                     .setRequiresDeviceIdle(false)

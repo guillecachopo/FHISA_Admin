@@ -323,44 +323,29 @@ public class NotificacionesScheduler extends JobService {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.i("JobScheduler", "FrecuenciasRef");
-                        if (dataSnapshot.getChildrenCount() > 1) {
-                            Frecuencias frecuencias = dataSnapshot.getValue(Frecuencias.class);
-                            long frecuencia = Long.parseLong(frecuencias.getNotificaciones()) * 60 * 1000;
 
-                            long ultimaHora = camionNotif.getUltimaPosicion().getTime();
-                            Date horaActualDate = Calendar.getInstance().getTime();
-                            long horaActual = horaActualDate.getTime();
-                            long diferencia = horaActual - ultimaHora;
-
-                            boolean dentro = camionEnArea(camionNotif, listaAreas);
-                            Log.i("JobScheduler Area", "Camion " + camionNotif.getId() + "en area: " + dentro);
-
-                            if (diferencia >= frecuencia && !dentro) {
-                                enviarNotificacion(camionNotif, Integer.parseInt(camionNotif.getId()));
-                                ErrorNotificacion errorNotificacion = new ErrorNotificacion(camionNotif.getId(), diferencia, horaActual);
-                                erroresRef.push().setValue(errorNotificacion);
-                            }
-
+                        Frecuencias frecuencias = dataSnapshot.getValue(Frecuencias.class);
+                        long frecuencia;
+                        if (dataSnapshot.hasChild("notificaciones")) {
+                            frecuencia = Long.parseLong(frecuencias.getNotificaciones()) * 60 * 1000;
                         } else {
-                            long frecuencia = 10 * 60 * 1000; //Frecuencia por defecto
-
-                            long ultimaHora = camionNotif.getUltimaPosicion().getTime();
-                            Date horaActualDate = Calendar.getInstance().getTime();
-                            long horaActual = horaActualDate.getTime();
-                            long diferencia = horaActual - ultimaHora;
-
-                            boolean dentro = camionEnArea(camionNotif, listaAreas);
-                            Log.i("JobScheduler Area", "Camion " + camionNotif.getId() + "en area: " + dentro);
-
-                            if (diferencia >= frecuencia && !dentro) {
-                                enviarNotificacion(camionNotif, notifId);
-                                ErrorNotificacion errorNotificacion = new ErrorNotificacion(camionNotif.getId(), diferencia, horaActual);
-                                erroresRef.push().setValue(errorNotificacion);
-                                notifId++;
-                            }
-
+                            frecuencia = 10 * 60 * 1000; //Frecuencia por defecto
                         }
 
+                        long ultimaHora = camionNotif.getUltimaPosicion().getTime();
+                        Date horaActualDate = Calendar.getInstance().getTime();
+                        long horaActual = horaActualDate.getTime();
+                        long diferencia = horaActual - ultimaHora;
+
+                        boolean dentro = camionEnArea(camionNotif, listaAreas);
+                        Log.i("JobScheduler Area", "Camion " + camionNotif.getId() + " en area: " + dentro);
+
+                        if (diferencia >= frecuencia && !dentro) {
+                            enviarNotificacion(camionNotif, notifId);
+                            ErrorNotificacion errorNotificacion = new ErrorNotificacion(camionNotif.getId(), diferencia, horaActual);
+                            erroresRef.push().setValue(errorNotificacion);
+                            notifId++;
+                        }
                     }
 
                     @Override
