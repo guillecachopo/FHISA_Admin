@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin;
+package com.example.guill.fhisa_admin.Antiguo;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,11 +15,13 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.guill.fhisa_admin.MainActivity;
 import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.ErrorNotificacion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
+import com.example.guill.fhisa_admin.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
