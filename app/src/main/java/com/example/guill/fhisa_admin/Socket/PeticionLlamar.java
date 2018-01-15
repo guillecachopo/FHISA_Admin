@@ -3,9 +3,11 @@ package com.example.guill.fhisa_admin.Socket;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 
 import com.example.guill.fhisa_admin.Objetos.Vehiculo;
@@ -41,11 +43,16 @@ public class PeticionLlamar extends AsyncTask<String, String, String> {
 
     @Override
     protected String doInBackground(String... imei) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
+        String ip = preferences.getString("etIP", "89.17.197.73");
+        String puertoString = preferences.getString("etPuerto","6905");
+        int puerto = Integer.parseInt(puertoString);
+
         Socket socketCliente = null;
         BufferedReader entrada = null;
         PrintWriter salida = null;
         try {
-            socketCliente = new Socket("89.17.197.73", 6905); //"89.17.197.73", 6905
+            socketCliente = new Socket(ip, puerto); //"89.17.197.73", 6905
             entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream(),"ISO-8859-1"));
             salida = new PrintWriter(new BufferedWriter(new
                     OutputStreamWriter(socketCliente.getOutputStream())), true);

@@ -1,8 +1,10 @@
 package com.example.guill.fhisa_admin.Socket;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Process;
+import android.preference.PreferenceManager;
 
 import com.example.guill.fhisa_admin.Objetos.Albaran;
 import com.google.gson.Gson;
@@ -41,12 +43,17 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
 
         @Override
         protected String doInBackground(String... imei) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
+            String ip = preferences.getString("etIP", "89.17.197.73");
+            String puertoString = preferences.getString("etPuerto","6905");
+            int puerto = Integer.parseInt(puertoString);
+
             Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND + THREAD_PRIORITY_MORE_FAVORABLE);
             Socket socketCliente = null;
             BufferedReader entrada = null;
             PrintWriter salida = null;
             try {
-                socketCliente = new Socket("89.17.197.73", 6905); //"89.17.197.73", 6905
+                socketCliente = new Socket(ip, puerto); //"89.17.197.73", 6905
                 entrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream(), "ISO-8859-1"));
                 salida = new PrintWriter(new BufferedWriter(new
                         OutputStreamWriter(socketCliente.getOutputStream())), true);
