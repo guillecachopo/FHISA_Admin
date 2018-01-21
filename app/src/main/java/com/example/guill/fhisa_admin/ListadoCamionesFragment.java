@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * Created by guill on 28/11/2017.
  */
 
-public class RecyclerViewFragment2 extends Fragment {
+public class ListadoCamionesFragment extends Fragment {
 
     /**
      * RecyclerView que se va a utilizar

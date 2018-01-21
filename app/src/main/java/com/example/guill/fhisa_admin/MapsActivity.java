@@ -243,7 +243,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         btnArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                accionAreaSegura();
+                accionBaseOperativa();
             }
         });
 
@@ -278,7 +278,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         inicializarMapa(mMap);
         setTipoMapaInicial(mMap);
 
-        inicializarAreas(areasRef);
+        inicializarBasesOperativas(areasRef);
+
         cargarCamiones(camionesRef);
         escucharMarkerClick(mMap);
 
@@ -384,17 +385,17 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
                 Polyline previousPolyline = mPolylineRutaMap.get(camion.getId());
                 if (previousPolyline != null) { //Existe polyline
-                    actualizarDibujoRuta(camion);
+                    actualizarTrazoRuta(camion);
                 } else { //No hay polyline
-                    dibujarRuta(camion);
+                    trazarRuta(camion);
                 }
             }
 
-            if (camion.getPosicionesList().size() == 0) borrarDibujoRuta(camion);
+            if (camion.getPosicionesList().size() == 0) borrarTrazoRuta(camion);
         }
     }
 
-    private void borrarDibujoRuta(Camion camionBorrar) {
+    private void borrarTrazoRuta(Camion camionBorrar) {
         Polyline polylineBorrar = mPolylineRutaMap.get(camionBorrar.getId());
         if (polylineBorrar != null) {
             polylineBorrar.remove();
@@ -402,7 +403,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void actualizarDibujoRuta(Camion camionPintar) {
+    private void actualizarTrazoRuta(Camion camionPintar) {
         List<LatLng> latlngs = new ArrayList<>();
         int colorRuta = preferences.getInt(camionPintar.getId()+"-color", Color.RED);
         for (Posicion posicion :camionPintar.getPosicionesList()) {
@@ -414,7 +415,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         previousPolyline.setColor(colorRuta);
     }
 
-    private void dibujarRuta(Camion camionPintar) {
+    private void trazarRuta(Camion camionPintar) {
         boolean dibujar = preferences.getBoolean("cbxAddPolylines", false);
         int colorRuta = preferences.getInt(camionPintar.getId()+"-color", Color.RED);
 
@@ -489,9 +490,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         int childNumber = (int) dataSnapshot.child("rutas").getChildrenCount(); //ruta_actual + rutas_completadas (?)
         Log.i("DataSnapshot", camionPos.getId() +": " + childNumber);
 
-
-        if (childNumber == 2) {
-
+        if (dataSnapshot.child("rutas").hasChild("ruta_actual")) {
+            //Está en ruta
             Query q = dataSnapshot.child("rutas").child("ruta_actual").getRef().orderByKey().limitToLast(1);
 
             q.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -513,8 +513,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
                 }
             });
-
         } else {
+            //No está en ruta
             for (Camion camionBorrar : listaCamiones) {
                 if (camionBorrar.getId().compareTo(camionPos.getId()) == 0) {
                     camionBorrar.clearPosiciones();
@@ -680,12 +680,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     /**
      * Método al que se entrará cuando se haga click en Marcar Area
      */
-    public void accionAreaSegura() {
-        infoDialogMarcarArea();
+    public void accionBaseOperativa() {
+        infoDialogMarcarBaseOperativa();
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latlng) {
-                crearAreaSegura(latlng);
+                crearBaseOperativa(latlng);
                 mMap.setOnMapClickListener(null); //Para que no salga continuamente el dialogo para definir una zona
             }
         });
@@ -699,7 +699,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                borrarAreaSegura(latLng);
+                borrarBaseOperativa(latLng);
                 mMap.setOnMapClickListener(null);
             }
         });
@@ -764,7 +764,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     /**
      * Método que muestra que se entrará a configurar una Base Operativa
      */
-    public void infoDialogMarcarArea() {
+    public void infoDialogMarcarBaseOperativa() {
 
         new AlertDialog.Builder(getContext())
                 .setTitle("Creación de zona libre de notificaciones (CANTERA)")
@@ -799,7 +799,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      * area operativa en Firebase y genera un círculo en el area elegida.
      * @param latlng
      */
-    public void crearAreaSegura(final LatLng latlng) {
+    public void crearBaseOperativa(final LatLng latlng) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater(getArguments());
         final View dialogView = inflater.inflate(R.layout.dialog_area, null);
@@ -815,7 +815,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 if (introducido.equals("")) {
                     Toast.makeText(getContext(), "No se ha introducido un valor válido",
                             Toast.LENGTH_SHORT).show();
-                    crearAreaSegura(latlng);
+                    crearBaseOperativa(latlng);
                 }
                 else {
                     long distancia = Long.parseLong(edt.getText().toString());
@@ -846,7 +846,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      * su circunferencia asociada.
      * @param latitudlongitud
      */
-    public void borrarAreaSegura(LatLng latitudlongitud) {
+    public void borrarBaseOperativa(LatLng latitudlongitud) {
         for (int i = 0; i < listaCirculos.size(); i++) {
 
             LatLng center = listaCirculos.get(i).getCenter();
@@ -918,7 +918,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      * Método encargado de mostrar en el mapa las areas existentes
      * @param areasRef
      */
-    public void inicializarAreas(DatabaseReference areasRef) {
+    public void inicializarBasesOperativas(DatabaseReference areasRef) {
         areasRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override

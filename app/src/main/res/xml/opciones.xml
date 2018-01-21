@@ -13,4 +13,22 @@
         android:summary="Marcar para mostrar trazo de ruta"
         android:key="cbxAddPolylines" />
 
+    <com.example.guill.fhisa_admin.EditTextPreference
+        android:title="Dirección IP del ERP"
+        android:key="etIP"
+        android:summary="%s"
+        android:digits="0123456789."
+        android:inputType="numberDecimal"
+        android:defaultValue="89.17.197.73"
+        />
+
+    <com.example.guill.fhisa_admin.EditTextPreference
+        android:title="Puerto de comunicación con el ERP"
+        android:key="etPuerto"
+        android:summary="%s"
+        android:inputType="numberDecimal"
+        android:digits="0123456789"
+        android:defaultValue="6905"
+        />
+
 </PreferenceScreen>

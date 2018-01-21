@@ -190,7 +190,7 @@ public class NotificacionesScheduler extends JobService {
      * @param areasRef
      */
     private void inicializarAreas(DatabaseReference areasRef) {
-        Log.i("JobScheduler", "inicializarAreas");
+        Log.i("JobScheduler", "inicializarBasesOperativas");
         areasRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

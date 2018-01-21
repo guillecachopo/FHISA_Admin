@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Fragment> fragments = new ArrayList<>();
 
         fragments.add(new MapsActivity());
-        fragments.add(new RecyclerViewFragment2());
+        fragments.add(new ListadoCamionesFragment());
         fragments.add(new ErroresFragment());
 
         return fragments; //Ya tenemos los fragments en un arraylist
