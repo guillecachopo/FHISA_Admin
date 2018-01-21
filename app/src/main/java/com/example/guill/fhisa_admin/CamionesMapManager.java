@@ -104,29 +104,9 @@ public class CamionesMapManager {
                         Posicion posicion = snapshot3.getValue(Posicion.class);
                         listaPosiciones.add(posicion);
                     }
+                    Log.i("Posiciones", "Posiciones añadidas a camion en ruta " + camionPos.getId());
                 }
                 if (!existeRutaActual) { //El camion no tiene ruta actual, pero hay que mostrarlo tambien en el mapa
-
-                    dataSnapshot.child("rutas").child("rutas_completadas").getRef().limitToLast(1)
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    long ultimoValor = dataSnapshot.getChildrenCount();
-                                    ArrayList<Posicion> ultimaPosicion = new ArrayList<Posicion>();
-                                    for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
-                                        Posicion posicion = snapshot1.getValue(Posicion.class);
-                                        ultimaPosicion.add(posicion); //antes listaPosiciones.add(posicion);
-                                    }
-                                    //Coge todas las de su ultima ruta completada, le seteamos solo la última
-                                    listaPosiciones.add(ultimaPosicion.get(ultimaPosicion.size()-1));
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
 
                     Query queryRuta_completada = dataSnapshot.child("rutas")
                             .child("rutas_completadas").getRef().orderByKey().limitToLast(1);
@@ -141,6 +121,8 @@ public class CamionesMapManager {
                             }
                             //Coge todas las de su ultima ruta completada, le seteamos solo la última
                             listaPosiciones.add(ultimaPosicion.get(ultimaPosicion.size()-1));
+
+                            Log.i("Posiciones", "Posiciones añadidas a camion SIN ruta " + camionPos.getId());
                         }
 
                         @Override
@@ -163,6 +145,7 @@ public class CamionesMapManager {
 
                         }
                     });
+
                 }
             }
         }
@@ -174,6 +157,15 @@ public class CamionesMapManager {
                 camionRefresh.setPosicionesList(camionPos.getPosicionesList()); //o camionRefresh = camion;
             }
         }
+
+        //La query tarda más en ejecutarse, por lo que los marcadores no aparecerían hasta que llegase
+        //una nueva posición de un camión en ruta, ya que se ejecuta antes el addMarcadoresCamiones.
+        if (!existeRutaActual) {
+            ArrayList<Camion> camionListaUnica = new ArrayList<>();
+            camionListaUnica.add(camionPos);
+            mapsActivity.addMarcadoresCamiones(mapsActivity.mMarkerMap, camionListaUnica);
+        }
+
 
 
     }

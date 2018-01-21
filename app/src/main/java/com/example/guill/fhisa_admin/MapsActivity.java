@@ -284,7 +284,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                addMarcadoresCamiones(mMarkerMap ,listaCamiones);
+                addMarcadoresCamiones(mMarkerMap, listaCamiones);
             }
 
             @Override
@@ -351,7 +351,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
      * Modifica el HashMap para crear y actualizar los marcadores de los camiones
      * @param mMarkerMap
      */
-    private void addMarcadoresCamiones(Map<String, Marker> mMarkerMap, ArrayList<Camion> listaCamiones) {
+    public void addMarcadoresCamiones(Map<String, Marker> mMarkerMap, ArrayList<Camion> listaCamiones) {
         for (final Camion camion : listaCamiones) {
 
             Log.i("DataSnapshot", camion.getId() + " posiciones: " + camion.getPosicionesList().size());
@@ -388,7 +388,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 }
             }
 
-            if (camion.getPosicionesList().size() == 0) trazadosRutas.borrarTrazoRuta(this, camion);
+            if (camion.getPosicionesList().size() == 0 || camion.getPosicionesList().size() == 1)
+                trazadosRutas.borrarTrazoRuta(this, camion);
         }
     }
 
