@@ -91,7 +91,7 @@ public class CamionesMapManager {
      * @param camionPos
      * @param dataSnapshot
      */
-    public void addPosicionesCamion(MapsActivity mapsActivity, final Camion camionPos, final DataSnapshot dataSnapshot) {
+    public void addPosicionesCamion(final MapsActivity mapsActivity, final Camion camionPos, final DataSnapshot dataSnapshot) {
         final ArrayList<Posicion> listaPosiciones = new ArrayList<>();
 
         boolean existeRutaActual = false;
@@ -104,7 +104,17 @@ public class CamionesMapManager {
                         Posicion posicion = snapshot3.getValue(Posicion.class);
                         listaPosiciones.add(posicion);
                     }
+
                     Log.i("Posiciones", "Posiciones añadidas a camion en ruta " + camionPos.getId());
+
+                    camionPos.setPosicionesList(listaPosiciones);
+                    //Ahora tendria que actualizar listaCamiones:
+                    for (Camion camionRefresh : mapsActivity.listaCamiones) {
+                        if (camionRefresh.getId().compareTo(camionPos.getId())==0) {
+                            camionRefresh.setPosicionesList(camionPos.getPosicionesList()); //o camionRefresh = camion;
+                        }
+                    }
+
                 }
                 if (!existeRutaActual) { //El camion no tiene ruta actual, pero hay que mostrarlo tambien en el mapa
 
@@ -123,6 +133,16 @@ public class CamionesMapManager {
                             listaPosiciones.add(ultimaPosicion.get(ultimaPosicion.size()-1));
 
                             Log.i("Posiciones", "Posiciones añadidas a camion SIN ruta " + camionPos.getId());
+
+                            camionPos.setPosicionesList(listaPosiciones);
+                            //Ahora tendria que actualizar listaCamiones:
+                            for (Camion camionRefresh : mapsActivity.listaCamiones) {
+                                if (camionRefresh.getId().compareTo(camionPos.getId())==0) {
+                                    camionRefresh.setPosicionesList(camionPos.getPosicionesList()); //o camionRefresh = camion;
+                                }
+                            }
+
+                            mapsActivity.addMarcadoresCamiones(mapsActivity.mMarkerMap, mapsActivity.listaCamiones);
                         }
 
                         @Override
@@ -150,6 +170,7 @@ public class CamionesMapManager {
             }
         }
 
+        /*
         camionPos.setPosicionesList(listaPosiciones);
         //Ahora tendria que actualizar listaCamiones:
         for (Camion camionRefresh : mapsActivity.listaCamiones) {
@@ -157,14 +178,16 @@ public class CamionesMapManager {
                 camionRefresh.setPosicionesList(camionPos.getPosicionesList()); //o camionRefresh = camion;
             }
         }
+        */
 
         //La query tarda más en ejecutarse, por lo que los marcadores no aparecerían hasta que llegase
         //una nueva posición de un camión en ruta, ya que se ejecuta antes el addMarcadoresCamiones.
-        if (!existeRutaActual) {
-            ArrayList<Camion> camionListaUnica = new ArrayList<>();
-            camionListaUnica.add(camionPos);
-            mapsActivity.addMarcadoresCamiones(mapsActivity.mMarkerMap, camionListaUnica);
-        }
+       /* if (!existeRutaActual) {
+            //ArrayList<Camion> camionListaUnica = new ArrayList<>();
+            //camionListaUnica.add(camionPos);
+            //mapsActivity.addMarcadoresCamiones(mapsActivity.mMarkerMap, camionListaUnica);
+            mapsActivity.addMarcadoresCamiones(mapsActivity.mMarkerMap, mapsActivity.listaCamiones);
+        } */
 
 
 
