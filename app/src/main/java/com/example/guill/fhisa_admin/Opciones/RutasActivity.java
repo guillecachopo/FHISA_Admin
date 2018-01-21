@@ -197,7 +197,13 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
         final String imei = getImei();
         Calendar calendar = Calendar.getInstance();
         final String hoyDia = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
-        final String hoyMes = String.valueOf(calendar.get(Calendar.MONTH)+1);
+        final String hoyMes;
+        if (String.valueOf((calendar.get(Calendar.MONTH)+1)).length() == 1) {
+            hoyMes = "0"+String.valueOf((calendar.get(Calendar.MONTH)+1));
+        } else {
+            hoyMes = String.valueOf((calendar.get(Calendar.MONTH)+1));
+        }
+
         final String hoyYear = String.valueOf(calendar.get(Calendar.YEAR));
 
         DatabaseReference rutasRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE)
@@ -211,7 +217,8 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
                     String ruta = rutaNombre.getKey();
                     String[] parts = ruta.split("_");
                     String fechaRuta = parts[1];
-                    if (fechaRuta.startsWith(hoyDia+hoyMes+hoyYear))
+                    Log.i("FechaRuta", fechaRuta + ", " + hoyYear+hoyMes+hoyDia);
+                    if (fechaRuta.startsWith(hoyYear+hoyMes+hoyDia))
                     listaRutas.add(rutaNombre.getKey());
                 }
 
@@ -244,7 +251,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
                     String[] parts = ruta.split("_");
                     String fechaRuta = parts[1];
 
-                    SimpleDateFormat df = new SimpleDateFormat("ddMMyyyy");
+                    SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
                     Date dateRuta = new Date();
                     try {
                         dateRuta = df.parse(fechaRuta);
@@ -291,7 +298,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
                     String[] parts = ruta.split("_");
                     String fechaRuta = parts[1];
 
-                    SimpleDateFormat df = new SimpleDateFormat("ddMMyyyy");
+                    SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
                     Date dateRuta = new Date();
                     try {
                         dateRuta = df.parse(fechaRuta);
