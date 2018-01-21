@@ -1,6 +1,7 @@
 package com.example.guill.fhisa_admin;
 
 import android.content.DialogInterface;
+import android.location.Location;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by guill on 21/01/2018.
@@ -35,6 +39,20 @@ public class AccionesBasesOperativas {
     }
 
     /**
+     * Método al que se entrará cuando se haga click en Borrar Area
+     */
+    public void accionBorrarBaseOperativa(final MapsActivity mapsActivity) {
+        infoDialogBorrarBaseOperativa(mapsActivity);
+        mapsActivity.mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                borrarBaseOperativa(latLng, mapsActivity);
+                mapsActivity.mMap.setOnMapClickListener(null);
+            }
+        });
+    }
+
+    /**
      * Método que muestra que se entrará a configurar una Base Operativa
      */
     public void infoDialogMarcarBaseOperativa(MapsActivity mapsActivity) {
@@ -44,6 +62,21 @@ public class AccionesBasesOperativas {
                 .setMessage("Está a punto de configurar un area segura libre de notificaciones. " +
                         "Cuando un camión se encuentre dentro del area, no se recibirán alertas. " +
                         "Marque el punto central del area.")
+                .setPositiveButton("ENTENDIDO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+                    }
+                }).show();
+    }
+
+    /**
+     * Método que muestra que se eliminará una Base Operativa
+     */
+    public void infoDialogBorrarBaseOperativa(MapsActivity mapsActivity) {
+        new AlertDialog.Builder(mapsActivity.getContext())
+                .setTitle("Borrado de zona libre de notificaciones (CANTERA)")
+                .setMessage("Parar borrar una zona, haga click en ella.")
                 .setPositiveButton("ENTENDIDO", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -97,6 +130,87 @@ public class AccionesBasesOperativas {
         AlertDialog b = dialogBuilder.create();
         b.show();
     }
+
+    /**
+     * Método encargado de borrar una Base Operativa. Esta se borrará de Firebase y eliminará
+     * su circunferencia asociada.
+     * @param latitudlongitud
+     */
+    public void borrarBaseOperativa(LatLng latitudlongitud, MapsActivity mapsActivity) {
+        for (int i = 0; i < mapsActivity.listaCirculos.size(); i++) {
+
+            LatLng center = mapsActivity.listaCirculos.get(i).getCenter();
+            double radius = mapsActivity.listaCirculos.get(i).getRadius();
+            final Area areaBorrar = new Area(center.latitude, center.longitude, (int) radius);
+            float[] distance = new float[1];
+            Location.distanceBetween(latitudlongitud.latitude, latitudlongitud.longitude,
+                    areaBorrar.getLatitud(), areaBorrar.getLongitud(), distance);
+            boolean clicked = distance[0] < radius;
+
+            if (clicked) {
+                mapsActivity.listaCirculos.get(i).remove();
+                mapsActivity.listaCirculos.remove(i);
+                mapsActivity.listaAreas.remove(i);
+
+                mapsActivity.areasRef.addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            snapshot.getValue().getClass();
+                            Area areaFirebase = snapshot.getValue(Area.class);
+                            if (areaFirebase.getLatitud() == areaBorrar.getLatitud() &&
+                                    areaFirebase.getLongitud() == areaBorrar.getLongitud() &&
+                                    areaFirebase.getDistancia() == areaBorrar.getDistancia())
+                                snapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
+    }
+
+
+    /**
+     * Método encargado de mostrar en el mapa las areas existentes
+     */
+    public void inicializarBasesOperativas(final MapsActivity mapsActivity) {
+        mapsActivity.areasRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    String idArea = snapshot.getValue(Area.class).getIdentificador();
+                    Area area = null;
+                    if(!mapsActivity.listaIdsAreas.contains(idArea)) {
+                        area = snapshot.getValue(Area.class);
+                        mapsActivity.listaIdsAreas.add(idArea);
+                        mapsActivity.listaAreas.add(area);
+                    }
+                    //LatLng latLng = new LatLng(area.getLatitud(), area.getLongitud());
+                }
+
+                //Dibujamos todos las areas que tenemos en firebase
+                for (int i=0; i<mapsActivity.listaAreas.size(); i++) {
+                    Circle circle = dibujarCirculo(mapsActivity.listaAreas.get(i), mapsActivity.mMap);
+                    mapsActivity.listaCirculos.add(circle);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     /**
      * Método encargado de dibujar un circulo
