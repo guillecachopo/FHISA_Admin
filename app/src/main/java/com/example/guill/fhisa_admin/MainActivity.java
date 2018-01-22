@@ -262,10 +262,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         new CopiaSeguridadFirebase(getApplicationContext(), preferences, progressBar)
                                 .execute("https://fhisaservicio.firebaseio.com/.json");
-                        //new EnviarEmail(getApplicationContext(), preferences).execute();
+                        //new EnviarEmailBackup(getApplicationContext(), preferences).execute();
 
                         //new DownloadFileFromURL().execute("https://fhisaservicio.firebaseio.com/.json");
-                        //new EnviarEmail(getApplicationContext(), preferences).execute();
+                        //new EnviarEmailBackup(getApplicationContext(), preferences).execute();
                         dialog.cancel();
                     }
                 })

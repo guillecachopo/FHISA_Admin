@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin;
+package com.example.guill.fhisa_admin.Mail;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -33,7 +33,7 @@ import javax.mail.internet.MimeMultipart;
  * Created by guill on 21/12/2017.
  */
 
-public class EnviarEmail extends AsyncTask<String, String, String> {
+public class EnviarEmailBackup extends AsyncTask<String, String, String> {
 
     public Context context;
     public SharedPreferences preferences;
@@ -43,7 +43,7 @@ public class EnviarEmail extends AsyncTask<String, String, String> {
     Session session = null;
     String from = "fhisaautomatico@gmail.com";
 
-    public EnviarEmail(Context context, SharedPreferences preferences, String rutaFichero, ProgressBar progressBar) {
+    public EnviarEmailBackup(Context context, SharedPreferences preferences, String rutaFichero, ProgressBar progressBar) {
         this.context = context;
         this.preferences = preferences;
         this.rutaFichero = rutaFichero;

@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.guill.fhisa_admin.Mail.EnviarEmailBackup;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -110,7 +112,7 @@ public class CopiaSeguridadFirebase extends AsyncTask <String, String, String> {
     @Override
     protected void onPostExecute(String file_url) {
         Toast.makeText(context, "JSON descargado en la ruta root/FHISAFirebase", Toast.LENGTH_LONG).show();
-        new EnviarEmail(context, preferences, rutaFichero, progressBar).execute();
+        new EnviarEmailBackup(context, preferences, rutaFichero, progressBar).execute();
     }
 
 

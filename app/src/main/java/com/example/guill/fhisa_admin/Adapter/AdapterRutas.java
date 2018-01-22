@@ -68,9 +68,9 @@ public class AdapterRutas extends RecyclerView.Adapter<AdapterRutas.RutasViewHol
         String fechaRuta = parts[1];
         String horaFinRuta = parts[2];
 
-        String diaRuta = fechaRuta.substring(0,2);
-        String mesRuta = fechaRuta.substring(2,4);
-        String anioRuta = fechaRuta.substring(4);
+        String diaRuta = fechaRuta.substring(6);
+        String mesRuta = fechaRuta.substring(4,6);
+        String anioRuta = fechaRuta.substring(0,4);
 
         String horaFin = horaFinRuta.substring(0,2);
         String minutosFin = horaFinRuta.substring(2);

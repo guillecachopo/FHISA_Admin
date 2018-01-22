@@ -13,6 +13,12 @@
         android:summary="Marcar para mostrar trazo de ruta"
         android:key="cbxAddPolylines" />
 
+    <Preference
+        android:title="Contraseña para finalizar FHISA Servicio"
+        android:key="etPassword"
+        android:inputType="textPassword"
+        />
+
     <com.example.guill.fhisa_admin.EditTextPreference
         android:title="Dirección IP del ERP"
         android:key="etIP"
