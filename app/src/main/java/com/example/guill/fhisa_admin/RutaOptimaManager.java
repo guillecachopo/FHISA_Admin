@@ -26,7 +26,6 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,51 +39,50 @@ public class RutaOptimaManager {
      * @param camion
      */
     public void obtenerRutaOptimaDestino(MapsActivity mapsActivity, Camion camion) {
+
+        new PeticionUltimoAlbaran(mapsActivity, this, camion).execute(camion.getId());
+        //latitudLongitudDestino = "43.463632, -5.053424";
+    }
+
+    public void dibujarDestino(String latitudLongitudDestino, MapsActivity mapsActivity, Camion camion) {
         final LatLng latlng = new LatLng(camion.getUltimaPosicion().getLatitude(), camion.getUltimaPosicion().getLongitude());
         final String latitudOrigen = String.valueOf(latlng.latitude);
         final String longitudOrigen = String.valueOf(latlng.longitude);
         final String latitudlongitudOrigen = latitudOrigen + "," + longitudOrigen;
-        String latitudLongitudDestino = null;
 
-        try {
-            latitudLongitudDestino = new PeticionUltimoAlbaran(mapsActivity.getActivity()).execute(camion.getId()).get();
-            Log.i("LatitudLongitud", latitudLongitudDestino);
-            if (latitudLongitudDestino.compareTo("0.000000,0.000000") == 0 || latitudLongitudDestino.compareTo(",") == 0 ||
-                    latitudLongitudDestino.startsWith("error 401")) {
-                Snackbar.make(mapsActivity.getActivity().findViewById(R.id.map),
-                        "No hay coordenadas de destino en el albarán", Snackbar.LENGTH_INDEFINITE)
-                        .setDuration(5000)
-                        .show();
+        Log.i("LatitudLongitud", latitudLongitudDestino);
 
-            } else {
-                DateTime now = new DateTime();
-                try {
-                    DirectionsResult results = DirectionsApi.newRequest(getGeoContext(mapsActivity.getActivity()))
-                            .mode(TravelMode.DRIVING)
-                            .origin(latitudlongitudOrigen)
-                            .destination(latitudLongitudDestino)
-                            .departureTime(now)
-                            .await();
+        if (latitudLongitudDestino.compareTo("0.000000,0.000000") == 0 || latitudLongitudDestino.compareTo(",") == 0 ||
+                latitudLongitudDestino.startsWith("error 401")) {
 
-                    final Marker marcadorDestino = addMarkersToMap(results, mapsActivity.mMap, camion);
-                    final Polyline rutaOptima = addPolyline(results, mapsActivity.mMap, camion);
-                    mapsActivity.mPolylineMap.put(marcadorDestino.getTag().toString(), rutaOptima);
+            Snackbar.make(mapsActivity.getActivity().findViewById(R.id.map),
+                    "No hay coordenadas de destino en el albarán", Snackbar.LENGTH_INDEFINITE)
+                    .setDuration(5000)
+                    .show();
+
+        } else {
+            DateTime now = new DateTime();
+            try {
+                DirectionsResult results = DirectionsApi.newRequest(getGeoContext(mapsActivity.getActivity()))
+                        .mode(TravelMode.DRIVING)
+                        .origin(latitudlongitudOrigen)
+                        .destination(latitudLongitudDestino)
+                        .departureTime(now)
+                        .await();
+
+                final Marker marcadorDestino = addMarkersToMap(results, mapsActivity.mMap, camion);
+                final Polyline rutaOptima = addPolyline(results, mapsActivity.mMap, camion);
+                mapsActivity.mPolylineMap.put(marcadorDestino.getTag().toString(), rutaOptima);
 
 
-                } catch (ApiException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            } catch (ApiException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         }
-        //latitudLongitudDestino = "43.463632, -5.053424";
     }
 
     /**

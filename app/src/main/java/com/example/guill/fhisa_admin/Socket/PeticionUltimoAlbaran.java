@@ -1,12 +1,15 @@
 package com.example.guill.fhisa_admin.Socket;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Process;
 import android.preference.PreferenceManager;
+import android.view.View;
 
+import com.example.guill.fhisa_admin.MapsActivity;
 import com.example.guill.fhisa_admin.Objetos.Albaran;
+import com.example.guill.fhisa_admin.Objetos.Camion;
+import com.example.guill.fhisa_admin.RutaOptimaManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -27,10 +30,14 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
 
     public class PeticionUltimoAlbaran extends AsyncTask<String, String, String> {
 
-        public Activity activity;
+        public MapsActivity mapsActivity;
+        public RutaOptimaManager rutaOptimaManager;
+        public Camion camion;
 
-        public PeticionUltimoAlbaran(Activity activity) {
-            this.activity = activity;
+        public PeticionUltimoAlbaran(MapsActivity mapsActivity, RutaOptimaManager rutaOptimaManager, Camion camion) {
+            this.mapsActivity = mapsActivity;
+            this.rutaOptimaManager = rutaOptimaManager;
+            this.camion = camion;
         }
 
         /**
@@ -38,12 +45,12 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
          */
         @Override
         protected void onPreExecute() {
-            super.onPreExecute();
+            mapsActivity.progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected String doInBackground(String... imei) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mapsActivity.getContext());
             String ip = preferences.getString("etIP", "89.17.197.73");
             String puertoString = preferences.getString("etPuerto","6905");
             int puerto = Integer.parseInt(puertoString);
@@ -88,6 +95,17 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
                 e.printStackTrace();
             }
 
+
+            return json;
+        }
+
+        /**
+         * After completing background task
+         **/
+        @Override
+        protected void onPostExecute(String json) {
+            mapsActivity.progressBar.setVisibility(View.GONE);
+            
             String destino;
             if (json.startsWith("error 401")) {
                 destino = "error 401";
@@ -97,15 +115,10 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
                 Albaran albaran = gson.fromJson(json, Albaran.class);
                 destino = albaran.getDestino();
             }
-            return destino;
-        }
 
-        /**
-         * After completing background task
-         **/
-        @Override
-        protected void onPostExecute(String destino) {
-            super.onPostExecute(destino);
+            rutaOptimaManager.dibujarDestino(destino, mapsActivity, camion);
+
+
         }
 
     }
