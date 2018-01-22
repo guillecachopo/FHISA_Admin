@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Process;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.MapsActivity;
 import com.example.guill.fhisa_admin.Objetos.Albaran;
@@ -46,6 +47,8 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
         @Override
         protected void onPreExecute() {
             mapsActivity.progressBar.setVisibility(View.VISIBLE);
+            Toast.makeText(mapsActivity.getContext(), "Obteniendo ruta óptima al destino...",
+                    Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -105,7 +108,7 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
         @Override
         protected void onPostExecute(String json) {
             mapsActivity.progressBar.setVisibility(View.GONE);
-            
+
             String destino;
             if (json.startsWith("error 401")) {
                 destino = "error 401";
