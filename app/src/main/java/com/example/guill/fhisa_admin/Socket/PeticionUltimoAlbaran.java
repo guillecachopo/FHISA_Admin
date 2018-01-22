@@ -88,10 +88,15 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
                 e.printStackTrace();
             }
 
-            Gson gson = new GsonBuilder().serializeNulls().create();
-            Albaran albaran = gson.fromJson(json, Albaran.class);
-            String destino = albaran.getDestino();
+            String destino;
+            if (json.startsWith("error 401")) {
+                destino = "error 401";
 
+            } else {
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                Albaran albaran = gson.fromJson(json, Albaran.class);
+                destino = albaran.getDestino();
+            }
             return destino;
         }
 
@@ -100,7 +105,7 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
          **/
         @Override
         protected void onPostExecute(String destino) {
-            super.onPostExecute(destino);;
+            super.onPostExecute(destino);
         }
 
     }

@@ -96,22 +96,36 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
      * **/
     @Override
     protected void onPostExecute(String json) {
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        Vehiculo vehiculo = gson.fromJson(json, Vehiculo.class);
-        String idFhisa = vehiculo.getId();
-        String imei = vehiculo.getImei();
-        String telefono = vehiculo.getTlf();
-        String matricula = vehiculo.getMatricula();
+        if (json.startsWith("error 401")) {
+            TextView tvIdVehiculo = (TextView) activity.findViewById(R.id.tvIdVehiculo);
+            TextView tvImeiVehiculo = (TextView) activity.findViewById(R.id.tvImeiVehiculo);
+            TextView tvMatriculaVehiculo = (TextView) activity.findViewById(R.id.tvMatriculaVehiculo);
+            TextView tvTlfVehiculo = (TextView) activity.findViewById(R.id.tvTlfVehiculo);
 
-        TextView tvIdVehiculo = (TextView) activity.findViewById(R.id.tvIdVehiculo);
-        TextView tvImeiVehiculo = (TextView) activity.findViewById(R.id.tvImeiVehiculo);
-        TextView tvMatriculaVehiculo = (TextView) activity.findViewById(R.id.tvMatriculaVehiculo);
-        TextView tvTlfVehiculo = (TextView) activity.findViewById(R.id.tvTlfVehiculo);
+            tvIdVehiculo.setText("No disponible");
+            tvImeiVehiculo.setText("No disponible");
+            tvMatriculaVehiculo.setText("No disponible");
+            tvTlfVehiculo.setText("No disponible");
 
-        tvIdVehiculo.setText(idFhisa);
-        tvImeiVehiculo.setText(imei);
-        tvMatriculaVehiculo.setText(matricula);
-        tvTlfVehiculo.setText(telefono);
+        } else {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            Vehiculo vehiculo = gson.fromJson(json, Vehiculo.class);
+            String idFhisa = vehiculo.getId();
+            String imei = vehiculo.getImei();
+            String telefono = vehiculo.getTlf();
+            String matricula = vehiculo.getMatricula();
+
+            TextView tvIdVehiculo = (TextView) activity.findViewById(R.id.tvIdVehiculo);
+            TextView tvImeiVehiculo = (TextView) activity.findViewById(R.id.tvImeiVehiculo);
+            TextView tvMatriculaVehiculo = (TextView) activity.findViewById(R.id.tvMatriculaVehiculo);
+            TextView tvTlfVehiculo = (TextView) activity.findViewById(R.id.tvTlfVehiculo);
+
+            tvIdVehiculo.setText(idFhisa);
+            tvImeiVehiculo.setText(imei);
+            tvMatriculaVehiculo.setText(matricula);
+            tvTlfVehiculo.setText(telefono);
+        }
+
 
         progressBar.setVisibility(View.GONE);
     }

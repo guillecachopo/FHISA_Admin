@@ -44,8 +44,6 @@ public class OpcionesMenuActivity extends AppCompatActivity {
     }
 
     public void passwordOlvidada(View view) {
-        OpcionesMenuFragment opcionesMenuFragment = new OpcionesMenuFragment();
-
         AlertDialog alertDialog = new AlertDialog.Builder(OpcionesMenuActivity.this).create();
         alertDialog.setTitle("Envío de contraseña por correo electrónico");
         alertDialog.setMessage("Se enviará la contraseña actual por correo electrónico");

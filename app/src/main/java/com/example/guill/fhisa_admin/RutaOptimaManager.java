@@ -49,7 +49,8 @@ public class RutaOptimaManager {
         try {
             latitudLongitudDestino = new PeticionUltimoAlbaran(mapsActivity.getActivity()).execute(camion.getId()).get();
             Log.i("LatitudLongitud", latitudLongitudDestino);
-            if (latitudLongitudDestino.compareTo("0.000000,0.000000") == 0 || latitudLongitudDestino.compareTo(",") == 0) {
+            if (latitudLongitudDestino.compareTo("0.000000,0.000000") == 0 || latitudLongitudDestino.compareTo(",") == 0 ||
+                    latitudLongitudDestino.startsWith("error 401")) {
                 Snackbar.make(mapsActivity.getActivity().findViewById(R.id.map),
                         "No hay coordenadas de destino en el albarán", Snackbar.LENGTH_INDEFINITE)
                         .setDuration(5000)

@@ -1,23 +1,28 @@
 package com.example.guill.fhisa_admin.Adapter;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.guill.fhisa_admin.MainActivity;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Opciones.OpcionesCamionActivity;
 import com.example.guill.fhisa_admin.Opciones.VehiculoActivity;
 import com.example.guill.fhisa_admin.R;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -38,7 +43,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
     Activity activity;
 
     public Adapter(List<Camion> camiones, Activity activity) {
-
         this.camiones = camiones;
         this.activity = activity;
     }
@@ -54,7 +58,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
 
     //Asciar cada elemento de la lista con cada view
     @Override
-    public void onBindViewHolder(CamionesViewHolder holder, int position) {
+    public void onBindViewHolder(final CamionesViewHolder holder, int position) {
         final Camion camion = camiones.get(position);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -129,6 +133,34 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
 
             });
 
+            holder.ivDeleteCamion.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(view.getContext()).create();
+                    alertDialog.setTitle("ATENCIÓN: Eliminar vehículo");
+                    alertDialog.setMessage("Si elimina el vehículo de la base de datos, todos aquellos registros " +
+                            "asociados a dicho vehículo serán eliminados, incluyendo sus rutas. " +
+                            "Haga click en ACEPTAR para continuar");
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ACEPTAR",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    database.getReferenceFromUrl("https://fhisaservicio.firebaseio.com/camiones/"+id).removeValue();
+                                    Intent intent = new Intent(activity, MainActivity.class);
+                                    activity.startActivity(intent);
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCELAR",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+            });
+
         }
 
     }
@@ -142,6 +174,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
 
         TextView tvIdentificador, tvImei, tvUltimaPosicion, tvHora;
         CardView cvCamion;
+        ImageView ivDeleteCamion;
 
         public CamionesViewHolder(View itemView) {
             super(itemView);
@@ -150,6 +183,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
             tvUltimaPosicion = itemView.findViewById(R.id.tvPosicionCV);
             tvHora = itemView.findViewById(R.id.tvHoraCV);
             cvCamion = itemView.findViewById(R.id.cvCamion);
+            ivDeleteCamion = itemView.findViewById(R.id.ivDeleteCamion);
         }
     }
 
