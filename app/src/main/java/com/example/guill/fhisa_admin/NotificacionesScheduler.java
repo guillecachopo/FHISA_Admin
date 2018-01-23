@@ -95,7 +95,7 @@ public class NotificacionesScheduler extends JobService {
         Log.i("JobScheduler", "onStartJob");
         FirebaseCamionesListener();
         jobFinished(jobParameters, true);
-        return true;
+        return false;
     }
 
     @Override

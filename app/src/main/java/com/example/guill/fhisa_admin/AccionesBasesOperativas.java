@@ -1,5 +1,6 @@
 package com.example.guill.fhisa_admin;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.location.Location;
 import android.support.v7.app.AlertDialog;
@@ -9,12 +10,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Objetos.Area;
+import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 /**
@@ -97,13 +101,15 @@ public class AccionesBasesOperativas {
         dialogBuilder.setView(dialogView);
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.etArea);
+        final EditText nombreArea = (EditText) dialogView.findViewById(R.id.etNombreArea);
 
         dialogBuilder.setTitle("Selección de area");
-        dialogBuilder.setMessage("Elija en metros el radio del area.");
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        //dialogBuilder.setMessage("Elija en metros el radio del area.");
+        dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                String introducido = edt.getText().toString();
-                if (introducido.equals("")) {
+                String nombreIntroducido = nombreArea.getText().toString();
+                String radioIntroducido = edt.getText().toString();
+                if (radioIntroducido.equals("") || nombreIntroducido.equals("")) {
                     Toast.makeText(mapsActivity.getContext(), "No se ha introducido un valor válido",
                             Toast.LENGTH_SHORT).show();
                     crearBaseOperativa(latlng, mapsActivity);
@@ -113,7 +119,9 @@ public class AccionesBasesOperativas {
                     Area area = new Area(String.valueOf(latlng.latitude), latlng.latitude,
                             latlng.longitude, (int) distancia);
 
-                    mapsActivity.areasRef.push().setValue(area);
+                    area.setIdentificador(nombreIntroducido);
+
+                    mapsActivity.areasRef.child(area.getIdentificador()).setValue(area);
                     mapsActivity.listaAreas.add(area);
 
                     Circle circle = dibujarCirculo(area, mapsActivity.mMap);
@@ -209,6 +217,49 @@ public class AccionesBasesOperativas {
 
             }
         });
+    }
+
+    /**
+     * Método encargado de mostrar un AlertDialog para la modificación de la Base Operativa. Guarda la
+     * base operativa en Firebase.
+     */
+    public void modificarBaseOperativa(final Area area, final Activity activity) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity.getApplicationContext());
+        final View dialogView = activity.getLayoutInflater().inflate(R.layout.dialog_area, null);
+        dialogBuilder.setView(dialogView);
+
+        final EditText edt = (EditText) dialogView.findViewById(R.id.etArea);
+        final EditText nombreArea = (EditText) dialogView.findViewById(R.id.etNombreArea);
+
+        dialogBuilder.setTitle("Modificación de base operativa");
+        //dialogBuilder.setMessage("Elija en metros el radio del area.");
+        dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String nombreIntroducido = nombreArea.getText().toString();
+                String radioIntroducido = edt.getText().toString();
+                if (radioIntroducido.equals("") || nombreIntroducido.equals("")) {
+                    Toast.makeText(activity.getApplicationContext(), "No se ha introducido un valor válido",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+
+                    area.setIdentificador(nombreIntroducido);
+                    area.setDistancia(Integer.parseInt(radioIntroducido));
+
+                    DatabaseReference areasRef = FirebaseDatabase.getInstance().getReference(FirebaseReferences.AREAS_REFERENCE);
+                    areasRef.child(area.getIdentificador()).setValue(area);
+
+                }
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //pass
+            }
+        });
+
+        AlertDialog b = dialogBuilder.create();
+        b.show();
     }
 
 

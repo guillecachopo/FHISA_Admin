@@ -1,6 +1,7 @@
 package com.example.guill.fhisa_admin;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -22,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 public class OpcionesMenuFragment extends PreferenceFragment {
 
     Preference mPassword;
+    Preference tvModificarBasesOperativas;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,12 +31,22 @@ public class OpcionesMenuFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.opciones);
 
         mPassword = (Preference) findPreference("etPassword");
+        tvModificarBasesOperativas = (Preference) findPreference("tvModificarBO");
 
         mPassword.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 changePassword();
+                return false;
+            }
+        });
+
+        tvModificarBasesOperativas.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(getActivity(), ModificarBasesOperativasActivity.class);
+                startActivity(intent);
                 return false;
             }
         });

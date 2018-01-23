@@ -48,15 +48,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
 import me.tatarka.support.job.JobInfo;
 import me.tatarka.support.job.JobScheduler;
@@ -215,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             jb = new JobInfo.Builder(1, cp)
                     .setBackoffCriteria(4000, JobInfo.BACKOFF_POLICY_LINEAR)
-                    .setPersisted(true)
+                    .setPersisted(false)
                     .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setRequiresCharging(false)
                     .setRequiresDeviceIdle(false)
@@ -224,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             jb = new JobInfo.Builder(1, cp)
                     .setBackoffCriteria(4000, JobInfo.BACKOFF_POLICY_LINEAR)
-                    .setPersisted(true)
+                    .setPersisted(false)
                     .setPeriodic(1000 * 60 * 5) //Setear en milisegundos cada cuánto tiempo queremos que se ejecute el job para comprobar posiciones
                     .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setRequiresCharging(false)
@@ -457,49 +449,6 @@ public class MainActivity extends AppCompatActivity {
 
     // -----------------------------------------------------------
 
-
-    //----------------ENVIAR EMAIL----------------------------------
-
-    class RetreiveFeedTask extends AsyncTask<String, Void, String> {
-        @Override
-        //AsyckTask para hacer operaciones en segundo plano (background)
-        protected String doInBackground(String... params) {
-
-            try{
-                BodyPart texto=new MimeBodyPart();
-                texto.setText(textMessage);
-                MimeMultipart multiParte = new MimeMultipart();
-
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(usu
-                        , "[Comentario Peephole]"));
-                message.setRecipients(Message.RecipientType.TO,
-                        InternetAddress.parse("peepholeuniovi@gmail.com"));
-
-
-                // message.setRecipients(Message.RecipientType.TO,
-                //InternetAddress.parse(extra));
-                message.setSubject(asunto);
-                multiParte.addBodyPart(texto);
-                message.setContent(multiParte);
-                Transport.send(message);
-
-
-            } catch(MessagingException e) {
-                e.printStackTrace();
-            } catch(Exception e) {
-                Toast.makeText(getApplicationContext(),
-                        "Error de autenticacion o fallo de conexión", Toast.LENGTH_LONG).show();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(), "Mensaje enviado",
-                    Toast.LENGTH_LONG).show();
-        }
-    }
 
 
 }
