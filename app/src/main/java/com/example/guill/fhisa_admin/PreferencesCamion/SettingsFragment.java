@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin.Preferences;
+package com.example.guill.fhisa_admin.PreferencesCamion;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;

@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin;
+package com.example.guill.fhisa_admin.Mapa;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.example.guill.fhisa_admin.Objetos.Camion;
+import com.example.guill.fhisa_admin.R;
 import com.example.guill.fhisa_admin.Socket.PeticionUltimoAlbaran;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;

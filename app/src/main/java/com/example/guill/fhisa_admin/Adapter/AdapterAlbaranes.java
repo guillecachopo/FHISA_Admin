@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.Objetos.AlbaranReducido;
-import com.example.guill.fhisa_admin.Opciones.AlbaranActivity;
+import com.example.guill.fhisa_admin.OpcionesCamion.AlbaranActivity;
 import com.example.guill.fhisa_admin.R;
 
 import java.util.List;

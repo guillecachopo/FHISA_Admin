@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin.Opciones;
+package com.example.guill.fhisa_admin.OpcionesCamion;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;

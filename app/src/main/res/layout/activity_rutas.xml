@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.guill.fhisa_admin.Opciones.RutasActivity">
+    tools:context="com.example.guill.fhisa_admin.OpcionesCamion.RutasActivity">
 
     <include
         android:id="@+id/actionBar"

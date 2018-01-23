@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.guill.fhisa_admin.ModificarBasesOperativasActivity;
+import com.example.guill.fhisa_admin.OpcionesMenu.ModificarBasesOperativasActivity;
 import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.R;
@@ -68,8 +68,8 @@ public class AdapterBasesOperativas extends RecyclerView.Adapter<AdapterBasesOpe
         holder.cvBaseOperativa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //AccionesBasesOperativas accionesBasesOperativas = new AccionesBasesOperativas();
-                //accionesBasesOperativas.modificarBaseOperativa(area, activity);
+                //BasesOperativasManager basesOperativasManager = new BasesOperativasManager();
+                //basesOperativasManager.modificarBaseOperativa(area, activity);
                 modificarBasesOperativasActivity.modificarBaseOperativa(area, holder.tvRadioBaseOperativa);
 
             }

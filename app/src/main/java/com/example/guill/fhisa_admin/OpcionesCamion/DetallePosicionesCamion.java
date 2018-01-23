@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin.Opciones;
+package com.example.guill.fhisa_admin.OpcionesCamion;
 
 /*
 public class DetallePosicionesCamion extends AppCompatActivity implements AdapterView.OnItemSelectedListener {

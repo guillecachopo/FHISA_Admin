@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin;
+package com.example.guill.fhisa_admin.Mapa;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
+import com.example.guill.fhisa_admin.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -25,7 +26,7 @@ import com.google.firebase.database.ValueEventListener;
  * Created by guill on 21/01/2018.
  */
 
-public class AccionesBasesOperativas {
+public class BasesOperativasManager {
 
 
     /**

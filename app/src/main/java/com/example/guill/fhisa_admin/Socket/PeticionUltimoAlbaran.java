@@ -7,10 +7,10 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.guill.fhisa_admin.MapsActivity;
+import com.example.guill.fhisa_admin.Mapa.MapsActivity;
 import com.example.guill.fhisa_admin.Objetos.Albaran;
 import com.example.guill.fhisa_admin.Objetos.Camion;
-import com.example.guill.fhisa_admin.RutaOptimaManager;
+import com.example.guill.fhisa_admin.Mapa.RutaOptimaManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

@@ -47,7 +47,7 @@
             android:name=".Antiguo.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".Opciones.DetallePosicionesCamion"
+            android:name=".OpcionesCamion.DetallePosicionesCamion"
             android:parentActivityName=".MainActivity" />
 
         <service
@@ -56,30 +56,30 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
-            android:name=".Preferences.CamionPreferences"
+            android:name=".PreferencesCamion.CamionPreferences"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".Opciones.OpcionesCamionActivity"
+            android:name=".OpcionesCamion.OpcionesCamionActivity"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".Preferences.CamionPreferencesActivity"
+            android:name=".PreferencesCamion.CamionPreferencesActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".Opciones.AlbaranActivity" />
-        <activity android:name=".Opciones.VehiculoActivity" />
-        <activity android:name=".Opciones.ListaConsumosActivity" />
-        <activity android:name=".Opciones.ListaAlbaranesActivity" />
-        <activity android:name=".Opciones.MantenimientoActivity" />
-        <activity android:name=".Opciones.VelocidadActualActivity" />
+        <activity android:name=".OpcionesCamion.AlbaranActivity" />
+        <activity android:name=".OpcionesCamion.VehiculoActivity" />
+        <activity android:name=".OpcionesCamion.ListaConsumosActivity" />
+        <activity android:name=".OpcionesCamion.ListaAlbaranesActivity" />
+        <activity android:name=".OpcionesCamion.MantenimientoActivity" />
+        <activity android:name=".OpcionesCamion.VelocidadActualActivity" />
         <activity
-            android:name=".OpcionesMenuActivity"
+            android:name=".OpcionesMenu.OpcionesMenuActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".Opciones.RutasActivity" />
+        <activity android:name=".OpcionesCamion.RutasActivity" />
         <activity
-            android:name=".Opciones.MapaRutaElegidaActivity"
+            android:name=".OpcionesCamion.MapaRutaElegidaActivity"
             android:label="@string/title_activity_mapa_ruta_elegida" />
-        <activity android:name=".Opciones.FrecuenciasEnvioActivity" />
+        <activity android:name=".OpcionesCamion.FrecuenciasEnvioActivity" />
         <activity
-            android:name=".ModificarBasesOperativasActivity"
+            android:name=".OpcionesMenu.ModificarBasesOperativasActivity"
             ></activity>
     </application>
 

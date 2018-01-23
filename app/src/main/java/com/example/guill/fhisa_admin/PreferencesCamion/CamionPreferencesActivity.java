@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin.Preferences;
+package com.example.guill.fhisa_admin.PreferencesCamion;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.guill.fhisa_admin.Opciones.MapaRutaElegidaActivity;
+import com.example.guill.fhisa_admin.OpcionesCamion.MapaRutaElegidaActivity;
 import com.example.guill.fhisa_admin.R;
 
 import java.util.List;

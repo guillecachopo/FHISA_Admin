@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin;
+package com.example.guill.fhisa_admin.Mapa;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,10 +18,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.guill.fhisa_admin.Globals;
 import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
-import com.example.guill.fhisa_admin.Opciones.VehiculoActivity;
+import com.example.guill.fhisa_admin.OpcionesCamion.VehiculoActivity;
+import com.example.guill.fhisa_admin.R;
 import com.example.guill.fhisa_admin.Socket.PeticionEstado;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -167,7 +169,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     /**
      * Gestiona las bases operativas
      */
-    public AccionesBasesOperativas accionesBasesOperativas = new AccionesBasesOperativas();
+    public BasesOperativasManager basesOperativasManager = new BasesOperativasManager();
 
     /**
      * Gestiona los trazados de las rutas actuales
@@ -240,14 +242,14 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         btnArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                accionesBasesOperativas.accionBaseOperativa(MapsActivity.this);
+                basesOperativasManager.accionBaseOperativa(MapsActivity.this);
             }
         });
 
         btnBorrarArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                accionesBasesOperativas.accionBorrarBaseOperativa(MapsActivity.this);
+                basesOperativasManager.accionBorrarBaseOperativa(MapsActivity.this);
             }
         });
 
@@ -275,7 +277,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         inicializarMapa(mMap);
         setTipoMapaInicial(mMap);
 
-        accionesBasesOperativas.inicializarBasesOperativas(this);
+        basesOperativasManager.inicializarBasesOperativas(this);
         camionesMapManager.cargarCamiones(this, camionesRef);
 
         escucharMarkerClick(mMap);

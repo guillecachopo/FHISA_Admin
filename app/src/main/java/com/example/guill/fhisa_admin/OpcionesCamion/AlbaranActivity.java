@@ -1,4 +1,4 @@
-package com.example.guill.fhisa_admin.Opciones;
+package com.example.guill.fhisa_admin.OpcionesCamion;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;

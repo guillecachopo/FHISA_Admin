@@ -19,8 +19,8 @@ import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.MainActivity;
 import com.example.guill.fhisa_admin.Objetos.Camion;
-import com.example.guill.fhisa_admin.Opciones.OpcionesCamionActivity;
-import com.example.guill.fhisa_admin.Opciones.VehiculoActivity;
+import com.example.guill.fhisa_admin.OpcionesCamion.OpcionesCamionActivity;
+import com.example.guill.fhisa_admin.OpcionesCamion.VehiculoActivity;
 import com.example.guill.fhisa_admin.R;
 import com.google.firebase.database.FirebaseDatabase;
 
