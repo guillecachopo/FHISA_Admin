@@ -6,11 +6,31 @@
     android:padding="10dp"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorBlack"
+        android:text="Identificador de la base operativa: "/>
+
+    <EditText
+        android:id="@+id/etNombreArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:backgroundTint="@color/colorFhisaDark"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorBlack"
+        android:text="Radio (m) de la base operativa:"/>
+
     <EditText
         android:id="@+id/etArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number" />
+        android:inputType="number"
+        android:backgroundTint="@color/colorFhisaDark"/>
 
     <TextView
         android:id="@+id/etErrorArea"
@@ -18,5 +38,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/colorRojoOscuro"
         />
+
+
 
 </LinearLayout>

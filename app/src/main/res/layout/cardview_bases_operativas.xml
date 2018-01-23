@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/cvMantenimiento">
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/cvBaseOperativa"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/tvOperacionMantenimiento"
-            android:layout_width="170dp"
+            android:id="@+id/tvIdentificadorBaseOperativa"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text=""
+            android:textSize="16dp"
             android:textColor="@color/colorBlack" />
 
         <TextView
-            android:id="@+id/tvCicloMantenimiento"
+            android:id="@+id/tvRadioBaseOperativa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="60dp"
             android:text=""
+            android:textSize="16dp"
             android:textColor="@color/colorBlack" />
 
     </LinearLayout>

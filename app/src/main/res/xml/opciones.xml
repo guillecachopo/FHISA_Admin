@@ -19,6 +19,11 @@
         android:inputType="textPassword"
         />
 
+    <Preference
+        android:title="Bases operativas"
+        android:key="tvModificarBO"
+        />
+
     <com.example.guill.fhisa_admin.EditTextPreference
         android:title="Dirección IP del ERP"
         android:key="etIP"
