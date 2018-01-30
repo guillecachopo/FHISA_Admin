@@ -29,7 +29,7 @@ public class OpcionesCamionActivity extends AppCompatActivity {
     private Toolbar toolbar;
     ArrayList<String> posicionesString;
     ArrayList<String> horasString;
-    String id;
+    String imei;
     TextView tvCamionId;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
@@ -53,9 +53,9 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
 
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-        String alias = pref.getString(id + "-nombreCamion", id);
+        String alias = pref.getString(imei + "-nombreCamion", imei);
         tvCamionId = (TextView) findViewById(R.id.tvCamionOpcionesId);
         tvCamionId.setText("Camión: " + alias);
 
@@ -64,15 +64,15 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
     public void detallesCamion(View view) {
         Bundle extras = getIntent().getExtras();
-        String imei = extras.getString("id");
-        Intent intent = new Intent(this, VehiculoActivity.class);
-        intent.putExtra("id", imei);
+        String imei = extras.getString("imei");
+        Intent intent = new Intent(this, DetallesVehiculoActivity.class);
+        intent.putExtra("imei", imei);
         startActivity(intent);
     }
 
     public void llamarConductor(View view) {
         Bundle extras = getIntent().getExtras();
-        String imei = extras.getString("id");
+        String imei = extras.getString("imei");
 
         PeticionLlamar llamarTask = new PeticionLlamar(this);
         llamarTask.execute(imei);
@@ -80,37 +80,37 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
     public void irMapa(View view) {
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
         Globals globals = (Globals) getApplicationContext();
-        globals.setId(id);
+        globals.setId(imei);
         globals.setIr(true);
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    public void irPosiciones(View view) {
+    public void irRutas(View view) {
 
         /*
         posicionesString = new ArrayList<>();
         horasString = new ArrayList<>();
 
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
         posicionesString = (ArrayList<String>) getIntent().getSerializableExtra("posiciones");
         horasString = (ArrayList<String>) getIntent().getSerializableExtra("horas");
 
         Intent intent = new Intent(view.getContext(), DetallePosicionesCamion.class);
-        intent.putExtra("id", id);
+        intent.putExtra("imei", imei);
         intent.putStringArrayListExtra("posiciones", posicionesString);
         intent.putStringArrayListExtra("horas", horasString);
         startActivity(intent); */
 
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
 
         Intent intent = new Intent(view.getContext(), RutasActivity.class);
-        intent.putExtra("id", id);
+        intent.putExtra("imei", imei);
         startActivity(intent);
 
 
@@ -120,12 +120,12 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
 
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
 
 /*
         //Intent intent = new Intent(view.getContext(), CamionPreferences.class);
         Intent intent = new Intent(view.getContext(), CamionPreferences.class);
-        intent.putExtra("id", id);
+        intent.putExtra("imei", imei);
         startActivity(intent); */
 
 
@@ -135,6 +135,12 @@ public class OpcionesCamionActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(fDialogTitle);
         builder.create();
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
         builder.setSingleChoiceItems(
                 COLORES_ITEMS,
                 11,
@@ -148,58 +154,58 @@ public class OpcionesCamionActivity extends AppCompatActivity {
                         switch (item) {
 
                             case 0:
-                                Log.i("Color", id);
-                                editor.putInt(id+"-color", Color.WHITE );
+                                Log.i("Color", imei);
+                                editor.putInt(imei +"-color", Color.WHITE );
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
                             case 1:
-                                editor.putInt(id+"-color", Color.GREEN );
+                                editor.putInt(imei +"-color", Color.GREEN );
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
                             case 2:
-                                editor.putInt(id+"-color", Color.BLUE );
+                                editor.putInt(imei +"-color", Color.BLUE );
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
                             case 3:
-                                editor.putInt(id+"-color", Color.YELLOW );
+                                editor.putInt(imei +"-color", Color.YELLOW );
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
                             case 4:
-                                editor.putInt(id+"-color", Color.BLACK );
+                                editor.putInt(imei +"-color", Color.BLACK );
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
                             case 5:
-                                editor.putInt(id+"-color", Color.GRAY );
+                                editor.putInt(imei +"-color", Color.GRAY );
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
                             case 6:
-                                editor.putInt(id+"-color", Color.CYAN );
+                                editor.putInt(imei +"-color", Color.CYAN );
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
                             case 7:
-                                editor.putInt(id+"-color", Color.RED );
+                                editor.putInt(imei +"-color", Color.RED );
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
                             case 8:
-                                editor.putInt(id+"-color", Color.DKGRAY );
+                                editor.putInt(imei +"-color", Color.DKGRAY );
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
                             case 9:
-                                editor.putInt(id+"-color", Color.LTGRAY);
+                                editor.putInt(imei +"-color", Color.LTGRAY);
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
                             case 10:
-                                editor.putInt(id+"-color", Color.MAGENTA );
+                                editor.putInt(imei +"-color", Color.MAGENTA );
                                 editor.apply();
                                 dialog.dismiss();
                                 break;
@@ -214,44 +220,44 @@ public class OpcionesCamionActivity extends AppCompatActivity {
     public void irVelocidadActual(View view) {
 
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
 
         Intent intent = new Intent(view.getContext(), VelocidadActualActivity.class);
-        intent.putExtra("id", id);
+        intent.putExtra("imei", imei);
         startActivity(intent);
 
     }
 
     public void irAlbaran(View view) {
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
 
         Intent intent = new Intent(view.getContext(), ListaAlbaranesActivity.class);
-        intent.putExtra("id", id);
+        intent.putExtra("imei", imei);
         startActivity(intent);
     }
 
     public void irConsumos(View view) {
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
 
         Intent intent = new Intent(view.getContext(), ListaConsumosActivity.class);
-        intent.putExtra("id", id);
+        intent.putExtra("imei", imei);
         startActivity(intent);
     }
 
     public void irMantenimiento(View view) {
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
 
         Intent intent = new Intent(view.getContext(), MantenimientoActivity.class);
-        intent.putExtra("id", id);
+        intent.putExtra("imei", imei);
         startActivity(intent);
     }
 
     public void irCamionNombre(final View view) {
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
 
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = getLayoutInflater().inflate(R.layout.dialog_nombre_camion, null);
@@ -259,9 +265,9 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.etAlertDialogCamionNombre);
 
-        dialogBuilder.setTitle("Selección de id");
-        dialogBuilder.setMessage("Nuevo identificador del camión: ");
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        dialogBuilder.setTitle("Selección de Alias");
+        dialogBuilder.setMessage("Nuevo alias personalizado del camión: ");
+        dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
                 String introducido = edt.getText().toString();
@@ -270,24 +276,24 @@ public class OpcionesCamionActivity extends AppCompatActivity {
                     irCamionNombre(view);
                 } else if (introducido.equals("IMEI") || introducido.equals("imei")) {
                     Toast.makeText(getApplicationContext(), "Se ha reestablecido el IMEI como identificador", Toast.LENGTH_SHORT).show();
-                    String identificador = id;
+                    String identificador = imei;
                     pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     editor = pref.edit();
-                    editor.putString(id + "-nombreCamion", identificador);
+                    editor.putString(imei + "-nombreCamion", identificador);
                     editor.apply();
                 } else {
                     String identificador = edt.getText().toString();
                     Toast.makeText(getApplicationContext(), "El identificador personalizado del camión es: " + identificador, Toast.LENGTH_SHORT).show();
                     pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     editor = pref.edit();
-                    editor.putString(id + "-nombreCamion", identificador);
+                    editor.putString(imei + "-nombreCamion", identificador);
                     editor.apply();
                 }
 
 
             }
         });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //pass
             }
@@ -299,9 +305,9 @@ public class OpcionesCamionActivity extends AppCompatActivity {
 
     public void frecuenciasEnvio(View view) {
         Bundle extras = getIntent().getExtras();
-        String imei = extras.getString("id");
+        String imei = extras.getString("imei");
         Intent intent = new Intent(this, FrecuenciasEnvioActivity.class);
-        intent.putExtra("id", imei);
+        intent.putExtra("imei", imei);
         startActivity(intent);
     }
 

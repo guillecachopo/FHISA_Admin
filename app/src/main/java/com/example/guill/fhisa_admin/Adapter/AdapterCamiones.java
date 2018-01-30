@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.example.guill.fhisa_admin.MainActivity;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.OpcionesCamion.OpcionesCamionActivity;
-import com.example.guill.fhisa_admin.OpcionesCamion.VehiculoActivity;
+import com.example.guill.fhisa_admin.OpcionesCamion.DetallesVehiculoActivity;
 import com.example.guill.fhisa_admin.R;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -37,12 +37,12 @@ import java.util.Locale;
  */
 
 
-public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
+public class AdapterCamiones extends RecyclerView.Adapter<AdapterCamiones.CamionesViewHolder>{
 
     List<Camion> camiones;
     Activity activity;
 
-    public Adapter(List<Camion> camiones, Activity activity) {
+    public AdapterCamiones(List<Camion> camiones, Activity activity) {
         this.camiones = camiones;
         this.activity = activity;
     }
@@ -114,7 +114,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
                 public void onClick(View v) {
                     //Intent intent = new Intent(activity, DetallePosicionesCamion.class);
                     Intent intent = new Intent(activity, OpcionesCamionActivity.class);
-                    intent.putExtra("id", id);
+                    intent.putExtra("imei", id);
                     intent.putStringArrayListExtra("posiciones", posicionesString);
                     intent.putStringArrayListExtra("horas", horasString);
                     activity.startActivity(intent);
@@ -125,8 +125,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.CamionesViewHolder>{
                 @Override
                 public boolean onLongClick(View view) {
                     Toast.makeText(activity, "Datos del camión", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(activity, VehiculoActivity.class);
-                    intent.putExtra("id", id);
+                    Intent intent = new Intent(activity, DetallesVehiculoActivity.class);
+                    intent.putExtra("imei", id);
                     activity.startActivity(intent);
                     return false;
                 }

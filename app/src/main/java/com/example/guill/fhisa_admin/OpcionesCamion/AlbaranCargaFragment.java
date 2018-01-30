@@ -13,7 +13,7 @@ import com.example.guill.fhisa_admin.R;
  * Created by guill on 02/12/2017.
  */
 
-public class AlbaranFragmentCarga extends Fragment {
+public class AlbaranCargaFragment extends Fragment {
 
     public TextView tvCantidadAlbaran, tvTipoCargaAlbaran, tvCementoTipoAlbaran,
             tvCementoMarcaAlbaran, tvCementoKgm3Albaran, tvAdiccionesTipoAlbaran, tvAdiccionesMarcaAlbaran,

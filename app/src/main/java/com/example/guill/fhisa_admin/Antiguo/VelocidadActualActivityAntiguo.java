@@ -87,7 +87,7 @@ public class VelocidadActualActivityAntiguo extends AppCompatActivity {
                         for (DataSnapshot snapshot2 : snapshot1.getChildren()) {
 
                             Posicion posicion = snapshot2.getValue(Posicion.class);
-                            camion.setPosiciones(posicion);
+                            camion.setPosicion(posicion);
 
                             altitude = camion.getUltimaPosicion().getAltitude();
                             latitude = camion.getUltimaPosicion().getLatitude();

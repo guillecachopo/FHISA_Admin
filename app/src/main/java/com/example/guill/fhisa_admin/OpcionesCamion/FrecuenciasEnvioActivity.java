@@ -54,9 +54,11 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle extras = getIntent().getExtras();
-        imei = extras.getString("id");
+        imei = extras.getString("imei");
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String alias = pref.getString(imei + "-nombreCamion", imei);
         TextView tvCamionId = (TextView) findViewById(R.id.tvImeiFrecuencias);
-        tvCamionId.setText("Camion: " + imei);
+        tvCamionId.setText("Camion: " + alias);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String frecuenciaEnvioPosiciones = preferences.getString(imei + "-frecuenciaPosiciones", "1");
@@ -78,7 +80,7 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
         final EditText edt = (EditText) dialogView.findViewById(R.id.etAlertDialogFrecuenciaPosiciones);
         dialogBuilder.setTitle("Frecuencia de envío de posiciones");
         dialogBuilder.setMessage("Nueva frecuencia de envío (en minutos)");
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
                 String introducido = edt.getText().toString();
@@ -101,7 +103,7 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
                 }
             }
         });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //pass
             }
@@ -120,7 +122,7 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
         final EditText edt = (EditText) dialogView.findViewById(R.id.etAlertDialogFrecuenciaErrores);
         dialogBuilder.setTitle("Frecuencia de envío de notificaciones de error");
         dialogBuilder.setMessage("Nueva frecuencia de envío (en minutos)");
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
                 String introducido = edt.getText().toString();
@@ -143,7 +145,7 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
                 }
             }
         });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //pass
             }

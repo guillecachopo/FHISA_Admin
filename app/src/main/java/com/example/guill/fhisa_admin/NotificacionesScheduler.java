@@ -17,7 +17,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
-import com.example.guill.fhisa_admin.Objetos.Area;
+import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.ErrorNotificacion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
@@ -70,7 +70,7 @@ public class NotificacionesScheduler extends JobService {
     /**
      * Lista que contiene las areas
      */
-    ArrayList<Area> listaAreas = new ArrayList<>();
+    ArrayList<BaseOperativa> listaBasesOperativas = new ArrayList<>();
 
     /**
      * Lista que contiene las Ids de los camiones
@@ -115,21 +115,21 @@ public class NotificacionesScheduler extends JobService {
     /**
      * Comprueba si el camión está dentro de un area o no
      * @param camionComprobar
-     * @param listaAreas
+     * @param listaBasesOperativas
      * @return
      */
-    public boolean camionEnArea(Camion camionComprobar, ArrayList<Area> listaAreas) {
+    public boolean camionEnArea(Camion camionComprobar, ArrayList<BaseOperativa> listaBasesOperativas) {
         ArrayList<Integer> d = new ArrayList<>();
         boolean dentro = false;
 
-        for (Area area : listaAreas) {
+        for (BaseOperativa baseOperativa : listaBasesOperativas) {
             float[] distance = new float[2];
             Location.distanceBetween(camionComprobar.getUltimaPosicion().getLatitude(), camionComprobar.getUltimaPosicion().getLongitude(),
-                    area.getLatitud(), area.getLongitud(), distance);
+                    baseOperativa.getLatitud(), baseOperativa.getLongitud(), distance);
 
-            Log.i("JobScheduler", "distancia: " + distance[0] + ", radio: " + area.getDistancia());
+            Log.i("JobScheduler", "distancia: " + distance[0] + ", radio: " + baseOperativa.getDistancia());
 
-            if (distance[0] <= area.getDistancia()) { //Camion dentro del circulo
+            if (distance[0] <= baseOperativa.getDistancia()) { //Camion dentro del circulo
                 // Inside The Circle
                 dentro = true;
                 d.add(1);
@@ -196,12 +196,12 @@ public class NotificacionesScheduler extends JobService {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    String idArea = snapshot.getValue(Area.class).getIdentificador();
-                    Area area = null;
+                    String idArea = snapshot.getValue(BaseOperativa.class).getIdentificador();
+                    BaseOperativa baseOperativa = null;
                     if(!IDsAreas.contains(idArea)) {
-                        area = snapshot.getValue(Area.class);
+                        baseOperativa = snapshot.getValue(BaseOperativa.class);
                         IDsAreas.add(idArea);
-                        listaAreas.add(area);
+                        listaBasesOperativas.add(baseOperativa);
                     }
                 }
             }
@@ -219,7 +219,7 @@ public class NotificacionesScheduler extends JobService {
      * @param camionesRef
      */
     public void inicializarListaCamiones(DatabaseReference camionesRef) {
-        Log.i("JobScheduler", "inicializarListaCamiones");
+        Log.i("JobScheduler", "obtenerErrores");
 
         camionesRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -295,7 +295,7 @@ public class NotificacionesScheduler extends JobService {
                 if (dataSnapshot.getValue() != null) {
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         Posicion posicion = child.getValue(Posicion.class);
-                        camionPos.setPosiciones(posicion);
+                        camionPos.setPosicion(posicion);
                         long time = camionPos.getUltimaPosicion().getTime();
                         camionPos.setHoras(time);
                     }
@@ -337,8 +337,8 @@ public class NotificacionesScheduler extends JobService {
                         long horaActual = horaActualDate.getTime();
                         long diferencia = horaActual - ultimaHora;
 
-                        boolean dentro = camionEnArea(camionNotif, listaAreas);
-                        Log.i("JobScheduler Area", "Camion " + camionNotif.getId() + " en area: " + dentro);
+                        boolean dentro = camionEnArea(camionNotif, listaBasesOperativas);
+                        Log.i("JobScheduler BaseOperativa", "Camion " + camionNotif.getId() + " en area: " + dentro);
 
                         if (diferencia >= frecuencia && !dentro) {
                             enviarNotificacion(camionNotif, notifId);

@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.guill.fhisa_admin.Adapter.Adapter;
+import com.example.guill.fhisa_admin.Adapter.AdapterCamiones;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
@@ -47,7 +47,7 @@ public class ListadoCamionesFragment extends Fragment {
     /**
      * Adaptador del RecyclerView
      */
-    Adapter adaptador;
+    AdapterCamiones adaptador;
 
     /**
      * Base de datos Firebase a utilizar
@@ -87,7 +87,7 @@ public class ListadoCamionesFragment extends Fragment {
      */
     private void inicializarAdaptador(RecyclerView recyclerView) {
         //Crea un objeto de contacto adaptador y le pasa la lista que tenemos para hacer internamente lo configurado en esa activity
-        adaptador = new Adapter(listaCamiones, getActivity());
+        adaptador = new AdapterCamiones(listaCamiones, getActivity());
         recyclerView.setAdapter(adaptador);
     }
 
@@ -179,7 +179,7 @@ public class ListadoCamionesFragment extends Fragment {
                             long ultimoValor = dataSnapshot.getChildrenCount();
                             for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
                                 Posicion posicion = snapshot1.getValue(Posicion.class);
-                                camionPos.setPosiciones(posicion);
+                                camionPos.setPosicion(posicion);
                                 long time = camionPos.getUltimaPosicion().getTime();
                                 camionPos.setHoras(time);
                             }
@@ -210,7 +210,7 @@ public class ListadoCamionesFragment extends Fragment {
 
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         Posicion posicion = child.getValue(Posicion.class);
-                        camionPos.setPosiciones(posicion);
+                        camionPos.setPosicion(posicion);
                         long time = camionPos.getUltimaPosicion().getTime();
                         camionPos.setHoras(time);
                     }

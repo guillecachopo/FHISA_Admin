@@ -24,22 +24,22 @@ public class CamionesMapManager {
      * Método encargado de mostrar los camiones en el mapa
      * @param camionesRef
      */
-    public void cargarCamiones(final MapsActivity mapsActivity, DatabaseReference camionesRef) {
+    public void cargarCamiones(final MapsFragment mapsFragment, DatabaseReference camionesRef) {
 
         camionesRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();
-                Camion camion = crearCamion(mapsActivity, id);
-                addPosicionesCamion(mapsActivity, camion, dataSnapshot);
+                Camion camion = crearCamion(mapsFragment, id);
+                addPosicionesCamion(mapsFragment, camion, dataSnapshot);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();
-                Camion camion = crearCamion(mapsActivity, id);
+                Camion camion = crearCamion(mapsFragment, id);
                 final Camion camionPos = camion;
-                actualizarCamion(mapsActivity, camionPos, dataSnapshot);
+                actualizarCamion(mapsFragment, camionPos, dataSnapshot);
             } //Id
 
 
@@ -66,20 +66,20 @@ public class CamionesMapManager {
      * @param id
      * @return
      */
-    public Camion crearCamion(MapsActivity mapsActivity, String id) {
+    public Camion crearCamion(MapsFragment mapsFragment, String id) {
         Camion camion = null;
-        if (!mapsActivity.listaIdsCamiones.contains(id)) { //Si la ID no está en la lista añadimos el camion
+        if (!mapsFragment.listaIdsCamiones.contains(id)) { //Si la ID no está en la lista añadimos el camion
             camion = new Camion(id);
-            mapsActivity.listaIdsCamiones.add(id);
-            mapsActivity.listaCamiones.add(camion);
-            int randomColor = mapsActivity.generaColorRandom(); //Genero un color aleatorio para cada camion
-            mapsActivity.listaColores.add(randomColor); //Añado el color aleatorio a una lista
+            mapsFragment.listaIdsCamiones.add(id);
+            mapsFragment.listaCamiones.add(camion);
+            int randomColor = mapsFragment.generaColorRandom(); //Genero un color aleatorio para cada camion
+            mapsFragment.listaColores.add(randomColor); //Añado el color aleatorio a una lista
 
         }
         else {
-            for (int i = 0; i < mapsActivity.listaCamiones.size(); i++)
-                if (mapsActivity.listaCamiones.get(i).getId().compareTo(id) == 0) {
-                    camion = mapsActivity.listaCamiones.get(i);
+            for (int i = 0; i < mapsFragment.listaCamiones.size(); i++)
+                if (mapsFragment.listaCamiones.get(i).getId().compareTo(id) == 0) {
+                    camion = mapsFragment.listaCamiones.get(i);
                     //camion.clearPosiciones();
                 }
         }
@@ -91,7 +91,7 @@ public class CamionesMapManager {
      * @param camionPos
      * @param dataSnapshot
      */
-    public void addPosicionesCamion(final MapsActivity mapsActivity, final Camion camionPos, final DataSnapshot dataSnapshot) {
+    public void addPosicionesCamion(final MapsFragment mapsFragment, final Camion camionPos, final DataSnapshot dataSnapshot) {
         final ArrayList<Posicion> listaPosiciones = new ArrayList<>();
 
         boolean existeRutaActual = false;
@@ -109,7 +109,7 @@ public class CamionesMapManager {
 
                     camionPos.setPosicionesList(listaPosiciones);
                     //Ahora tendria que actualizar listaCamiones:
-                    for (Camion camionRefresh : mapsActivity.listaCamiones) {
+                    for (Camion camionRefresh : mapsFragment.listaCamiones) {
                         if (camionRefresh.getId().compareTo(camionPos.getId())==0) {
                             camionRefresh.setPosicionesList(camionPos.getPosicionesList()); //o camionRefresh = camion;
                         }
@@ -136,14 +136,14 @@ public class CamionesMapManager {
 
                             camionPos.setPosicionesList(listaPosiciones);
                             //Ahora tendria que actualizar listaCamiones:
-                            for (Camion camionRefresh : mapsActivity.listaCamiones) {
+                            for (Camion camionRefresh : mapsFragment.listaCamiones) {
                                 if (camionRefresh.getId().compareTo(camionPos.getId())==0) {
                                     camionRefresh.setPosicionesList(camionPos.getPosicionesList()); //o camionRefresh = camion;
                                 }
                             }
                             //La query tarda más en ejecutarse, por lo que los marcadores no aparecerían hasta que llegase
                             //una nueva posición de un camión en ruta, ya que se ejecuta antes el addMarcadoresCamiones.
-                            mapsActivity.addMarcadoresCamiones(mapsActivity.mMarkerMap, mapsActivity.listaCamiones);
+                            mapsFragment.addMarcadoresCamiones(mapsFragment.mMarkerMap, mapsFragment.listaCamiones);
                         }
 
                         @Override
@@ -178,7 +178,7 @@ public class CamionesMapManager {
      * @param camionPos
      * @param dataSnapshot
      */
-    public void actualizarCamion(final MapsActivity mapsActivity, final Camion camionPos, DataSnapshot dataSnapshot) {
+    public void actualizarCamion(final MapsFragment mapsFragment, final Camion camionPos, DataSnapshot dataSnapshot) {
         //camionPos no tiene ninguna posición. Pero tiene un ID que nos sirve para actualizarlo en la listaCamiones
 
         //Un camion que estaba en ruta y ya no entrará en onChildChanged una vez
@@ -195,9 +195,9 @@ public class CamionesMapManager {
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         Posicion posicion = child.getValue(Posicion.class);
 
-                        for (Camion camionRefresh : mapsActivity.listaCamiones) {
+                        for (Camion camionRefresh : mapsFragment.listaCamiones) {
                             if (camionRefresh.getId().compareTo(camionPos.getId()) == 0) {
-                                camionRefresh.setPosiciones(posicion); //setPosiciones añade una posición.
+                                camionRefresh.setPosicion(posicion); //setPosicion añade una posición.
                             }
                         }
                     }
@@ -210,7 +210,7 @@ public class CamionesMapManager {
             });
         } else {
             //No está en ruta
-            for (Camion camionBorrar : mapsActivity.listaCamiones) {
+            for (Camion camionBorrar : mapsFragment.listaCamiones) {
                 if (camionBorrar.getId().compareTo(camionPos.getId()) == 0) {
                     camionBorrar.clearPosiciones();
                 }

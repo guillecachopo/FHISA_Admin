@@ -22,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Globals;
-import com.example.guill.fhisa_admin.Objetos.Area;
+import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
@@ -78,7 +78,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     long numCamiones;
     MarkerOptions markerOptions;
 
-    ArrayList<Area> areasList;
+    ArrayList<BaseOperativa> areasList;
     ArrayList<String> IDsAreas;
     String idArea;
     ArrayList<Circle> circleList;
@@ -218,16 +218,16 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    idArea = snapshot.getValue(Area.class).getIdentificador();
-                    Area area = null;
+                    idArea = snapshot.getValue(BaseOperativa.class).getIdentificador();
+                    BaseOperativa baseOperativa = null;
                     if(!IDsAreas.contains(idArea)) {
-                        area = snapshot.getValue(Area.class);
+                        baseOperativa = snapshot.getValue(BaseOperativa.class);
                         IDsAreas.add(idArea);
-                        areasList.add(area);
-                        Log.i("Areas", "Area: " + area.getDistancia());
+                        areasList.add(baseOperativa);
+                        Log.i("Areas", "BaseOperativa: " + baseOperativa.getDistancia());
 
                     }
-                    //LatLng latLng = new LatLng(area.getLatitud(), area.getLongitud());
+                    //LatLng latLng = new LatLng(baseOperativa.getLatitud(), baseOperativa.getLongitud());
                 }
 
                 //Dibujamos todos las areas que tenemos en firebase
@@ -293,7 +293,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         for (DataSnapshot snapshot2 : snapshot1.getChildren()) {
 
                             Posicion posicion = snapshot2.getValue(Posicion.class);
-                            camion.setPosiciones(posicion);
+                            camion.setPosicion(posicion);
 
                             altitude = camion.getUltimaPosicion().getAltitude();
                             latitude = camion.getUltimaPosicion().getLatitude();
@@ -314,10 +314,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 //Si el mapa se actualiza, hay que volver a pintar las areas. Además, este mMap.clear() se ejecuta al iniciarse la app, por lo que
                 //los circulos se borrarían
                 for (int i=0; i<areasList.size(); i++) {
-                    Area area = areasList.get(i);
+                    BaseOperativa baseOperativa = areasList.get(i);
                     Circle circle = mMap.addCircle(new CircleOptions()
-                            .center(new LatLng(area.getLatitud(), area.getLongitud()))
-                            .radius(area.getDistancia())
+                            .center(new LatLng(baseOperativa.getLatitud(), baseOperativa.getLongitud()))
+                            .radius(baseOperativa.getDistancia())
                             .strokeColor(0x70FE2E2E)
                             .fillColor(0x552E86C1)); //55 es el % de transparencia
                     circleList.set(i, circle);
@@ -586,16 +586,16 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     LatLng randomLatLng = getRandomLocation(latlng, (int) distancia);
                     Log.i("PRUEBA", "Click en: " + latlng.latitude + ", " + latlng.longitude + ", Radio: " + distancia + ", Random: " + randomLatLng.latitude + ", " + randomLatLng.longitude);
 
-                    Area area = new Area(String.valueOf(latlng.latitude), latlng.latitude, latlng.longitude, (int) distancia);
+                    BaseOperativa baseOperativa = new BaseOperativa(String.valueOf(latlng.latitude), latlng.latitude, latlng.longitude, (int) distancia);
 
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference areasRef = database.getReference(FirebaseReferences.AREAS_REFERENCE);
-                    areasRef.push().setValue(area);
-                    areasList.add(area);
+                    areasRef.push().setValue(baseOperativa);
+                    areasList.add(baseOperativa);
 
                     Circle circle = mMap.addCircle(new CircleOptions()
-                            .center(new LatLng(area.getLatitud(), area.getLongitud()))
-                            .radius(area.getDistancia())
+                            .center(new LatLng(baseOperativa.getLatitud(), baseOperativa.getLongitud()))
+                            .radius(baseOperativa.getDistancia())
                             .strokeColor(0x70FE2E2E)
                             .fillColor(0x552E86C1));
                     circleList.add(circle);
@@ -627,10 +627,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
             LatLng center = circleList.get(i).getCenter();
             double radius = circleList.get(i).getRadius();
-            final Area areaBorrar =  new Area(center.latitude, center.longitude, (int) radius);
+            final BaseOperativa baseOperativaBorrar =  new BaseOperativa(center.latitude, center.longitude, (int) radius);
             float[] distance = new float[1];
             //Location.distanceBetween(camionesList.get(i).getUltimaPosicion().getLatitude(), camionesList.get(i).getUltimaPosicion().getLongitude(), circle.getCenter().latitude,circle.getCenter().longitude,distance);
-            Location.distanceBetween(latitudlongitud.latitude, latitudlongitud.longitude, areaBorrar.getLatitud(), areaBorrar.getLongitud(), distance);
+            Location.distanceBetween(latitudlongitud.latitude, latitudlongitud.longitude, baseOperativaBorrar.getLatitud(), baseOperativaBorrar.getLongitud(), distance);
             boolean clicked = distance[0] < radius;
             if (clicked) {
                 circleList.get(i).remove();
@@ -646,8 +646,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Log.i("Firebase", snapshot.getValue().toString());
                             snapshot.getValue().getClass();
-                            Area areaFirebase = snapshot.getValue(Area.class);
-                            if (areaFirebase.getLatitud() == areaBorrar.getLatitud() && areaFirebase.getLongitud() == areaBorrar.getLongitud() && areaFirebase.getDistancia() == areaBorrar.getDistancia()) snapshot.getRef().removeValue();
+                            BaseOperativa baseOperativaFirebase = snapshot.getValue(BaseOperativa.class);
+                            if (baseOperativaFirebase.getLatitud() == baseOperativaBorrar.getLatitud() && baseOperativaFirebase.getLongitud() == baseOperativaBorrar.getLongitud() && baseOperativaFirebase.getDistancia() == baseOperativaBorrar.getDistancia()) snapshot.getRef().removeValue();
                         }
                     }
 

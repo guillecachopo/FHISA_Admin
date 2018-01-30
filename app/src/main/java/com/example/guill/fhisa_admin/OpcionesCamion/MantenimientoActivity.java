@@ -46,7 +46,7 @@ public class MantenimientoActivity extends AppCompatActivity {
 
     private String getImei() {
         Bundle extras = getIntent().getExtras();
-        String imei = extras.getString("id");
+        String imei = extras.getString("imei");
         return imei;
     }
 

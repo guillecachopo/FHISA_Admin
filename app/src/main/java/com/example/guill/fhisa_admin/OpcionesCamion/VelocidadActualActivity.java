@@ -20,8 +20,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-
 /**
  * Created by guill on 08/01/2018.
  */
@@ -31,18 +29,6 @@ public class VelocidadActualActivity extends AppCompatActivity {
     private Toolbar toolbar;
     SpeedView speedometer;
     TextView tvVelocidadActual;
-
-    /**
-     * Lista que contiene los camiones
-     */
-    ArrayList<Camion> listaCamiones;
-
-    /**
-     * Lista que contiene las Ids de los camiones
-     */
-    ArrayList<String> listaIdsCamiones;
-
-    ArrayList<Posicion> listaPosiciones;
 
     /**
      * Base de datos Firebase a utilizar
@@ -140,7 +126,7 @@ public class VelocidadActualActivity extends AppCompatActivity {
                 } else { //Si está en ruta
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         Posicion posicion = child.getValue(Posicion.class);
-                        camion.setPosiciones(posicion);
+                        camion.setPosicion(posicion);
                         long time = camion.getUltimaPosicion().getTime();
                         camion.setHoras(time);
                     }
@@ -202,7 +188,7 @@ public class VelocidadActualActivity extends AppCompatActivity {
      */
     private String getImei() {
         Bundle extras = getIntent().getExtras();
-        String imei = extras.getString("id");
+        String imei = extras.getString("imei");
         return imei;
     }
 

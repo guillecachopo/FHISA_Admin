@@ -55,7 +55,7 @@ public class Camion {
         return posiciones.get(posiciones.size()-2);
     }
 
-    public void setPosiciones(Posicion posicion) {
+    public void setPosicion(Posicion posicion) {
         posiciones.add(posicion);
     }
 

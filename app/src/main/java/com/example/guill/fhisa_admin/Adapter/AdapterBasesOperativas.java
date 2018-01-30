@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.OpcionesMenu.ModificarBasesOperativasActivity;
-import com.example.guill.fhisa_admin.Objetos.Area;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.R;
 import com.google.firebase.database.DatabaseReference;
@@ -21,7 +21,7 @@ import java.util.List;
  */
 
 public class AdapterBasesOperativas extends RecyclerView.Adapter<AdapterBasesOperativas.BasesOperativasViewHolder> {
-    List<Area> listaBasesOperativas;
+    List<BaseOperativa> listaBasesOperativas;
     //Activity activity;
     ModificarBasesOperativasActivity modificarBasesOperativasActivity;
 
@@ -41,7 +41,7 @@ public class AdapterBasesOperativas extends RecyclerView.Adapter<AdapterBasesOpe
         }
     }
 
-    public AdapterBasesOperativas(ModificarBasesOperativasActivity modificarBasesOperativasActivity, List<Area> listaBasesOperativas) {
+    public AdapterBasesOperativas(ModificarBasesOperativasActivity modificarBasesOperativasActivity, List<BaseOperativa> listaBasesOperativas) {
         this.modificarBasesOperativasActivity = modificarBasesOperativasActivity;
         this.listaBasesOperativas = listaBasesOperativas;
     }
@@ -60,17 +60,17 @@ public class AdapterBasesOperativas extends RecyclerView.Adapter<AdapterBasesOpe
 
     @Override
     public void onBindViewHolder(final AdapterBasesOperativas.BasesOperativasViewHolder holder, int position) {
-        final Area area = listaBasesOperativas.get(position);
+        final BaseOperativa baseOperativa = listaBasesOperativas.get(position);
 
-        holder.tvIdentificadorBaseOperativa.setText(area.getIdentificador());
-        holder.tvRadioBaseOperativa.setText(String.valueOf(area.getDistancia()));
+        holder.tvIdentificadorBaseOperativa.setText(baseOperativa.getIdentificador());
+        holder.tvRadioBaseOperativa.setText(String.valueOf(baseOperativa.getDistancia()));
 
         holder.cvBaseOperativa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //BasesOperativasManager basesOperativasManager = new BasesOperativasManager();
-                //basesOperativasManager.modificarBaseOperativa(area, activity);
-                modificarBasesOperativasActivity.modificarBaseOperativa(area, holder.tvRadioBaseOperativa);
+                //basesOperativasManager.modificarBaseOperativa(baseOperativa, activity);
+                modificarBasesOperativasActivity.modificarBaseOperativa(baseOperativa, holder.tvRadioBaseOperativa);
 
             }
         });

@@ -24,7 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class VehiculoActivity extends AppCompatActivity {
+public class DetallesVehiculoActivity extends AppCompatActivity {
 
     /**
      * Declaración de TextViews de la actividad
@@ -104,7 +104,7 @@ public class VehiculoActivity extends AppCompatActivity {
      */
     private String getImei() {
         Bundle extras = getIntent().getExtras();
-        String imei = extras.getString("id");
+        String imei = extras.getString("imei");
         return imei;
     }
 
@@ -134,7 +134,7 @@ public class VehiculoActivity extends AppCompatActivity {
      */
     public void cambiarAlias(final View view) {
         Bundle extras = getIntent().getExtras();
-        final String imei = extras.getString("id");
+        final String imei = extras.getString("imei");
 
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = getLayoutInflater().inflate(R.layout.dialog_nombre_camion, null);
@@ -144,7 +144,7 @@ public class VehiculoActivity extends AppCompatActivity {
 
         dialogBuilder.setTitle("Selección de Alias");
         dialogBuilder.setMessage("Nuevo alias personalizado del camión: ");
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
                 String introducido = edt.getText().toString();
@@ -171,7 +171,7 @@ public class VehiculoActivity extends AppCompatActivity {
 
             }
         });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //pass
             }
@@ -201,7 +201,7 @@ public class VehiculoActivity extends AppCompatActivity {
 
     public void irOpcionesCamion(View view) {
         Intent intent = new Intent(this, OpcionesCamionActivity.class);
-        intent.putExtra("id", getImei());
+        intent.putExtra("imei", getImei());
         startActivity(intent);
     }
 

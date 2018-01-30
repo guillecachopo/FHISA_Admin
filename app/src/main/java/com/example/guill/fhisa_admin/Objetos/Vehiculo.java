@@ -13,6 +13,7 @@ public class Vehiculo {
     public Vehiculo() {
     }
 
+
     public Vehiculo(String id, String imei, String num_tlf, String name) {
         this.id = id;
         this.imei = imei;
@@ -21,34 +22,42 @@ public class Vehiculo {
     }
 
     public String getId() {
+        if (id==null || id.isEmpty() || id.length() == 0) id = "No registrado";
         return id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        if (id==null || id.isEmpty()) id = "No registrado";
+        else this.id = id;
     }
 
     public String getImei() {
+        if (imei==null || imei.equals("")) imei = "No registrado";
         return imei;
     }
 
     public void setImei(String imei) {
-        this.imei = imei;
+        if (imei==null || imei.equals("")) imei = "No registrado";
+        else this.imei = imei;
     }
 
     public String getTlf() {
+        if (num_tlf==null || num_tlf.equals("")) num_tlf = "No registrado";
         return num_tlf;
     }
 
     public void setTlf(String num_tlf) {
-        this.num_tlf = num_tlf;
+        if (num_tlf==null || num_tlf.equals("")) num_tlf = "No registrado";
+        else this.num_tlf = num_tlf;
     }
 
     public String getMatricula() {
+        if (name==null || name.equals("")) name = "No registrada";
         return name;
     }
 
     public void setMatricula(String name) {
-        this.name = name;
+        if (name==null || name.equals("")) name = "No registrada";
+        else this.name = name;
     }
 }

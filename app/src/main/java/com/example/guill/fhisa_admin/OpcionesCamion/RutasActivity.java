@@ -189,7 +189,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
 
     private String getImei() {
         Bundle extras = getIntent().getExtras();
-        String imei = extras.getString("id");
+        String imei = extras.getString("imei");
         return imei;
     }
 

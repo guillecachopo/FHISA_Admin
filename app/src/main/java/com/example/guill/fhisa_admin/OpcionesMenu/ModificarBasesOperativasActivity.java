@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Adapter.AdapterBasesOperativas;
-import com.example.guill.fhisa_admin.Objetos.Area;
+import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.R;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +35,7 @@ public class ModificarBasesOperativasActivity extends AppCompatActivity {
     /**
      * Lista que contiene las bases operativas
      */
-    ArrayList<Area> listaBasesOperativas;
+    ArrayList<BaseOperativa> listaBasesOperativas;
 
     /**
      * Base de datos Firebase a utilizar
@@ -86,8 +86,8 @@ public class ModificarBasesOperativasActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot areaSnapshot : dataSnapshot.getChildren()) {
-                    Area area = areaSnapshot.getValue(Area.class);
-                    listaBasesOperativas.add(area);
+                    BaseOperativa baseOperativa = areaSnapshot.getValue(BaseOperativa.class);
+                    listaBasesOperativas.add(baseOperativa);
                 }
                 adaptador.notifyDataSetChanged();
             }
@@ -103,7 +103,7 @@ public class ModificarBasesOperativasActivity extends AppCompatActivity {
      * Método encargado de mostrar un AlertDialog para la modificación de la Base Operativa. Guarda la
      * base operativa en Firebase.
      */
-    public void modificarBaseOperativa(final Area area, final TextView tvRadio) {
+    public void modificarBaseOperativa(final BaseOperativa baseOperativa, final TextView tvRadio) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = this.getLayoutInflater().inflate(R.layout.dialog_modificar_area, null);
         dialogBuilder.setView(dialogView);
@@ -111,7 +111,7 @@ public class ModificarBasesOperativasActivity extends AppCompatActivity {
         final EditText edt = (EditText) dialogView.findViewById(R.id.etRadioArea);
 
         dialogBuilder.setTitle("Modificación de base operativa");
-        dialogBuilder.setMessage("Elija en metros el radio del area.");
+        dialogBuilder.setMessage("Elija en metros el radio del baseOperativa.");
         dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String radioIntroducido = edt.getText().toString();
@@ -121,11 +121,11 @@ public class ModificarBasesOperativasActivity extends AppCompatActivity {
                 }
                 else {
 
-                    area.setDistancia(Integer.parseInt(radioIntroducido));
-                    tvRadio.setText(String.valueOf(area.getDistancia()));
+                    baseOperativa.setDistancia(Integer.parseInt(radioIntroducido));
+                    tvRadio.setText(String.valueOf(baseOperativa.getDistancia()));
 
                     DatabaseReference areasRef = FirebaseDatabase.getInstance().getReference(FirebaseReferences.AREAS_REFERENCE);
-                    areasRef.child(area.getIdentificador()).setValue(area);
+                    areasRef.child(baseOperativa.getIdentificador()).setValue(baseOperativa);
 
                 }
             }

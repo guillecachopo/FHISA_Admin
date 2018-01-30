@@ -174,7 +174,7 @@
 
             <RelativeLayout
                 android:id="@+id/rlVerPosiciones"
-                android:onClick="irPosiciones"
+                android:onClick="irRutas"
                 android:layout_width="match_parent"
                 android:layout_height="47dp"
                 android:clickable="true"
@@ -376,7 +376,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="29dp"
-                    android:text="Cambiar identificador del camión"
+                    android:text="Cambiar alias del camión"
                     android:textColor="@color/colorBlack"
                     android:textSize="16sp" />
 

@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.guill.fhisa_admin.Objetos.Area;
+import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
@@ -122,7 +122,7 @@ public class MapsActivity4 extends Fragment implements OnMapReadyCallback {
     /**
      * Lista en la que se almacenan las areas
      */
-    ArrayList<Area> listaAreas;
+    ArrayList<BaseOperativa> listaBasesOperativas;
 
     /**
      * Lista en la que se almacenan los circulos
@@ -167,7 +167,7 @@ public class MapsActivity4 extends Fragment implements OnMapReadyCallback {
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         editor = preferences.edit();
 
-        listaAreas = new ArrayList<>();
+        listaBasesOperativas = new ArrayList<>();
         listaCirculos = new ArrayList<>();
         listaCamiones = new ArrayList<Camion>();
         listaIdsCamiones = new ArrayList<String>();
@@ -267,7 +267,7 @@ public class MapsActivity4 extends Fragment implements OnMapReadyCallback {
     }
 
     /**
-     * Método al que se entrará cuando se haga click en Marcar Area
+     * Método al que se entrará cuando se haga click en Marcar BaseOperativa
      */
     public void accionAreaSegura() {
         infoDialogMarcarArea();
@@ -281,7 +281,7 @@ public class MapsActivity4 extends Fragment implements OnMapReadyCallback {
     }
 
     /**
-     * Método al que se entrará cuando se haga click en Borrar Area
+     * Método al que se entrará cuando se haga click en Borrar BaseOperativa
      */
     public void accionBorrarArea() {
         infoDialogBorrarArea();
@@ -408,13 +408,13 @@ public class MapsActivity4 extends Fragment implements OnMapReadyCallback {
                 }
                 else {
                     long distancia = Long.parseLong(edt.getText().toString());
-                    Area area = new Area(String.valueOf(latlng.latitude), latlng.latitude,
+                    BaseOperativa baseOperativa = new BaseOperativa(String.valueOf(latlng.latitude), latlng.latitude,
                             latlng.longitude, (int) distancia);
 
-                    areasRef.push().setValue(area);
-                    listaAreas.add(area);
+                    areasRef.push().setValue(baseOperativa);
+                    listaBasesOperativas.add(baseOperativa);
 
-                    Circle circle = dibujarCirculo(area);
+                    Circle circle = dibujarCirculo(baseOperativa);
                     listaCirculos.add(circle);
                 }
             }
@@ -440,16 +440,16 @@ public class MapsActivity4 extends Fragment implements OnMapReadyCallback {
 
             LatLng center = listaCirculos.get(i).getCenter();
             double radius = listaCirculos.get(i).getRadius();
-            final Area areaBorrar = new Area(center.latitude, center.longitude, (int) radius);
+            final BaseOperativa baseOperativaBorrar = new BaseOperativa(center.latitude, center.longitude, (int) radius);
             float[] distance = new float[1];
             Location.distanceBetween(latitudlongitud.latitude, latitudlongitud.longitude,
-                    areaBorrar.getLatitud(), areaBorrar.getLongitud(), distance);
+                    baseOperativaBorrar.getLatitud(), baseOperativaBorrar.getLongitud(), distance);
             boolean clicked = distance[0] < radius;
 
             if (clicked) {
                 listaCirculos.get(i).remove();
                 listaCirculos.remove(i);
-                listaAreas.remove(i);
+                listaBasesOperativas.remove(i);
 
                 areasRef.addValueEventListener(new ValueEventListener() {
 
@@ -457,10 +457,10 @@ public class MapsActivity4 extends Fragment implements OnMapReadyCallback {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             snapshot.getValue().getClass();
-                            Area areaFirebase = snapshot.getValue(Area.class);
-                            if (areaFirebase.getLatitud() == areaBorrar.getLatitud() &&
-                                    areaFirebase.getLongitud() == areaBorrar.getLongitud() &&
-                                    areaFirebase.getDistancia() == areaBorrar.getDistancia())
+                            BaseOperativa baseOperativaFirebase = snapshot.getValue(BaseOperativa.class);
+                            if (baseOperativaFirebase.getLatitud() == baseOperativaBorrar.getLatitud() &&
+                                    baseOperativaFirebase.getLongitud() == baseOperativaBorrar.getLongitud() &&
+                                    baseOperativaFirebase.getDistancia() == baseOperativaBorrar.getDistancia())
                                 snapshot.getRef().removeValue();
                         }
                     }
@@ -477,13 +477,13 @@ public class MapsActivity4 extends Fragment implements OnMapReadyCallback {
 
     /**
      * Método encargado de dibujar un circulo
-     * @param area
+     * @param baseOperativa
      * @return
      */
-    private Circle dibujarCirculo(Area area) {
+    private Circle dibujarCirculo(BaseOperativa baseOperativa) {
         Circle circulo = mMap.addCircle(new CircleOptions()
-                .center(new LatLng(area.getLatitud(), area.getLongitud()))
-                .radius(area.getDistancia())
+                .center(new LatLng(baseOperativa.getLatitud(), baseOperativa.getLongitud()))
+                .radius(baseOperativa.getDistancia())
                 .strokeColor(0x70FE2E2E)
                 .fillColor(0x552E86C1));
         return circulo;
@@ -514,19 +514,19 @@ public class MapsActivity4 extends Fragment implements OnMapReadyCallback {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    String idArea = snapshot.getValue(Area.class).getIdentificador();
-                    Area area = null;
+                    String idArea = snapshot.getValue(BaseOperativa.class).getIdentificador();
+                    BaseOperativa baseOperativa = null;
                     if(!listaIdsAreas.contains(idArea)) {
-                        area = snapshot.getValue(Area.class);
+                        baseOperativa = snapshot.getValue(BaseOperativa.class);
                         listaIdsAreas.add(idArea);
-                        listaAreas.add(area);
+                        listaBasesOperativas.add(baseOperativa);
                     }
-                    //LatLng latLng = new LatLng(area.getLatitud(), area.getLongitud());
+                    //LatLng latLng = new LatLng(baseOperativa.getLatitud(), baseOperativa.getLongitud());
                 }
 
                 //Dibujamos todos las areas que tenemos en firebase
-                for (int i=0; i<listaAreas.size(); i++) {
-                    Circle circle = dibujarCirculo(listaAreas.get(i));
+                for (int i = 0; i< listaBasesOperativas.size(); i++) {
+                    Circle circle = dibujarCirculo(listaBasesOperativas.get(i));
                     listaCirculos.add(circle);
                 }
 
@@ -625,7 +625,7 @@ public class MapsActivity4 extends Fragment implements OnMapReadyCallback {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     Posicion posicion = child.getValue(Posicion.class);
-                    camionPos.setPosiciones(posicion);
+                    camionPos.setPosicion(posicion);
                     Log.i("getUltimasPosiciones", String.valueOf(camionPos.getId() + ": " +posicion.getTime()));
                     Log.i("getUltimasPosiciones", camionPos.getId() + ": " + String.valueOf(camionPos.getPosicionesList().size()));
 

@@ -16,7 +16,7 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.guill.fhisa_admin.MainActivity;
-import com.example.guill.fhisa_admin.Objetos.Area;
+import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.ErrorNotificacion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
@@ -55,7 +55,7 @@ public class NotificationJobScheduler extends JobService {
     List<String> IDs;
     long numCamiones;
 
-    ArrayList<Area> areasList;
+    ArrayList<BaseOperativa> areasList;
     ArrayList<String> IDsAreas;
     String idArea;
 
@@ -90,12 +90,12 @@ public class NotificationJobScheduler extends JobService {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    idArea = snapshot.getValue(Area.class).getIdentificador();
-                    Area area = null;
+                    idArea = snapshot.getValue(BaseOperativa.class).getIdentificador();
+                    BaseOperativa baseOperativa = null;
                     if(!IDsAreas.contains(idArea)) {
-                        area = snapshot.getValue(Area.class);
+                        baseOperativa = snapshot.getValue(BaseOperativa.class);
                         IDsAreas.add(idArea);
-                        areasList.add(area);
+                        areasList.add(baseOperativa);
                     }
                 }
             }
@@ -137,7 +137,7 @@ public class NotificationJobScheduler extends JobService {
 
                         for (DataSnapshot snapshot2 : snapshot1.getChildren()) {
                             Posicion posicion = snapshot2.getValue(Posicion.class);
-                            camion.setPosiciones(posicion);
+                            camion.setPosicion(posicion);
 
                             altitude = camion.getUltimaPosicion().getAltitude();
                             latitude = camion.getUltimaPosicion().getLatitude();
@@ -164,7 +164,7 @@ public class NotificationJobScheduler extends JobService {
                     //Log.i("JobScheduler", "Diferencia: " + diferencia);
 
                     boolean dentro = camionEnArea(camionNotif, areasList);
-                    Log.i("JobScheduler Area", "Camion " + camionesList.get(i).getId() + "en area: " + dentro );
+                    Log.i("JobScheduler BaseOperativa", "Camion " + camionesList.get(i).getId() + "en area: " + dentro );
                     //Setear en milisegundos cuánto tiempo queremos que puede estar sin recibir una posición antes de que salte
                     if(diferencia >= 1000 * 60 * 10 && !dentro) {
                         enviarNotificacion(camionNotif, notifId);
@@ -214,16 +214,16 @@ public class NotificationJobScheduler extends JobService {
     }
 
 
-    public boolean camionEnArea(Camion camionComprobar, ArrayList<Area> listaAreas) {
+    public boolean camionEnArea(Camion camionComprobar, ArrayList<BaseOperativa> listaBasesOperativas) {
         ArrayList<Integer> d = new ArrayList<>();
         boolean dentro = false;
 
-        for (int i=0; i < listaAreas.size(); i++) {
+        for (int i = 0; i < listaBasesOperativas.size(); i++) {
             float[] distance = new float[2];
             Location.distanceBetween(camionComprobar.getUltimaPosicion().getLatitude(), camionComprobar.getUltimaPosicion().getLongitude(),
-                    listaAreas.get(i).getLatitud(), listaAreas.get(i).getLongitud(), distance);
+                    listaBasesOperativas.get(i).getLatitud(), listaBasesOperativas.get(i).getLongitud(), distance);
 
-            Log.i("JobScheduler", "distancia: " + distance[0] + ", radio: " + listaAreas.get(i).getDistancia());
+            Log.i("JobScheduler", "distancia: " + distance[0] + ", radio: " + listaBasesOperativas.get(i).getDistancia());
 
             if (distance[0] <= areasList.get(i).getDistancia()) { //Camion dentro del circulo
                 // Inside The Circle

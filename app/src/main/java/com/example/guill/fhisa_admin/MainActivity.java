@@ -4,13 +4,16 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Adapter.PageAdapter;
-import com.example.guill.fhisa_admin.Mapa.MapsActivity;
+import com.example.guill.fhisa_admin.Mapa.MapsFragment;
 import com.example.guill.fhisa_admin.OpcionesMenu.OpcionesMenuActivity;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Fragment> agregarFragment(){
         ArrayList<Fragment> fragments = new ArrayList<>();
 
-        fragments.add(new MapsActivity());
+        fragments.add(new MapsFragment());
         fragments.add(new ListadoCamionesFragment());
         fragments.add(new ErroresFragment());
 
@@ -128,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menuBorrarBD:
-                borrarBD();
+                //borrarBD();
                 return true;
 
             case R.id.menuLeyenda:
@@ -225,6 +228,9 @@ public class MainActivity extends AppCompatActivity {
                 .setMessage("Firebase Database es la base de datos utilizada para guardar las posiciones de cada camión y las areas correspondientes a las zonas libres de notificaciones. Las copias de seguridad se guardarán en del directorio raíz del dispositivo dentro la carpeta FHISAFirebase.")
                 .setPositiveButton("GUARDAR", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
+                        permisosAlmacenamiento();
+
                         new CopiaSeguridadFirebase(getApplicationContext(), preferences, progressBar)
                                 .execute("https://fhisaservicio.firebaseio.com/.json");
                         //new EnviarEmailBackup(getApplicationContext(), preferences).execute();
@@ -251,59 +257,64 @@ public class MainActivity extends AppCompatActivity {
         File fhisaDir = new File(Environment.getExternalStorageDirectory(), "FHISAFirebase"); //Cogemos el directorio donde se guardan los backups
         final String fhisaDirString = fhisaDir.toString();
         File[] files = fhisaDir.listFiles(); //Cogemos todos los ficheros de la carpeta
-        ArrayList<String> fileNames = new ArrayList<>(); //Vector dnde guardaremos los nombres de los backups
-        for (int i = 0; i < files.length; i++)
-        {
-            fileNames.add(files[i].getName()); //Guardamos en nuestro vector de nombres todos los nombres
-        }
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(MainActivity.this); //AlertDialog para elegir cuál queremos importar
-        builderSingle.setIcon(R.drawable.ic_fhisa);
-        builderSingle.setTitle("Seleccionar copia de seguridad");
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_singlechoice); //ArrayAdapter para el AlertDialog
-
-        for (int i=0; i<fileNames.size(); i++) arrayAdapter.add(fileNames.get(i)); //Añadimos al ArrayAdapter nuestro Array de nombres
-
-        builderSingle.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+        if (files!=null) {
+            ArrayList<String> fileNames = new ArrayList<>(); //Vector donde guardaremos los nombres de los backups
+            for (int i = 0; i < files.length; i++)
+            {
+                fileNames.add(files[i].getName()); //Guardamos en nuestro vector de nombres todos los nombres
             }
-        });
+            AlertDialog.Builder builderSingle = new AlertDialog.Builder(MainActivity.this); //AlertDialog para elegir cuál queremos importar
+            builderSingle.setIcon(R.drawable.ic_fhisa);
+            builderSingle.setTitle("Seleccionar copia de seguridad");
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_singlechoice); //ArrayAdapter para el AlertDialog
 
-        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(final DialogInterface dialog, int which) {
-                final String strName = arrayAdapter.getItem(which); //Este es el item seleccionado que pasaremos al parser
-                AlertDialog.Builder builderInner = new AlertDialog.Builder(MainActivity.this);
-                builderInner.setIcon(R.drawable.ic_fhisa);
-                builderInner.setMessage(strName);
-                builderInner.setTitle("La copia elegida es: ");
-                builderInner.setPositiveButton("IMPORTAR", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,int which) {
-                        JSONParser parser = new JSONParser();
+            for (int i=0; i<fileNames.size(); i++) arrayAdapter.add(fileNames.get(i)); //Añadimos al ArrayAdapter nuestro Array de nombres
 
-                        try {
-                            Object obj = parser.parse(new FileReader(fhisaDirString+"/"+strName)); //Cogemos el json elegido
-                            database.getReferenceFromUrl("https://fhisaservicio.firebaseio.com").setValue(obj);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+            builderSingle.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(final DialogInterface dialog, int which) {
+                    final String strName = arrayAdapter.getItem(which); //Este es el item seleccionado que pasaremos al parser
+                    AlertDialog.Builder builderInner = new AlertDialog.Builder(MainActivity.this);
+                    builderInner.setIcon(R.drawable.ic_fhisa);
+                    builderInner.setMessage(strName);
+                    builderInner.setTitle("La copia elegida es: ");
+                    builderInner.setPositiveButton("IMPORTAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog,int which) {
+                            JSONParser parser = new JSONParser();
+
+                            try {
+                                Object obj = parser.parse(new FileReader(fhisaDirString+"/"+strName)); //Cogemos el json elegido
+                                database.getReferenceFromUrl("https://fhisaservicio.firebaseio.com").setValue(obj);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            dialog.dismiss();
                         }
-                        dialog.dismiss();
-                    }
-                });
-                builderInner.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialog.dismiss();
-                    }
-                });
-                builderInner.show();
-            }
-        });
-        builderSingle.show();
+                    });
+                    builderInner.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builderInner.show();
+                }
+            });
+            builderSingle.show();
+        } else {
+            Toast.makeText(getApplicationContext(), "No hay copias de seguridad almacenadas", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     /**
@@ -329,6 +340,20 @@ public class MainActivity extends AppCompatActivity {
                 });
         AlertDialog alertdialog = alertDialogBorrar.create();
         alertdialog.show();
+    }
+
+    /**
+     * Solicitamos permisos de almacenamiento
+     */
+    public void permisosAlmacenamiento() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1024);
+
+        }
     }
 
 }

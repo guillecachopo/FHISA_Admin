@@ -46,17 +46,17 @@ public class ErroresFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         rvListaErrores.setLayoutManager(llm);
-        inicializarListaCamiones();
+        obtenerErrores();
         inicializarAdaptador();
 
         return v;
     }
 
-    public void inicializarListaCamiones(){
+    public void obtenerErrores(){
 
-        camiones = new ArrayList<Camion>();
+       // camiones = new ArrayList<Camion>();
         errorNotificacions = new ArrayList<ErrorNotificacion>();
-        IDs = new ArrayList<>();
+        //IDs = new ArrayList<>();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance(); //Cualquier referencia tiene que ser igual al mismo tipo pero cogiendo la instancia
         final DatabaseReference erroresRef = database.getReference(FirebaseReferences.ERRORES_REFERENCE);

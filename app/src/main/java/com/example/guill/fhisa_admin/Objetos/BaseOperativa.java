@@ -6,7 +6,7 @@ import com.google.android.gms.maps.model.CircleOptions;
  * Created by guill on 01/11/2017.
  */
 
-public class Area {
+public class BaseOperativa {
     String identificador;
     double latitud;
     double longitud;
@@ -14,10 +14,10 @@ public class Area {
     CircleOptions circle;
 
 
-    public Area() {
+    public BaseOperativa() {
     }
 
-    public Area(String identificador, double latitud, double longitud, int distancia, CircleOptions circle) {
+    public BaseOperativa(String identificador, double latitud, double longitud, int distancia, CircleOptions circle) {
         this.identificador = identificador;
         this.latitud = latitud;
         this.longitud = longitud;
@@ -25,14 +25,14 @@ public class Area {
         this.circle = circle;
     }
 
-    public Area(String identificador, double latitud, double longitud, int distancia) {
+    public BaseOperativa(String identificador, double latitud, double longitud, int distancia) {
         this.identificador = identificador;
         this.latitud = latitud;
         this.longitud = longitud;
         this.distancia = distancia;
     }
 
-    public Area(double latitud, double longitud, int distancia) {
+    public BaseOperativa(double latitud, double longitud, int distancia) {
         this.latitud = latitud;
         this.longitud = longitud;
         this.distancia = distancia;

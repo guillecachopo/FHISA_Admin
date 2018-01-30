@@ -5,7 +5,7 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.guill.fhisa_admin.Mapa.MapsActivity" >
+    tools:context="com.example.guill.fhisa_admin.Mapa.MapsFragment" >
 
 
     <com.google.android.gms.maps.MapView
@@ -77,14 +77,14 @@
                 android:layout_height="37dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:text="Marcar area" />
+                android:text="Marcar base" />
 
             <Button
                 android:id="@+id/btnBorrarArea"
                 android:layout_width="wrap_content"
                 android:layout_height="37dp"
 
-                android:text="Borrar area" />
+                android:text="Borrar base" />
 
         </LinearLayout>
     </FrameLayout>

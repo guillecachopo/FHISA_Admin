@@ -88,14 +88,18 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
             e.printStackTrace();
         }
 
-        return json;
+        String resultado = imei[0]+"---"+json;
+        return resultado;
     }
 
     /**
      *After completing background task
      * **/
     @Override
-    protected void onPostExecute(String json) {
+    protected void onPostExecute(String resultado) {
+        String[] parts = resultado.split("---");
+        String imeiDisp = parts[0];
+        String json = parts[1];
         if (json.startsWith("error 401")) {
             TextView tvIdVehiculo = (TextView) activity.findViewById(R.id.tvIdVehiculo);
             TextView tvImeiVehiculo = (TextView) activity.findViewById(R.id.tvImeiVehiculo);
@@ -103,11 +107,14 @@ public class PeticionVehiculo extends AsyncTask<String, String, String> {
             TextView tvTlfVehiculo = (TextView) activity.findViewById(R.id.tvTlfVehiculo);
 
             tvIdVehiculo.setText("No disponible");
-            tvImeiVehiculo.setText("No disponible");
+            tvImeiVehiculo.setText(imeiDisp);
             tvMatriculaVehiculo.setText("No disponible");
             tvTlfVehiculo.setText("No disponible");
 
         } else {
+            if (json.startsWith("{    \"id\" : ,") ) {
+                json = json.replace("{    \"id\" : ,", "{    \"id\" : \"\",");
+            }
             Gson gson = new GsonBuilder().serializeNulls().create();
             Vehiculo vehiculo = gson.fromJson(json, Vehiculo.class);
             String idFhisa = vehiculo.getId();

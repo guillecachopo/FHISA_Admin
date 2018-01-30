@@ -39,13 +39,20 @@ public class RutaOptimaManager {
      * Obtiene el destino del ultimo albaran y pinta la ruta
      * @param camion
      */
-    public void obtenerRutaOptimaDestino(MapsActivity mapsActivity, Camion camion) {
+    public void obtenerRutaOptimaDestino(MapsFragment mapsFragment, Camion camion) {
 
-        new PeticionUltimoAlbaran(mapsActivity, this, camion).execute(camion.getId());
+        new PeticionUltimoAlbaran(mapsFragment, this, camion).execute(camion.getId());
         //latitudLongitudDestino = "43.463632, -5.053424";
     }
 
-    public void dibujarDestino(String latitudLongitudDestino, MapsActivity mapsActivity, Camion camion) {
+    /**
+     * Gestiona la ruta óptima obtenida con anterioridad y la dibuja en el mapa junto con un marcador, en caso de eistir.
+     * @param latitudLongitudDestino
+     * @param mapsFragment
+     * @param camion
+     */
+
+    public void dibujarDestino(String latitudLongitudDestino, MapsFragment mapsFragment, Camion camion) {
         final LatLng latlng = new LatLng(camion.getUltimaPosicion().getLatitude(), camion.getUltimaPosicion().getLongitude());
         final String latitudOrigen = String.valueOf(latlng.latitude);
         final String longitudOrigen = String.valueOf(latlng.longitude);
@@ -56,7 +63,7 @@ public class RutaOptimaManager {
         if (latitudLongitudDestino.compareTo("0.000000,0.000000") == 0 || latitudLongitudDestino.compareTo(",") == 0 ||
                 latitudLongitudDestino.startsWith("error 401")) {
 
-            Snackbar.make(mapsActivity.getActivity().findViewById(R.id.map),
+            Snackbar.make(mapsFragment.getActivity().findViewById(R.id.map),
                     "No hay coordenadas de destino en el albarán", Snackbar.LENGTH_INDEFINITE)
                     .setDuration(5000)
                     .show();
@@ -64,16 +71,16 @@ public class RutaOptimaManager {
         } else {
             DateTime now = new DateTime();
             try {
-                DirectionsResult results = DirectionsApi.newRequest(getGeoContext(mapsActivity.getActivity()))
+                DirectionsResult results = DirectionsApi.newRequest(getGeoContext(mapsFragment.getActivity()))
                         .mode(TravelMode.DRIVING)
                         .origin(latitudlongitudOrigen)
                         .destination(latitudLongitudDestino)
                         .departureTime(now)
                         .await();
 
-                final Marker marcadorDestino = addMarkersToMap(results, mapsActivity.mMap, camion);
-                final Polyline rutaOptima = addPolyline(results, mapsActivity.mMap, camion);
-                mapsActivity.mPolylineMap.put(marcadorDestino.getTag().toString(), rutaOptima);
+                final Marker marcadorDestino = addMarkersToMap(results, mapsFragment.mMap, camion);
+                final Polyline rutaOptima = addPolyline(results, mapsFragment.mMap, camion);
+                mapsFragment.mPolylineMap.put(marcadorDestino.getTag().toString(), rutaOptima);
 
 
             } catch (ApiException e) {

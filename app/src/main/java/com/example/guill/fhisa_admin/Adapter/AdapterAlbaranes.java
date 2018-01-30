@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.guill.fhisa_admin.Objetos.AlbaranReducido;
-import com.example.guill.fhisa_admin.OpcionesCamion.AlbaranActivity;
+import com.example.guill.fhisa_admin.Objetos.Albaran;
+import com.example.guill.fhisa_admin.OpcionesCamion.DetallesAlbaranActivity;
 import com.example.guill.fhisa_admin.R;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 
 public class AdapterAlbaranes extends RecyclerView.Adapter<AdapterAlbaranes.AlbaranesViewHolder> {
-    List<AlbaranReducido> albaranes;
+    List<Albaran> albaranes;
     String imei;
     Activity activity;
 
@@ -37,7 +37,7 @@ public class AdapterAlbaranes extends RecyclerView.Adapter<AdapterAlbaranes.Alba
         }
     }
 
-    public AdapterAlbaranes(Activity activity, List<AlbaranReducido> albaranes, String imei) {
+    public AdapterAlbaranes(Activity activity, List<Albaran> albaranes, String imei) {
         this.activity = activity;
         this.albaranes = albaranes;
         this.imei = imei;
@@ -57,7 +57,7 @@ public class AdapterAlbaranes extends RecyclerView.Adapter<AdapterAlbaranes.Alba
 
     @Override
     public void onBindViewHolder(AdapterAlbaranes.AlbaranesViewHolder holder, int position) {
-        AlbaranReducido albaran = albaranes.get(position);
+        Albaran albaran = albaranes.get(position);
 
         final String idAlbaran = albaran.getId_albaran();
         String destinoObra = albaran.getDestino_obra();
@@ -68,7 +68,7 @@ public class AdapterAlbaranes extends RecyclerView.Adapter<AdapterAlbaranes.Alba
         holder.cvAlbaran.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(activity, AlbaranActivity.class);
+                Intent intent = new Intent(activity, DetallesAlbaranActivity.class);
                 intent.putExtra("idAlbaran", idAlbaran);
                 intent.putExtra("imei", imei);
                 activity.startActivity(intent);

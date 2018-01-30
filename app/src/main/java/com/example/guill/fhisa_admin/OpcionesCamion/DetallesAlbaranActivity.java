@@ -16,7 +16,7 @@ import com.example.guill.fhisa_admin.Socket.PeticionAlbaran;
 
 import java.util.ArrayList;
 
-public class AlbaranActivity extends AppCompatActivity {
+public class DetallesAlbaranActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -52,11 +52,11 @@ public class AlbaranActivity extends AppCompatActivity {
     private ArrayList<Fragment> agregarFragment(){
         ArrayList<Fragment> fragments = new ArrayList<>();
 
-        AlbaranFragmentInfo albaranFragmentInfo = new AlbaranFragmentInfo();
-        AlbaranFragmentCarga albaranFragmentCarga = new AlbaranFragmentCarga();
+        AlbaranInfoFragment albaranInfoFragment = new AlbaranInfoFragment();
+        AlbaranCargaFragment albaranCargaFragment = new AlbaranCargaFragment();
 
-        fragments.add(albaranFragmentInfo);
-        fragments.add(albaranFragmentCarga);
+        fragments.add(albaranInfoFragment);
+        fragments.add(albaranCargaFragment);
 
         return fragments; //Ya tenemos los fragments en un arraylist
     }

@@ -1,6 +1,5 @@
 package com.example.guill.fhisa_admin;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -36,7 +35,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class CopiaSeguridadFirebase extends AsyncTask <String, String, String> {
 
-    private ProgressDialog pDialog;
     public Context context;
     public SharedPreferences preferences;
     String rutaFichero;

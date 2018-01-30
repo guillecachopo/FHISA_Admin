@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.guill.fhisa_admin.Mapa.MapsActivity;
+import com.example.guill.fhisa_admin.Mapa.MapsFragment;
 import com.example.guill.fhisa_admin.Objetos.Albaran;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Mapa.RutaOptimaManager;
@@ -31,12 +31,12 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
 
     public class PeticionUltimoAlbaran extends AsyncTask<String, String, String> {
 
-        public MapsActivity mapsActivity;
+        public MapsFragment mapsFragment;
         public RutaOptimaManager rutaOptimaManager;
         public Camion camion;
 
-        public PeticionUltimoAlbaran(MapsActivity mapsActivity, RutaOptimaManager rutaOptimaManager, Camion camion) {
-            this.mapsActivity = mapsActivity;
+        public PeticionUltimoAlbaran(MapsFragment mapsFragment, RutaOptimaManager rutaOptimaManager, Camion camion) {
+            this.mapsFragment = mapsFragment;
             this.rutaOptimaManager = rutaOptimaManager;
             this.camion = camion;
         }
@@ -46,14 +46,14 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
          */
         @Override
         protected void onPreExecute() {
-            mapsActivity.progressBar.setVisibility(View.VISIBLE);
-            Toast.makeText(mapsActivity.getContext(), "Obteniendo ruta óptima al destino...",
+            mapsFragment.progressBar.setVisibility(View.VISIBLE);
+            Toast.makeText(mapsFragment.getContext(), "Obteniendo ruta óptima al destino...",
                     Toast.LENGTH_SHORT).show();
         }
 
         @Override
         protected String doInBackground(String... imei) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mapsActivity.getContext());
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mapsFragment.getContext());
             String ip = preferences.getString("etIP", "89.17.197.73");
             String puertoString = preferences.getString("etPuerto","6905");
             int puerto = Integer.parseInt(puertoString);
@@ -107,7 +107,7 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
          **/
         @Override
         protected void onPostExecute(String json) {
-            mapsActivity.progressBar.setVisibility(View.GONE);
+            mapsFragment.progressBar.setVisibility(View.GONE);
 
             String destino;
             if (json.startsWith("error 401")) {
@@ -119,7 +119,7 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
                 destino = albaran.getDestino();
             }
 
-            rutaOptimaManager.dibujarDestino(destino, mapsActivity, camion);
+            rutaOptimaManager.dibujarDestino(destino, mapsFragment, camion);
 
 
         }

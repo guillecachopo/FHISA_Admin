@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.guill.fhisa_admin.Adapter.Adapter;
+import com.example.guill.fhisa_admin.Adapter.AdapterCamiones;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
@@ -99,7 +99,7 @@ public class RecyclerViewFragment extends Fragment {
                         for (DataSnapshot snapshot2 : snapshot1.getChildren()) {
 
                             Posicion posicion = snapshot2.getValue(Posicion.class);
-                            camion.setPosiciones(posicion);
+                            camion.setPosicion(posicion);
 
                             altitude = camion.getUltimaPosicion().getAltitude();
                             latitude = camion.getUltimaPosicion().getLatitude();
@@ -124,10 +124,10 @@ public class RecyclerViewFragment extends Fragment {
 
     }
 
-    public Adapter adaptador;
+    public AdapterCamiones adaptador;
     public void inicializarAdaptador(){
         //Crea un objeto de contacto adaptador y le pasa la lista que tenemos para hacer internamente lo configurado en esa activity
-        adaptador = new Adapter(camiones, getActivity());
+        adaptador = new AdapterCamiones(camiones, getActivity());
         listaCamiones.setAdapter(adaptador);
     }
 

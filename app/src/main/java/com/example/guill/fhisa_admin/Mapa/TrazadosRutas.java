@@ -19,15 +19,14 @@ public class TrazadosRutas {
 
     /**
      * Método que traza la ruta actual de un camión.
-     * @param mapsActivity
+     * @param mapsFragment
      * @param camionPintar
      */
-    public void trazarRuta(MapsActivity mapsActivity, Camion camionPintar) {
-        boolean dibujar = mapsActivity.preferences.getBoolean("cbxAddPolylines", false);
-        int colorRuta = mapsActivity.preferences.getInt(camionPintar.getId()+"-color", Color.RED);
+    public void trazarRuta(MapsFragment mapsFragment, Camion camionPintar) {
+        boolean dibujar = mapsFragment.preferences.getBoolean("cbxAddPolylines", false);
+        int colorRuta = mapsFragment.preferences.getInt(camionPintar.getId()+"-color", Color.RED);
 
         if (dibujar) {
-
             List<LatLng> latlngs = new ArrayList<>();
             for (Posicion posicion :camionPintar.getPosicionesList()) {
                 LatLng latlng = new LatLng(posicion.getLatitude(), posicion.getLongitude());
@@ -36,25 +35,25 @@ public class TrazadosRutas {
             PolylineOptions polylineOptions = new PolylineOptions()
                     .color(colorRuta)
                     .width(10);
-            Polyline polyline = mapsActivity.mMap.addPolyline(polylineOptions);
+            Polyline polyline = mapsFragment.mMap.addPolyline(polylineOptions);
             polyline.setPoints(latlngs);
-            mapsActivity.mPolylineRutaMap.put(camionPintar.getId(), polyline);
+            mapsFragment.mPolylineRutaMap.put(camionPintar.getId(), polyline);
         }
     }
 
     /**
      * Método que actualiza el trazado de una ruta actual de un camión.
-     * @param mapsActivity
+     * @param mapsFragment
      * @param camionPintar
      */
-    public void actualizarTrazoRuta(MapsActivity mapsActivity, Camion camionPintar) {
+    public void actualizarTrazoRuta(MapsFragment mapsFragment, Camion camionPintar) {
         List<LatLng> latlngs = new ArrayList<>();
-        int colorRuta = mapsActivity.preferences.getInt(camionPintar.getId()+"-color", Color.RED);
+        int colorRuta = mapsFragment.preferences.getInt(camionPintar.getId()+"-color", Color.RED);
         for (Posicion posicion :camionPintar.getPosicionesList()) {
             LatLng latlng = new LatLng(posicion.getLatitude(), posicion.getLongitude());
             latlngs.add(latlng);
         }
-        Polyline previousPolyline = mapsActivity.mPolylineRutaMap.get(camionPintar.getId());
+        Polyline previousPolyline = mapsFragment.mPolylineRutaMap.get(camionPintar.getId());
         previousPolyline.setPoints(latlngs);
         previousPolyline.setColor(colorRuta);
     }
@@ -63,11 +62,11 @@ public class TrazadosRutas {
      * Método que borra el trazado de una ruta actual de un camión.
      * @param camionBorrar
      */
-    public void borrarTrazoRuta(MapsActivity mapsActivity, Camion camionBorrar) {
-        Polyline polylineBorrar = mapsActivity.mPolylineRutaMap.get(camionBorrar.getId());
+    public void borrarTrazoRuta(MapsFragment mapsFragment, Camion camionBorrar) {
+        Polyline polylineBorrar = mapsFragment.mPolylineRutaMap.get(camionBorrar.getId());
         if (polylineBorrar != null) {
             polylineBorrar.remove();
-            mapsActivity.mPolylineRutaMap.put(camionBorrar.getId(), null);
+            mapsFragment.mPolylineRutaMap.put(camionBorrar.getId(), null);
         }
     }
 

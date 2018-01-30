@@ -19,10 +19,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Globals;
-import com.example.guill.fhisa_admin.Objetos.Area;
+import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
-import com.example.guill.fhisa_admin.OpcionesCamion.VehiculoActivity;
+import com.example.guill.fhisa_admin.OpcionesCamion.DetallesVehiculoActivity;
 import com.example.guill.fhisa_admin.R;
 import com.example.guill.fhisa_admin.Socket.PeticionEstado;
 import com.google.android.gms.maps.CameraUpdate;
@@ -53,7 +53,7 @@ import java.util.Random;
  * Created by guill on 27/11/2017.
  */
 
-public class MapsActivity extends Fragment implements OnMapReadyCallback {
+public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * Vistas del fragment
@@ -110,7 +110,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     /**
      * Lista en la que se almacenan las areas
      */
-    ArrayList<Area> listaAreas;
+    ArrayList<BaseOperativa> listaBasesOperativas;
 
     /**
      * Lista en la que se almacenan los circulos
@@ -193,7 +193,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         editor = preferences.edit();
 
-        listaAreas = new ArrayList<>();
+        listaBasesOperativas = new ArrayList<>();
         listaCirculos = new ArrayList<>();
         listaIdsAreas = new ArrayList<String>();
 
@@ -242,14 +242,14 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         btnArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                basesOperativasManager.accionBaseOperativa(MapsActivity.this);
+                basesOperativasManager.accionBaseOperativa(MapsFragment.this);
             }
         });
 
         btnBorrarArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                basesOperativasManager.accionBorrarBaseOperativa(MapsActivity.this);
+                basesOperativasManager.accionBorrarBaseOperativa(MapsFragment.this);
             }
         });
 
@@ -311,7 +311,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     for (Camion camion : listaCamiones) {
                         String imei = camion.getId();
                         if (imei.compareTo(marker.getTag().toString()) == 0) {
-                            rutaOptimaManager.obtenerRutaOptimaDestino(MapsActivity.this, camion);
+                            rutaOptimaManager.obtenerRutaOptimaDestino(MapsFragment.this, camion);
                         }
                     }
                 }
@@ -338,8 +338,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     for (Camion camion : listaCamiones) {
                         String imei = camion.getId();
                         if (imei.compareTo(marker.getTag().toString()) == 0) {
-                            Intent intent = new Intent(getContext(), VehiculoActivity.class);
-                            intent.putExtra("id", imei);
+                            Intent intent = new Intent(getContext(), DetallesVehiculoActivity.class);
+                            intent.putExtra("imei", imei);
                             startActivity(intent);
                         }
                     }

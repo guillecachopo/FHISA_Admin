@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.guill.fhisa_admin.OpcionesCamion.VehiculoActivity">
+    tools:context="com.example.guill.fhisa_admin.OpcionesCamion.DetallesVehiculoActivity">
 
     <include
         android:id="@+id/actionBar"

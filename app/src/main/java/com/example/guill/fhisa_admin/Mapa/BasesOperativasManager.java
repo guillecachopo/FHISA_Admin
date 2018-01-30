@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.guill.fhisa_admin.Objetos.Area;
+import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,29 +30,29 @@ public class BasesOperativasManager {
 
 
     /**
-     * Método al que se entrará cuando se haga click en Marcar Area
+     * Método al que se entrará cuando se haga click en Marcar BaseOperativa
      */
-    public void accionBaseOperativa(final MapsActivity mapsActivity) {
-        infoDialogMarcarBaseOperativa(mapsActivity);
-        mapsActivity.mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+    public void accionBaseOperativa(final MapsFragment mapsFragment) {
+        infoDialogMarcarBaseOperativa(mapsFragment);
+        mapsFragment.mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latlng) {
-                crearBaseOperativa(latlng, mapsActivity);
-                mapsActivity.mMap.setOnMapClickListener(null); //Para que no salga continuamente el dialogo para definir una zona
+                crearBaseOperativa(latlng, mapsFragment);
+                mapsFragment.mMap.setOnMapClickListener(null); //Para que no salga continuamente el dialogo para definir una zona
             }
         });
     }
 
     /**
-     * Método al que se entrará cuando se haga click en Borrar Area
+     * Método al que se entrará cuando se haga click en Borrar BaseOperativa
      */
-    public void accionBorrarBaseOperativa(final MapsActivity mapsActivity) {
-        infoDialogBorrarBaseOperativa(mapsActivity);
-        mapsActivity.mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+    public void accionBorrarBaseOperativa(final MapsFragment mapsFragment) {
+        infoDialogBorrarBaseOperativa(mapsFragment);
+        mapsFragment.mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                borrarBaseOperativa(latLng, mapsActivity);
-                mapsActivity.mMap.setOnMapClickListener(null);
+                borrarBaseOperativa(latLng, mapsFragment);
+                mapsFragment.mMap.setOnMapClickListener(null);
             }
         });
     }
@@ -60,13 +60,13 @@ public class BasesOperativasManager {
     /**
      * Método que muestra que se entrará a configurar una Base Operativa
      */
-    public void infoDialogMarcarBaseOperativa(MapsActivity mapsActivity) {
+    public void infoDialogMarcarBaseOperativa(MapsFragment mapsFragment) {
 
-        new AlertDialog.Builder(mapsActivity.getContext())
-                .setTitle("Creación de zona libre de notificaciones (CANTERA)")
-                .setMessage("Está a punto de configurar un area segura libre de notificaciones. " +
-                        "Cuando un camión se encuentre dentro del area, no se recibirán alertas. " +
-                        "Marque el punto central del area.")
+        new AlertDialog.Builder(mapsFragment.getContext())
+                .setTitle("Creación de base operativa(CANTERA)")
+                .setMessage("Está a punto de configurar una base operativa. " +
+                        "Cuando un camión se encuentre dentro de la base operativa, no se recibirán alertas. " +
+                        "Marque el punto central de la base.")
                 .setPositiveButton("ENTENDIDO", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -78,10 +78,10 @@ public class BasesOperativasManager {
     /**
      * Método que muestra que se eliminará una Base Operativa
      */
-    public void infoDialogBorrarBaseOperativa(MapsActivity mapsActivity) {
-        new AlertDialog.Builder(mapsActivity.getContext())
-                .setTitle("Borrado de zona libre de notificaciones (CANTERA)")
-                .setMessage("Parar borrar una zona, haga click en ella.")
+    public void infoDialogBorrarBaseOperativa(MapsFragment mapsFragment) {
+        new AlertDialog.Builder(mapsFragment.getContext())
+                .setTitle("Borrado de una base operativa")
+                .setMessage("Parar borrar una base operativa, haga click en ella.")
                 .setPositiveButton("ENTENDIDO", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -95,38 +95,38 @@ public class BasesOperativasManager {
      * area operativa en Firebase y genera un círculo en el area elegida.
      * @param latlng
      */
-    public void crearBaseOperativa(final LatLng latlng, final MapsActivity mapsActivity) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mapsActivity.getContext());
-        LayoutInflater inflater = mapsActivity.getLayoutInflater(mapsActivity.getArguments());
+    public void crearBaseOperativa(final LatLng latlng, final MapsFragment mapsFragment) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mapsFragment.getContext());
+        LayoutInflater inflater = mapsFragment.getLayoutInflater(mapsFragment.getArguments());
         final View dialogView = inflater.inflate(R.layout.dialog_area, null);
         dialogBuilder.setView(dialogView);
 
         final EditText edt = (EditText) dialogView.findViewById(R.id.etArea);
         final EditText nombreArea = (EditText) dialogView.findViewById(R.id.etNombreArea);
 
-        dialogBuilder.setTitle("Selección de area");
+        dialogBuilder.setTitle("Selección del area de la base operativa");
         //dialogBuilder.setMessage("Elija en metros el radio del area.");
         dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String nombreIntroducido = nombreArea.getText().toString();
                 String radioIntroducido = edt.getText().toString();
                 if (radioIntroducido.equals("") || nombreIntroducido.equals("")) {
-                    Toast.makeText(mapsActivity.getContext(), "No se ha introducido un valor válido",
+                    Toast.makeText(mapsFragment.getContext(), "No se ha introducido un valor válido",
                             Toast.LENGTH_SHORT).show();
-                    crearBaseOperativa(latlng, mapsActivity);
+                    crearBaseOperativa(latlng, mapsFragment);
                 }
                 else {
                     long distancia = Long.parseLong(edt.getText().toString());
-                    Area area = new Area(String.valueOf(latlng.latitude), latlng.latitude,
+                    BaseOperativa baseOperativa = new BaseOperativa(String.valueOf(latlng.latitude), latlng.latitude,
                             latlng.longitude, (int) distancia);
 
-                    area.setIdentificador(nombreIntroducido);
+                    baseOperativa.setIdentificador(nombreIntroducido);
 
-                    mapsActivity.areasRef.child(area.getIdentificador()).setValue(area);
-                    mapsActivity.listaAreas.add(area);
+                    mapsFragment.areasRef.child(baseOperativa.getIdentificador()).setValue(baseOperativa);
+                    mapsFragment.listaBasesOperativas.add(baseOperativa);
 
-                    Circle circle = dibujarCirculo(area, mapsActivity.mMap);
-                    mapsActivity.listaCirculos.add(circle);
+                    Circle circle = dibujarCirculo(baseOperativa, mapsFragment.mMap);
+                    mapsFragment.listaCirculos.add(circle);
                 }
             }
         });
@@ -145,32 +145,32 @@ public class BasesOperativasManager {
      * su circunferencia asociada.
      * @param latitudlongitud
      */
-    public void borrarBaseOperativa(LatLng latitudlongitud, MapsActivity mapsActivity) {
-        for (int i = 0; i < mapsActivity.listaCirculos.size(); i++) {
+    public void borrarBaseOperativa(LatLng latitudlongitud, MapsFragment mapsFragment) {
+        for (int i = 0; i < mapsFragment.listaCirculos.size(); i++) {
 
-            LatLng center = mapsActivity.listaCirculos.get(i).getCenter();
-            double radius = mapsActivity.listaCirculos.get(i).getRadius();
-            final Area areaBorrar = new Area(center.latitude, center.longitude, (int) radius);
+            LatLng center = mapsFragment.listaCirculos.get(i).getCenter();
+            double radius = mapsFragment.listaCirculos.get(i).getRadius();
+            final BaseOperativa baseOperativaBorrar = new BaseOperativa(center.latitude, center.longitude, (int) radius);
             float[] distance = new float[1];
             Location.distanceBetween(latitudlongitud.latitude, latitudlongitud.longitude,
-                    areaBorrar.getLatitud(), areaBorrar.getLongitud(), distance);
+                    baseOperativaBorrar.getLatitud(), baseOperativaBorrar.getLongitud(), distance);
             boolean clicked = distance[0] < radius;
 
             if (clicked) {
-                mapsActivity.listaCirculos.get(i).remove();
-                mapsActivity.listaCirculos.remove(i);
-                mapsActivity.listaAreas.remove(i);
+                mapsFragment.listaCirculos.get(i).remove();
+                mapsFragment.listaCirculos.remove(i);
+                mapsFragment.listaBasesOperativas.remove(i);
 
-                mapsActivity.areasRef.addValueEventListener(new ValueEventListener() {
+                mapsFragment.areasRef.addValueEventListener(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             snapshot.getValue().getClass();
-                            Area areaFirebase = snapshot.getValue(Area.class);
-                            if (areaFirebase.getLatitud() == areaBorrar.getLatitud() &&
-                                    areaFirebase.getLongitud() == areaBorrar.getLongitud() &&
-                                    areaFirebase.getDistancia() == areaBorrar.getDistancia())
+                            BaseOperativa baseOperativaFirebase = snapshot.getValue(BaseOperativa.class);
+                            if (baseOperativaFirebase.getLatitud() == baseOperativaBorrar.getLatitud() &&
+                                    baseOperativaFirebase.getLongitud() == baseOperativaBorrar.getLongitud() &&
+                                    baseOperativaFirebase.getDistancia() == baseOperativaBorrar.getDistancia())
                                 snapshot.getRef().removeValue();
                         }
                     }
@@ -188,27 +188,27 @@ public class BasesOperativasManager {
     /**
      * Método encargado de mostrar en el mapa las areas existentes
      */
-    public void inicializarBasesOperativas(final MapsActivity mapsActivity) {
-        mapsActivity.areasRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    public void inicializarBasesOperativas(final MapsFragment mapsFragment) {
+        mapsFragment.areasRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    String idArea = snapshot.getValue(Area.class).getIdentificador();
-                    Area area = null;
-                    if(!mapsActivity.listaIdsAreas.contains(idArea)) {
-                        area = snapshot.getValue(Area.class);
-                        mapsActivity.listaIdsAreas.add(idArea);
-                        mapsActivity.listaAreas.add(area);
+                    String idArea = snapshot.getValue(BaseOperativa.class).getIdentificador();
+                    BaseOperativa baseOperativa = null;
+                    if(!mapsFragment.listaIdsAreas.contains(idArea)) {
+                        baseOperativa = snapshot.getValue(BaseOperativa.class);
+                        mapsFragment.listaIdsAreas.add(idArea);
+                        mapsFragment.listaBasesOperativas.add(baseOperativa);
                     }
-                    //LatLng latLng = new LatLng(area.getLatitud(), area.getLongitud());
+                    //LatLng latLng = new LatLng(baseOperativa.getLatitud(), baseOperativa.getLongitud());
                 }
 
                 //Dibujamos todos las areas que tenemos en firebase
-                for (int i=0; i<mapsActivity.listaAreas.size(); i++) {
-                    Circle circle = dibujarCirculo(mapsActivity.listaAreas.get(i), mapsActivity.mMap);
-                    mapsActivity.listaCirculos.add(circle);
+                for (int i = 0; i< mapsFragment.listaBasesOperativas.size(); i++) {
+                    Circle circle = dibujarCirculo(mapsFragment.listaBasesOperativas.get(i), mapsFragment.mMap);
+                    mapsFragment.listaCirculos.add(circle);
                 }
 
             }
@@ -224,7 +224,7 @@ public class BasesOperativasManager {
      * Método encargado de mostrar un AlertDialog para la modificación de la Base Operativa. Guarda la
      * base operativa en Firebase.
      */
-    public void modificarBaseOperativa(final Area area, final Activity activity) {
+    public void modificarBaseOperativa(final BaseOperativa baseOperativa, final Activity activity) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity.getApplicationContext());
         final View dialogView = activity.getLayoutInflater().inflate(R.layout.dialog_area, null);
         dialogBuilder.setView(dialogView);
@@ -233,7 +233,7 @@ public class BasesOperativasManager {
         final EditText nombreArea = (EditText) dialogView.findViewById(R.id.etNombreArea);
 
         dialogBuilder.setTitle("Modificación de base operativa");
-        //dialogBuilder.setMessage("Elija en metros el radio del area.");
+        //dialogBuilder.setMessage("Elija en metros el radio del baseOperativa.");
         dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String nombreIntroducido = nombreArea.getText().toString();
@@ -244,11 +244,11 @@ public class BasesOperativasManager {
                 }
                 else {
 
-                    area.setIdentificador(nombreIntroducido);
-                    area.setDistancia(Integer.parseInt(radioIntroducido));
+                    baseOperativa.setIdentificador(nombreIntroducido);
+                    baseOperativa.setDistancia(Integer.parseInt(radioIntroducido));
 
                     DatabaseReference areasRef = FirebaseDatabase.getInstance().getReference(FirebaseReferences.AREAS_REFERENCE);
-                    areasRef.child(area.getIdentificador()).setValue(area);
+                    areasRef.child(baseOperativa.getIdentificador()).setValue(baseOperativa);
 
                 }
             }
@@ -266,13 +266,13 @@ public class BasesOperativasManager {
 
     /**
      * Método encargado de dibujar un circulo
-     * @param area
+     * @param baseOperativa
      * @return
      */
-    private Circle dibujarCirculo(Area area, GoogleMap mMap) {
+    private Circle dibujarCirculo(BaseOperativa baseOperativa, GoogleMap mMap) {
         Circle circulo = mMap.addCircle(new CircleOptions()
-                .center(new LatLng(area.getLatitud(), area.getLongitud()))
-                .radius(area.getDistancia())
+                .center(new LatLng(baseOperativa.getLatitud(), baseOperativa.getLongitud()))
+                .radius(baseOperativa.getDistancia())
                 .strokeColor(0x70FE2E2E)
                 .fillColor(0x552E86C1));
         return circulo;

@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.example.guill.fhisa_admin.Objetos.Area;
+import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
 import com.example.guill.fhisa_admin.R;
@@ -130,22 +130,22 @@ public class MapaRutaElegidaActivity extends AppCompatActivity implements OnMapR
      */
     public void inicializarAreas(DatabaseReference areasRef) {
 
-        final ArrayList<Area> listaAreas = new ArrayList<>();
+        final ArrayList<BaseOperativa> listaBasesOperativas = new ArrayList<>();
         areasRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String idArea = snapshot.getValue(Area.class).getIdentificador();
-                    Area area = null;
-                    area = snapshot.getValue(Area.class);
-                    listaAreas.add(area);
+                    String idArea = snapshot.getValue(BaseOperativa.class).getIdentificador();
+                    BaseOperativa baseOperativa = null;
+                    baseOperativa = snapshot.getValue(BaseOperativa.class);
+                    listaBasesOperativas.add(baseOperativa);
 
                 }
 
                 //Dibujamos todos las areas que tenemos en firebase
-                for (int i=0; i<listaAreas.size(); i++) {
-                    Circle circle = dibujarCirculo(listaAreas.get(i));
+                for (int i = 0; i< listaBasesOperativas.size(); i++) {
+                    Circle circle = dibujarCirculo(listaBasesOperativas.get(i));
                 }
 
             }
@@ -158,14 +158,14 @@ public class MapaRutaElegidaActivity extends AppCompatActivity implements OnMapR
     }
 
     /**
-     * Dibuja un area
-     * @param area
+     * Dibuja un baseOperativa
+     * @param baseOperativa
      * @return
      */
-    private Circle dibujarCirculo(Area area) {
+    private Circle dibujarCirculo(BaseOperativa baseOperativa) {
         Circle circulo = mMap.addCircle(new CircleOptions()
-                .center(new LatLng(area.getLatitud(), area.getLongitud()))
-                .radius(area.getDistancia())
+                .center(new LatLng(baseOperativa.getLatitud(), baseOperativa.getLongitud()))
+                .radius(baseOperativa.getDistancia())
                 .strokeColor(0x70FE2E2E)
                 .fillColor(0x552E86C1));
         return circulo;

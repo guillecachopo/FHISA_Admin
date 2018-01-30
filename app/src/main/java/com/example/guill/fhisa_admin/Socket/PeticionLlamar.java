@@ -9,9 +9,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Objetos.Vehiculo;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -86,8 +88,19 @@ public class PeticionLlamar extends AsyncTask<String, String, String> {
             e.printStackTrace();
         }
 
-        Vehiculo vehiculo = new Gson().fromJson(json, Vehiculo.class);
-        String telefono = vehiculo.getTlf();
+        if (json.startsWith("{    \"id\" : ,") ) {
+            json = json.replace("{    \"id\" : ,", "{    \"id\" : \"\",");
+        }
+
+        String telefono;
+        if (json.startsWith("error 401")) {
+            telefono = "No registrado";
+        } else {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            Vehiculo vehiculo = gson.fromJson(json, Vehiculo.class);
+            telefono = vehiculo.getTlf();
+        }
+
         return telefono;
     }
 
@@ -101,7 +114,13 @@ public class PeticionLlamar extends AsyncTask<String, String, String> {
         if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CALL_PHONE},1);
         } else {
-            activity.getApplicationContext().startActivity(callIntent);
+            if(telefono.compareTo("No registrado") == 0 ) {
+                Toast.makeText(activity.getApplicationContext(), "El teléfono no está registrado en Velneo",
+                        Toast.LENGTH_SHORT).show();
+
+            } else {
+                activity.getApplicationContext().startActivity(callIntent);
+            }
         }
     }
 }

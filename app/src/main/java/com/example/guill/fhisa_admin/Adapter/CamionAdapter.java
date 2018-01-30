@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Created by guill on 16/10/2017.
  */
 
-//Tiene q heredar de RecyclerView.Adapter pq necesitamos adaptador q recibe una colecc de contactos ViewHolder
+//Tiene q heredar de RecyclerView.AdapterCamiones pq necesitamos adaptador q recibe una colecc de contactos ViewHolder
 public class CamionAdapter extends RecyclerView.Adapter<CamionAdapter.CamionViewHolder>{
 
     ArrayList<Camion> camiones;

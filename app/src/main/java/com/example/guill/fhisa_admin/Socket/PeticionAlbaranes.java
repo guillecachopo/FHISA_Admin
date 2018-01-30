@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guill.fhisa_admin.Adapter.AdapterAlbaranes;
-import com.example.guill.fhisa_admin.Objetos.AlbaranReducido;
+import com.example.guill.fhisa_admin.Objetos.Albaran;
 import com.example.guill.fhisa_admin.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -117,9 +117,9 @@ public class PeticionAlbaranes extends AsyncTask<String, String, String> {
                 tvNoVelneo.setText("El vehículo no está registrado en Velneo");
             } else {
 
-                final Type tipoAlbaranes = new TypeToken<List<AlbaranReducido>>() {
+                final Type tipoAlbaranes = new TypeToken<List<Albaran>>() {
                 }.getType();
-                final List<AlbaranReducido> albaranes = new Gson().fromJson(json, tipoAlbaranes);
+                final List<Albaran> albaranes = new Gson().fromJson(json, tipoAlbaranes);
 
                 Collections.reverse(albaranes);
 

@@ -64,8 +64,8 @@
         <activity
             android:name=".PreferencesCamion.CamionPreferencesActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".OpcionesCamion.AlbaranActivity" />
-        <activity android:name=".OpcionesCamion.VehiculoActivity" />
+        <activity android:name=".OpcionesCamion.DetallesAlbaranActivity" />
+        <activity android:name=".OpcionesCamion.DetallesVehiculoActivity" />
         <activity android:name=".OpcionesCamion.ListaConsumosActivity" />
         <activity android:name=".OpcionesCamion.ListaAlbaranesActivity" />
         <activity android:name=".OpcionesCamion.MantenimientoActivity" />

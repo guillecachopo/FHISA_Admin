@@ -17,7 +17,7 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
     ArrayList<String> h;
     ArrayList<String> p;
 
-    String id;
+    String imei;
     double altitude;
     double latitude;
     double longitude;
@@ -32,24 +32,24 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posiciones_camiones_recycler);
-        toolbar = (Toolbar) findViewById(R.id.actionBar);
+        toolbar = (Toolbar) findViewById(R.imei.actionBar);
         if (toolbar!=null) {
             setSupportActionBar(toolbar);
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        listaPosiciones = (RecyclerView) findViewById(R.id.rvCamionIndividual);
+        listaPosiciones = (RecyclerView) findViewById(R.imei.rvCamionIndividual);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         listaPosiciones.setLayoutManager(llm); //Para q el recycleview se comporte como un LinearLayout
 
-        this.spFechas = (Spinner) findViewById(R.id.spFechas);
+        this.spFechas = (Spinner) findViewById(R.imei.spFechas);
   //      loadSpinnerFechas();
 
 
         inicializarListaPosiciones(1);
-        this.spFechas = (Spinner) findViewById(R.id.spFechas);
+        this.spFechas = (Spinner) findViewById(R.imei.spFechas);
         loadSpinnerFechas();
         inicializarAdaptador();
 
@@ -64,7 +64,7 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
         camiones = new ArrayList<>();
         IDs = new ArrayList<>();
         Bundle extras = getIntent().getExtras();
-        id = extras.getString("id");
+        imei = extras.getString("imei");
         posicionesAux = (ArrayList<String>) getIntent().getSerializableExtra("posiciones");
 
         horasAux = (ArrayList<String>) getIntent().getSerializableExtra("horas");
@@ -92,14 +92,14 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
 
                     Camion camion=null;
 
-                    if (!IDs.contains(id)) {
-                        camion = new Camion(id);
-                        IDs.add(id);
+                    if (!IDs.contains(imei)) {
+                        camion = new Camion(imei);
+                        IDs.add(imei);
                         camiones.add(camion);
                     }
                     else {
                         for (int i=0; i<camiones.size(); i++)
-                            if (camiones.get(i).getId().compareTo(id)==0) {
+                            if (camiones.get(i).getId().compareTo(imei)==0) {
                                 camion = camiones.get(i);
                                 camion.clearPosiciones();
                                 posicionesAux.clear();
@@ -190,8 +190,8 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
     public void inicializarAdaptador(){
         //Crea un objeto de contacto adaptador y le pasa la lista que tenemos para hacer internamente lo configurado en esa activity
 
-        adaptador = new AdapterPosiciones(posicionesString, horasString, id, this);
-      //  adaptador = new AdapterPosiciones(p, h, id, this);
+        adaptador = new AdapterPosiciones(posicionesString, horasString, imei, this);
+      //  adaptador = new AdapterPosiciones(p, h, imei, this);
         listaPosiciones.setAdapter(adaptador);
     }
 
@@ -254,7 +254,7 @@ public class DetallePosicionesCamion extends AppCompatActivity implements Adapte
 
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
-            case android.R.id.home:
+            case android.R.imei.home:
                 finish();
                 break;
         }
