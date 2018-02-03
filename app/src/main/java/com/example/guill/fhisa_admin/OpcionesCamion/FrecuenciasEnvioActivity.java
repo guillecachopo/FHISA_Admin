@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -40,8 +41,8 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
     /**
      * Referencia de las frecuencias en Firebase
      */
-    final DatabaseReference frecuenciasRef = database.getReference("frecuencias");
-
+    //final DatabaseReference frecuenciasRef = database.getReference("frecuencias");
+    final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,9 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
                     //Cambiar frecuencia de envios
                     String frecuenciaEnvio = edt.getText().toString();
                     Toast.makeText(getApplicationContext(), "La frecuencia de envío actual será de " + frecuenciaEnvio + " minutos.", Toast.LENGTH_SHORT).show();
-                    frecuenciasRef.child(imei).child("posiciones").setValue(frecuenciaEnvio);
+                    //frecuenciasRef.child(imei).child("posiciones").setValue(frecuenciaEnvio);
+                    long frecuenciaPosiciones = Long.parseLong(frecuenciaEnvio);
+                    camionesRef.child(imei).child("frecuencia_posiciones").setValue(frecuenciaPosiciones);
 
                     preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     editor = preferences.edit();
@@ -133,7 +136,10 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
                     //Cambiar frecuencia de envios
                     String frecuenciaEnvio = edt.getText().toString();
                     Toast.makeText(getApplicationContext(), "La frecuencia de envío actual será de " + frecuenciaEnvio + " minutos.", Toast.LENGTH_SHORT).show();
-                    frecuenciasRef.child(imei).child("notificaciones").setValue(frecuenciaEnvio);
+
+                    //frecuenciasRef.child(imei).child("notificaciones").setValue(frecuenciaEnvio);
+                    long frecuenciaErrores = Long.parseLong(frecuenciaEnvio);
+                    camionesRef.child(imei).child("frecuencia_errores").setValue(frecuenciaErrores);
 
                     preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     editor = preferences.edit();

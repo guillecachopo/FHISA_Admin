@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.R;
 import com.example.guill.fhisa_admin.Socket.PeticionLlamar;
 import com.example.guill.fhisa_admin.Socket.PeticionVehiculo;
@@ -79,8 +80,8 @@ public class DetallesVehiculoActivity extends AppCompatActivity {
      */
     private void getBateria(String imei) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference bateriaRef = database.getReference("bateria");
-        bateriaRef.child(imei).addValueEventListener(new ValueEventListener() {
+        DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
+        camionesRef.child(imei).child("bateria").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {

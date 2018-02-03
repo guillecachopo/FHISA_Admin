@@ -196,7 +196,14 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
     private void inicializarRutasHoy(RecyclerView rvRutasCamion) {
         final String imei = getImei();
         Calendar calendar = Calendar.getInstance();
-        final String hoyDia = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+
+        final String hoyDia;
+        if (String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)).length() == 1) {
+            hoyDia = "0"+String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+        } else {
+            hoyDia = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+        }
+
         final String hoyMes;
         if (String.valueOf((calendar.get(Calendar.MONTH)+1)).length() == 1) {
             hoyMes = "0"+String.valueOf((calendar.get(Calendar.MONTH)+1));
@@ -343,7 +350,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
         dia = calendarFechaElegida.get(Calendar.DAY_OF_MONTH);
         mes = calendarFechaElegida.get(Calendar.MONTH);
         anio = calendarFechaElegida.get(Calendar.YEAR);
-        Log.i("Fechas", "Dia: " + dia + " , mes: " + mes + ", año: " + anio);
+        Log.i("Fechas", "Introducida: " + "Dia: " + dia + " , mes: " + mes + ", año: " + anio);
 
 
         DatabaseReference rutasRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE)
@@ -358,7 +365,7 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
                     String[] parts = ruta.split("_");
                     String fechaRuta = parts[1];
 
-                    SimpleDateFormat df = new SimpleDateFormat("ddMMyyyy");
+                    SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
                     Date dateRuta = new Date();
                     try {
                         dateRuta = df.parse(fechaRuta);
@@ -370,6 +377,8 @@ public class RutasActivity extends AppCompatActivity implements AdapterView.OnIt
                     int rutaDia = calendarRuta.get(Calendar.DAY_OF_MONTH);
                     int rutaMes = calendarRuta.get(Calendar.MONTH);
                     int rutaYear = calendarRuta.get(Calendar.YEAR);
+
+                    Log.i("Fechas", "Firebase: " + "Dia: " + rutaDia + " , mes: " + rutaMes + ", año: " + rutaYear);
 
                     if (rutaYear == anio && rutaMes == mes && rutaDia == dia)
                         listaRutas.add(rutaNombre.getKey());

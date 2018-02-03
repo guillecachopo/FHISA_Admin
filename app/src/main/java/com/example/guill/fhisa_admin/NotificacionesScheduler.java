@@ -21,7 +21,6 @@ import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.Objetos.Camion;
 import com.example.guill.fhisa_admin.Objetos.ErrorNotificacion;
 import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
-import com.example.guill.fhisa_admin.Objetos.Frecuencias;
 import com.example.guill.fhisa_admin.Objetos.Posicion;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -315,10 +314,53 @@ public class NotificacionesScheduler extends JobService {
         Log.i("JobScheduler", "ListaCamiones comprobarHoras: " + listaCamiones.size());
 
             Log.i("JobScheduler", "camionNotif : listaCamiones");
-
             Log.i("JobScheduler", camionNotif.getId() + " posiciones: " + camionNotif.getPosicionesList().size());
             if (camionNotif.getPosicionesList().size() > 0) {
 
+                camionesRef.child(camionNotif.getId()).child("frecuencia_errores").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.i("JobScheduler", "FrecuenciasRef");
+                        long frecuencia;
+                        if (dataSnapshot.exists()) {
+                            frecuencia = (long) dataSnapshot.getValue() * 60 * 1000;
+                            Log.i("FRECUENCIA", String.valueOf(frecuencia));
+                        } else {
+                            frecuencia = 10 * 60 * 1000; //Frecuencia por defecto
+                        }
+
+                        Log.i("FRECUENCIA_DESPUES", String.valueOf(frecuencia));
+
+                        long ultimaHora = camionNotif.getUltimaPosicion().getTime();
+                        Date horaActualDate = Calendar.getInstance().getTime();
+                        long horaActual = horaActualDate.getTime();
+                        long diferencia = horaActual - ultimaHora;
+
+                        boolean dentro = camionEnArea(camionNotif, listaBasesOperativas);
+                        Log.i("JobScheduler BaseOperativa", "Camion " + camionNotif.getId() + " en area: " + dentro);
+
+                        if (diferencia >= frecuencia && !dentro) {
+                            enviarNotificacion(camionNotif, notifId);
+                            ErrorNotificacion errorNotificacion = new ErrorNotificacion(camionNotif.getId(), diferencia, horaActual);
+                            erroresRef.push().setValue(errorNotificacion);
+                            notifId++;
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
+            }
+
+
+                /**
                 frecuenciasRef.child(camionNotif.getId()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -353,7 +395,8 @@ public class NotificacionesScheduler extends JobService {
 
                     }
                 });
-            }
+
+            } **/
 
     }
 

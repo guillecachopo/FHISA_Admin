@@ -12,6 +12,8 @@ public class Camion {
     Posicion posicion;
     ArrayList<Posicion> posiciones;
     ArrayList<Long> horas;
+    long frecuencia_posiciones;
+    long frecuencia_errores;
 
     public Camion() {
     }
@@ -25,6 +27,11 @@ public class Camion {
     public Camion(String id, ArrayList<Posicion> posicionesList) {
         this.id = id;
         this.posiciones = posicionesList;
+    }
+
+    public Camion(String id, long frecuencia_errores) {
+        this.id = id;
+        this.frecuencia_errores = frecuencia_errores;
     }
 
     public Camion(Posicion posicion){
@@ -71,6 +78,22 @@ public class Camion {
         this.posiciones = posicionesList;
     }
 
+
+    public long getFrecuenciaPosiciones() {
+        return frecuencia_posiciones;
+    }
+
+    public void setFrecuenciaPosiciones(long frecuenciaPosiciones) {
+        this.frecuencia_posiciones = frecuencia_posiciones;
+    }
+
+    public long getFrecuenciaErrores() {
+        return frecuencia_errores;
+    }
+
+    public void setFrecuenciaErrores(long frecuencia_errores) {
+        this.frecuencia_errores = frecuencia_errores;
+    }
 
     //Lo usaremos más que nada en DetallePosicionesCamion para ver las horas de cada posicion
 
