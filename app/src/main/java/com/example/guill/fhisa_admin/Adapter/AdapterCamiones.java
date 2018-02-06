@@ -64,8 +64,6 @@ public class AdapterCamiones extends RecyclerView.Adapter<AdapterCamiones.Camion
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
 
         final String id = camion.getId();
-//        String latitud = Double.toString(camion.getUltimaPosicion().getLatitude());
- //       String longitud = Double.toString(camion.getUltimaPosicion().getLongitude());
         String nombre = preferences.getString(id+"-nombreCamion", "");
 
         if (camion.getPosicionesList().size() > 0) { //Damos tiempo a los datos para que carguen
@@ -112,7 +110,6 @@ public class AdapterCamiones extends RecyclerView.Adapter<AdapterCamiones.Camion
             holder.cvCamion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Intent intent = new Intent(activity, DetallePosicionesCamion.class);
                     Intent intent = new Intent(activity, OpcionesCamionActivity.class);
                     intent.putExtra("imei", id);
                     intent.putStringArrayListExtra("posiciones", posicionesString);

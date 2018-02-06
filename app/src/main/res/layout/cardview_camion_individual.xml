@@ -24,9 +24,9 @@
 
                 <TextView
                     android:id="@+id/tvHorasIndividual"
-                    android:layout_below="@id/tvPosicionesIndividual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/tvPosicionesIndividual"
                     android:text="Hora"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/nombre_cardview" />

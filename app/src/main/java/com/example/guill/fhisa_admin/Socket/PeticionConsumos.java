@@ -51,13 +51,6 @@ public class PeticionConsumos extends AsyncTask<String, String, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        /*
-        pDialog = new ProgressDialog(activity);
-        pDialog.setMessage("Descargando... Espere, por favor...");
-        pDialog.setIndeterminate(false);
-        pDialog.setCancelable(false);
-        pDialog.show(); */
-
     }
 
     @Override
@@ -113,8 +106,6 @@ public class PeticionConsumos extends AsyncTask<String, String, String> {
      * **/
     @Override
     protected void onPostExecute(String json) {
-        //pDialog.dismiss();
-
         if (json.compareTo("error 401") == 0) {
             TextView tvNoVelneo = (TextView) activity.findViewById(R.id.tvConsumosNoVelneo);
             tvNoVelneo.setText("El vehículo no está registrado en Velneo");

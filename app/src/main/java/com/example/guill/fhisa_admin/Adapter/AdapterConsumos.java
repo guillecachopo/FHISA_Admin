@@ -62,7 +62,6 @@ public class AdapterConsumos extends RecyclerView.Adapter<AdapterConsumos.Consum
         String litros = String.format("%.2f", Float.parseFloat(consumo.getUnidades()));
         float consumoVehiculoFloat = Float.parseFloat(consumo.getConsumo())*100;
         String consumoVehiculo = String.format("%.2f", consumoVehiculoFloat);
-       // String consumoVehiculo = String.format("%.2f", Float.toString(Float.parseFloat(consumo.getConsumo())));
 
         holder.tvFechaConsumo.setText(fechaRepostaje);
         holder.tvLitrosRepostadosConsumo.setText(litros);

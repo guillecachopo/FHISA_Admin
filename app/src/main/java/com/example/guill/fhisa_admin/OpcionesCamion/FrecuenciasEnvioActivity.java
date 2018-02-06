@@ -41,7 +41,6 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
     /**
      * Referencia de las frecuencias en Firebase
      */
-    //final DatabaseReference frecuenciasRef = database.getReference("frecuencias");
     final DatabaseReference camionesRef = database.getReference(FirebaseReferences.CAMIONES_REFERENCE);
 
     @Override
@@ -92,7 +91,6 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
                     //Cambiar frecuencia de envios
                     String frecuenciaEnvio = edt.getText().toString();
                     Toast.makeText(getApplicationContext(), "La frecuencia de envío actual será de " + frecuenciaEnvio + " minutos.", Toast.LENGTH_SHORT).show();
-                    //frecuenciasRef.child(imei).child("posiciones").setValue(frecuenciaEnvio);
                     long frecuenciaPosiciones = Long.parseLong(frecuenciaEnvio);
                     camionesRef.child(imei).child("frecuencia_posiciones").setValue(frecuenciaPosiciones);
 
@@ -127,7 +125,6 @@ public class FrecuenciasEnvioActivity extends AppCompatActivity {
         dialogBuilder.setMessage("Nueva frecuencia de envío (en minutos)");
         dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
                 String introducido = edt.getText().toString();
                 if (introducido.equals("")) {
                     Toast.makeText(getApplicationContext(), "No se ha introducido un valor válido", Toast.LENGTH_SHORT).show();

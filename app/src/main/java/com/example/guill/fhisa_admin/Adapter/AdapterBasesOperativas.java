@@ -9,9 +9,7 @@ import android.widget.TextView;
 
 import com.example.guill.fhisa_admin.Objetos.BaseOperativa;
 import com.example.guill.fhisa_admin.OpcionesMenu.ModificarBasesOperativasActivity;
-import com.example.guill.fhisa_admin.Objetos.FirebaseReferences;
 import com.example.guill.fhisa_admin.R;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
@@ -26,7 +24,6 @@ public class AdapterBasesOperativas extends RecyclerView.Adapter<AdapterBasesOpe
     ModificarBasesOperativasActivity modificarBasesOperativasActivity;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference areasRef = database.getReference(FirebaseReferences.AREAS_REFERENCE);
 
     public static class BasesOperativasViewHolder extends RecyclerView.ViewHolder {
 
@@ -68,8 +65,6 @@ public class AdapterBasesOperativas extends RecyclerView.Adapter<AdapterBasesOpe
         holder.cvBaseOperativa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //BasesOperativasManager basesOperativasManager = new BasesOperativasManager();
-                //basesOperativasManager.modificarBaseOperativa(baseOperativa, activity);
                 modificarBasesOperativasActivity.modificarBaseOperativa(baseOperativa, holder.tvRadioBaseOperativa);
 
             }

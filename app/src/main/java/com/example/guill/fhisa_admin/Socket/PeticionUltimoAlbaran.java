@@ -98,7 +98,6 @@ import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
                 e.printStackTrace();
             }
 
-
             return json;
         }
 

@@ -54,9 +54,7 @@ public class ErroresFragment extends Fragment {
 
     public void obtenerErrores(){
 
-       // camiones = new ArrayList<Camion>();
         errorNotificacions = new ArrayList<ErrorNotificacion>();
-        //IDs = new ArrayList<>();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance(); //Cualquier referencia tiene que ser igual al mismo tipo pero cogiendo la instancia
         final DatabaseReference erroresRef = database.getReference(FirebaseReferences.ERRORES_REFERENCE);
@@ -91,48 +89,6 @@ public class ErroresFragment extends Fragment {
                 adaptador.notifyDataSetChanged();
             }
         });
-
-        /*
-        erroresRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot snapshot :
-                        dataSnapshot.getChildren()) {
-
-                    imei = snapshot.getKey();
-                    //Camion camion=null;
-
-                    if (!IDs.contains(imei)) {
-                      //  camion = new Camion(imei);
-                        IDs.add(imei);
-                      //  camiones.add(camion);
-                    }
-                    else {
-                        for (int i=0; i<camiones.size(); i++)
-                            if (camiones.get(i).getId().compareTo(imei)==0) {
-                        //        camion = camiones.get(i);
-                            }
-                    }
-
-                    for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
-                        for (DataSnapshot snapshot2 : snapshot1.getChildren()) {
-
-                            ErrorNotificacion error = snapshot2.getValue(ErrorNotificacion.class);
-                            errorNotificacions.add(error);
-
-                        } //for snapshot2 (Iterador donde estan los errores)
-                    }
-
-                } //for snapshot (Iterador donde estan las IDs)
-                adaptador.notifyDataSetChanged();
-            } //onDataChange
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); //ValueEventListener
-        */
 
     }
 

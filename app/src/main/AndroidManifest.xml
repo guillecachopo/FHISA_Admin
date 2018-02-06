@@ -44,9 +44,6 @@
             android:value="AIzaSyAam3CoohPwYSWGAJpfYDUC3KoGil5Sszg" />
 
         <activity
-            android:name=".Antiguo.MapsActivity"
-            android:label="@string/title_activity_maps" />
-        <activity
             android:name=".OpcionesCamion.DetallePosicionesCamion"
             android:parentActivityName=".MainActivity" />
 
@@ -56,13 +53,7 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
-            android:name=".PreferencesCamion.CamionPreferences"
-            android:parentActivityName=".MainActivity" />
-        <activity
             android:name=".OpcionesCamion.OpcionesCamionActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".PreferencesCamion.CamionPreferencesActivity"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".OpcionesCamion.DetallesAlbaranActivity" />
         <activity android:name=".OpcionesCamion.DetallesVehiculoActivity" />

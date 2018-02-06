@@ -147,7 +147,6 @@ public class DetallesVehiculoActivity extends AppCompatActivity {
         dialogBuilder.setMessage("Nuevo alias personalizado del camión: ");
         dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
                 String introducido = edt.getText().toString();
                 if (introducido.equals("")) {
                     Toast.makeText(getApplicationContext(), "No se ha introducido un valor válido", Toast.LENGTH_SHORT).show();

@@ -97,44 +97,17 @@ public class OpcionesCamionActivity extends AppCompatActivity {
     }
 
     public void irRutas(View view) {
-
-        /*
-        posicionesString = new ArrayList<>();
-        horasString = new ArrayList<>();
-
-        Bundle extras = getIntent().getExtras();
-        imei = extras.getString("imei");
-        posicionesString = (ArrayList<String>) getIntent().getSerializableExtra("posiciones");
-        horasString = (ArrayList<String>) getIntent().getSerializableExtra("horas");
-
-        Intent intent = new Intent(view.getContext(), DetallePosicionesCamion.class);
-        intent.putExtra("imei", imei);
-        intent.putStringArrayListExtra("posiciones", posicionesString);
-        intent.putStringArrayListExtra("horas", horasString);
-        startActivity(intent); */
-
         Bundle extras = getIntent().getExtras();
         imei = extras.getString("imei");
 
         Intent intent = new Intent(view.getContext(), RutasActivity.class);
         intent.putExtra("imei", imei);
         startActivity(intent);
-
-
     }
 
     public void setColorRuta(View view) {
-
-
         Bundle extras = getIntent().getExtras();
         imei = extras.getString("imei");
-
-/*
-        //Intent intent = new Intent(view.getContext(), CamionPreferences.class);
-        Intent intent = new Intent(view.getContext(), CamionPreferences.class);
-        intent.putExtra("imei", imei);
-        startActivity(intent); */
-
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         final SharedPreferences.Editor editor = pref.edit();
@@ -276,7 +249,6 @@ public class OpcionesCamionActivity extends AppCompatActivity {
         dialogBuilder.setMessage("Nuevo alias personalizado del camión: ");
         dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
                 String introducido = edt.getText().toString();
                 if (introducido.equals("")) {
                     Toast.makeText(getApplicationContext(), "No se ha introducido un valor válido", Toast.LENGTH_SHORT).show();

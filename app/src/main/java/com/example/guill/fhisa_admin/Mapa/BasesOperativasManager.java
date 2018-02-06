@@ -105,7 +105,6 @@ public class BasesOperativasManager {
         final EditText nombreArea = (EditText) dialogView.findViewById(R.id.etNombreArea);
 
         dialogBuilder.setTitle("Selección del area de la base operativa");
-        //dialogBuilder.setMessage("Elija en metros el radio del area.");
         dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String nombreIntroducido = nombreArea.getText().toString();
@@ -202,7 +201,6 @@ public class BasesOperativasManager {
                         mapsFragment.listaIdsAreas.add(idArea);
                         mapsFragment.listaBasesOperativas.add(baseOperativa);
                     }
-                    //LatLng latLng = new LatLng(baseOperativa.getLatitud(), baseOperativa.getLongitud());
                 }
 
                 //Dibujamos todos las areas que tenemos en firebase
@@ -233,7 +231,6 @@ public class BasesOperativasManager {
         final EditText nombreArea = (EditText) dialogView.findViewById(R.id.etNombreArea);
 
         dialogBuilder.setTitle("Modificación de base operativa");
-        //dialogBuilder.setMessage("Elija en metros el radio del baseOperativa.");
         dialogBuilder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String nombreIntroducido = nombreArea.getText().toString();

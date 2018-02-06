@@ -12,10 +12,7 @@
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:id="@+id/appBarLayout"
-        android:animateLayoutChanges="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:animateLayoutChanges="true">
 
         <include
             android:id="@+id/actionBar"
@@ -51,9 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/appBarLayout">
+        >
 
     </android.support.v4.view.ViewPager>
 

@@ -61,7 +61,6 @@ public class OpcionesMenuFragment extends PreferenceFragment {
         final EditText etPasswordNew = (EditText) dialogView.findViewById(R.id.etPassword);
 
         dialogBuilder.setTitle("Contraseña para finalizar FHISA Servicio");
-        //dialogBuilder.setMessage("Introduce la nueva contraseña");
         dialogBuilder.setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
             public void onClick(final DialogInterface dialog, int whichButton) {
 
@@ -102,7 +101,6 @@ public class OpcionesMenuFragment extends PreferenceFragment {
 
         AlertDialog b = dialogBuilder.create();
         b.show();
-        //mService.removeLocationUpdates();
     }
 
 }

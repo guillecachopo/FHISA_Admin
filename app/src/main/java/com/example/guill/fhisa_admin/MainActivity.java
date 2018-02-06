@@ -174,12 +174,6 @@ public class MainActivity extends AppCompatActivity {
         ComponentName cp = new ComponentName(this, NotificacionesScheduler.class);
         JobInfo jb;
 
-        /*
-        Globals globals = (Globals) this.getApplicationContext();
-        int numeroCamiones = (int) globals.getNumCamiones();
-        Log.i("CamionesNotificaciones", String.valueOf(numeroCamiones));
-        */
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             jb = new JobInfo.Builder(1, cp)
                     .setBackoffCriteria(4000, JobInfo.BACKOFF_POLICY_LINEAR)
@@ -233,10 +227,6 @@ public class MainActivity extends AppCompatActivity {
 
                         new CopiaSeguridadFirebase(getApplicationContext(), preferences, progressBar)
                                 .execute("https://fhisaservicio.firebaseio.com/.json");
-                        //new EnviarEmailBackup(getApplicationContext(), preferences).execute();
-
-                        //new DownloadFileFromURL().execute("https://fhisaservicio.firebaseio.com/.json");
-                        //new EnviarEmailBackup(getApplicationContext(), preferences).execute();
                         dialog.cancel();
                     }
                 })

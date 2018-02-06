@@ -313,91 +313,46 @@ public class NotificacionesScheduler extends JobService {
     private void comprobarHoras(final Camion camionNotif) {
         Log.i("JobScheduler", "ListaCamiones comprobarHoras: " + listaCamiones.size());
 
-            Log.i("JobScheduler", "camionNotif : listaCamiones");
-            Log.i("JobScheduler", camionNotif.getId() + " posiciones: " + camionNotif.getPosicionesList().size());
-            if (camionNotif.getPosicionesList().size() > 0) {
+        Log.i("JobScheduler", "camionNotif : listaCamiones");
+        Log.i("JobScheduler", camionNotif.getId() + " posiciones: " + camionNotif.getPosicionesList().size());
+        if (camionNotif.getPosicionesList().size() > 0) {
 
-                camionesRef.child(camionNotif.getId()).child("frecuencia_errores").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.i("JobScheduler", "FrecuenciasRef");
-                        long frecuencia;
-                        if (dataSnapshot.exists()) {
-                            frecuencia = (long) dataSnapshot.getValue() * 60 * 1000;
-                            Log.i("FRECUENCIA", String.valueOf(frecuencia));
-                        } else {
-                            frecuencia = 10 * 60 * 1000; //Frecuencia por defecto
-                        }
-
-                        Log.i("FRECUENCIA_DESPUES", String.valueOf(frecuencia));
-
-                        long ultimaHora = camionNotif.getUltimaPosicion().getTime();
-                        Date horaActualDate = Calendar.getInstance().getTime();
-                        long horaActual = horaActualDate.getTime();
-                        long diferencia = horaActual - ultimaHora;
-
-                        boolean dentro = camionEnArea(camionNotif, listaBasesOperativas);
-                        Log.i("JobScheduler BaseOperativa", "Camion " + camionNotif.getId() + " en area: " + dentro);
-
-                        if (diferencia >= frecuencia && !dentro) {
-                            enviarNotificacion(camionNotif, notifId);
-                            ErrorNotificacion errorNotificacion = new ErrorNotificacion(camionNotif.getId(), diferencia, horaActual);
-                            erroresRef.push().setValue(errorNotificacion);
-                            notifId++;
-                        }
-
+            camionesRef.child(camionNotif.getId()).child("frecuencia_errores").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.i("JobScheduler", "FrecuenciasRef");
+                    long frecuencia;
+                    if (dataSnapshot.exists()) {
+                        frecuencia = (long) dataSnapshot.getValue() * 60 * 1000;
+                        Log.i("FRECUENCIA", String.valueOf(frecuencia));
+                    } else {
+                        frecuencia = 10 * 60 * 1000; //Frecuencia por defecto
                     }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    Log.i("FRECUENCIA_DESPUES", String.valueOf(frecuencia));
 
-                    }
-                });
+                    long ultimaHora = camionNotif.getUltimaPosicion().getTime();
+                    Date horaActualDate = Calendar.getInstance().getTime();
+                    long horaActual = horaActualDate.getTime();
+                    long diferencia = horaActual - ultimaHora;
 
+                    boolean dentro = camionEnArea(camionNotif, listaBasesOperativas);
+                    Log.i("JobScheduler BaseOperativa", "Camion " + camionNotif.getId() + " en area: " + dentro);
 
-
-
-            }
-
-
-                /**
-                frecuenciasRef.child(camionNotif.getId()).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.i("JobScheduler", "FrecuenciasRef");
-
-                        Frecuencias frecuencias = dataSnapshot.getValue(Frecuencias.class);
-                        long frecuencia;
-                        if (dataSnapshot.hasChild("notificaciones")) {
-                            frecuencia = Long.parseLong(frecuencias.getNotificaciones()) * 60 * 1000;
-                        } else {
-                            frecuencia = 10 * 60 * 1000; //Frecuencia por defecto
-                        }
-
-                        long ultimaHora = camionNotif.getUltimaPosicion().getTime();
-                        Date horaActualDate = Calendar.getInstance().getTime();
-                        long horaActual = horaActualDate.getTime();
-                        long diferencia = horaActual - ultimaHora;
-
-                        boolean dentro = camionEnArea(camionNotif, listaBasesOperativas);
-                        Log.i("JobScheduler BaseOperativa", "Camion " + camionNotif.getId() + " en area: " + dentro);
-
-                        if (diferencia >= frecuencia && !dentro) {
-                            enviarNotificacion(camionNotif, notifId);
-                            ErrorNotificacion errorNotificacion = new ErrorNotificacion(camionNotif.getId(), diferencia, horaActual);
-                            erroresRef.push().setValue(errorNotificacion);
-                            notifId++;
-                        }
+                    if (diferencia >= frecuencia && !dentro) {
+                        enviarNotificacion(camionNotif, notifId);
+                        ErrorNotificacion errorNotificacion = new ErrorNotificacion(camionNotif.getId(), diferencia, horaActual);
+                        erroresRef.push().setValue(errorNotificacion);
+                        notifId++;
                     }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+                }
+            });
 
-            } **/
-
+        }
     }
-
 }

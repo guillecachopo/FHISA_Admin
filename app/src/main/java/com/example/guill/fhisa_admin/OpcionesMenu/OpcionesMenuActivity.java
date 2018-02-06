@@ -71,24 +71,6 @@ public class OpcionesMenuActivity extends AppCompatActivity {
         EnviarEmailPassword enviarEmailPassword = new EnviarEmailPassword(getApplicationContext(), preferences, progressBar);
         enviarEmailPassword.execute(newPassword);
         dialog.dismiss();
-
-        /*
-        passwordRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String passwordActual = String.valueOf(dataSnapshot.getValue());
-                progressBar.setVisibility(View.VISIBLE);
-                EnviarEmailPassword enviarEmailPassword = new EnviarEmailPassword(getApplicationContext(), preferences, progressBar);
-                enviarEmailPassword.execute(passwordActual);
-                dialog.dismiss();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        */
     }
 
     private String generarPassword() {
