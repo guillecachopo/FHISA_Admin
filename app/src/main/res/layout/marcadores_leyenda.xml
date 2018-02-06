@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="5dp"
-            android:text="Salida Obra"
+            android:text="En Retorno"
             android:textColor="@color/colorBlack"/>
     </LinearLayout>
 

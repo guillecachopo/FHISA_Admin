@@ -126,7 +126,7 @@ public class PeticionConsumos extends AsyncTask<String, String, String> {
             ArrayList<Consumo> consumos1 = new ArrayList<>();
 
             for (Consumo consumo : consumos) {
-                if (consumo.getKm().compareTo("0") != 0) consumos1.add(consumo);
+                if (consumo.getKm().compareTo("0") != 0 && consumo.getConsumo().compareTo("0") != 0) consumos1.add(consumo);
             }
 
             Collections.reverse(consumos1);

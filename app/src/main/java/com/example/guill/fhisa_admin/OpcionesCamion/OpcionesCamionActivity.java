@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import com.example.guill.fhisa_admin.Globals;
 import com.example.guill.fhisa_admin.MainActivity;
 import com.example.guill.fhisa_admin.R;
 import com.example.guill.fhisa_admin.Socket.PeticionLlamar;
+import com.example.guill.fhisa_admin.Socket.PeticionVehiculo;
 
 import java.util.ArrayList;
 
@@ -58,6 +60,11 @@ public class OpcionesCamionActivity extends AppCompatActivity {
         String alias = pref.getString(imei + "-nombreCamion", imei);
         tvCamionId = (TextView) findViewById(R.id.tvCamionOpcionesId);
         tvCamionId.setText("Camión: " + alias);
+
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
+        PeticionVehiculo peticionVehiculo = new PeticionVehiculo(this, progressBar);
+        peticionVehiculo.execute(imei);
 
 
     }

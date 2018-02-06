@@ -43,7 +43,7 @@ public class SocketClienteTCP {
         int i=0;
         do {
            // request = "860935033015443, albaran, 301226" ;
-            request = "359826055321751, vehiculo, ";
+            request = "353762096491053, estado, ";
             salida.println(request);
             respuesta = entrada.readLine();
             System.out.println(respuesta);

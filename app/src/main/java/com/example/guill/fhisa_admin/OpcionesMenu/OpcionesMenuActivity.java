@@ -12,11 +12,8 @@ import android.widget.ProgressBar;
 
 import com.example.guill.fhisa_admin.Mail.EnviarEmailPassword;
 import com.example.guill.fhisa_admin.R;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by guill on 12/12/2017.
@@ -47,7 +44,7 @@ public class OpcionesMenuActivity extends AppCompatActivity {
     public void passwordOlvidada(View view) {
         AlertDialog alertDialog = new AlertDialog.Builder(OpcionesMenuActivity.this).create();
         alertDialog.setTitle("Envío de contraseña por correo electrónico");
-        alertDialog.setMessage("Se enviará la contraseña actual por correo electrónico");
+        alertDialog.setMessage("Se enviará una nueva contraseña aleatoria por correo electrónico");
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ENVIAR",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -68,6 +65,14 @@ public class OpcionesMenuActivity extends AppCompatActivity {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference passwordRef = database.getReference("password_servicio");
+        String newPassword = generarPassword();
+        passwordRef.setValue(newPassword);
+        progressBar.setVisibility(View.VISIBLE);
+        EnviarEmailPassword enviarEmailPassword = new EnviarEmailPassword(getApplicationContext(), preferences, progressBar);
+        enviarEmailPassword.execute(newPassword);
+        dialog.dismiss();
+
+        /*
         passwordRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -83,6 +88,22 @@ public class OpcionesMenuActivity extends AppCompatActivity {
 
             }
         });
+        */
+    }
+
+    private String generarPassword() {
+        char[] elementos={'0','1','2','3','4','5','6','7','8','9' ,'a',
+                'b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t',
+                'u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M',
+                'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
+        char[] conjunto = new char[10];
+        String pass;
+
+        for (int i=0; i<10; i++) {
+            int el = (int) (Math.random()*62);
+            conjunto[i] = (char) elementos[el];
+        }
+        return pass= new String (conjunto);
     }
 
 }
